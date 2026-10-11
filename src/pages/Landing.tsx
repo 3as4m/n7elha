@@ -33,6 +33,12 @@ const Landing = () => {
         joinGame: "ادخل اللعبة",
 
         mapCaption: "من هنا نبدأ",
+        storyKicker: "قصتنا",
+        storyTitle: "الطالب حاضر بجسمه، غايب بعقله",
+        sp1: "نعرف زين شكل الحصة: الطالب قاعد قدامك بس عقله بمكان ثاني. عيونه على الساعة، أو على الجوال تحت الطاولة، يعدّ الدقايق للجرس. مو لأنه ما يفهم — الطريقة اللي يتعلّم فيها ميتة، ما تعطيه سبب يهتم.",
+        sp2: "والمعلم يحارب معركة خاسرة. ينافس جوالات وتطبيقات على انتباهٍ ما عاد يطول أكثر من دقايق. يجتهد ويجهّز زين، بس الصف طافي قبل لا يبدأ الدرس.",
+        sp3: "هالمفهوم — تجربة تعليمية تخلي الطالب يحب التعلّم بدل ما يهرب منه — ما موجود في الفصول العربية. قررنا نكون أول واحد يبنيه. من هني طلعت نفلها.",
+
         visKicker: "رؤية السعودية ٢٠٣٠",
         visTitle: "تعليم يبني الإنسان، كما تريد الرؤية",
         visIntro: "رؤية ٢٠٣٠ تضع الإنسان في قلب التنمية، وبرنامج تنمية القدرات البشرية يستهدف جيلًا متمكنًا من المعرفة والمهارات. هذا الجيل يتشكل في الفصل كل يوم، ونفلها تشتغل هناك بالذات.",
@@ -74,6 +80,12 @@ const Landing = () => {
         joinGame: "JOIN GAME",
 
         mapCaption: "This is where we start",
+        storyKicker: "OUR STORY",
+        storyTitle: "Students show up. Their minds don't.",
+        sp1: "We know exactly what class looks like. The student's body is there, but their mind is somewhere else. Eyes on the clock. Scrolling under the desk. Counting down to the bell. Not because they don't understand — it's because the way we teach gives them no reason to care.",
+        sp2: "The teacher is fighting a losing battle over attention. Competing with devices they can't beat. Working hard, preparing well, but the room checks out before the lesson even starts.",
+        sp3: "The idea of making students actually want to learn — of creating an experience that intrinsically engages instead of coercing compliance — doesn't exist yet in Arabic classrooms. We decided to build it first. That's how nefelha started.",
+
         visKicker: "SAUDI VISION 2030",
         visTitle: "Education that builds people, the way the Vision intends",
         visIntro: "Vision 2030 puts people at the center of development, and the Human Capability Development Program aims for a generation strong in knowledge and skills. That generation is shaped in the classroom every day, and that is exactly where nefelha works.",
@@ -211,7 +223,7 @@ const Landing = () => {
         </div>
         </div>
 
-        {/* ---------------- VISION 2030 ---------------- */}
+        {/* ---------------- OUR STORY ---------------- */}
         {/* A teal band with wavy edges instead of a flat dark block. It overlaps
             the sections above and below by the wave's height, so their shapes
             run under the waves instead of stopping at a straight seam. The
@@ -221,31 +233,21 @@ const Landing = () => {
             <path fill={TEAL} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
           </svg>
           <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: TEAL }}>
-          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] gap-10 lg:gap-16">
+          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] gap-8 lg:gap-16">
             <div>
-              <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.visKicker}</span>
+              <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.storyKicker}</span>
               <h2
                 className="mt-3 text-[26px] sm:text-[34px] tracking-tight leading-[1.15]"
                 style={{ color: "#FFFFFF", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
               >
-                {t.visTitle}
+                {t.storyTitle}
               </h2>
-              <p className="mt-5 text-[15px] leading-relaxed text-white/80">{t.visIntro}</p>
             </div>
-            <div className="relative">
+            <div className="max-w-xl relative">
               <div className="h-1 w-16 rounded-full" style={{ background: LIME }} />
-              <ol className="mt-4 divide-y divide-white/15">
-                {t.visItems.map(([head, body], i) => (
-                  <li key={head} className="flex gap-5 py-6">
-                    <span className="shrink-0 w-9 text-[30px] leading-none font-semibold" style={{ color: LIME, fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{isAr ? ["١", "٢", "٣"][i] : `0${i + 1}`}</span>
-                    <div>
-                      <h3 className="text-[18px] sm:text-[20px] font-semibold text-white">{head}</h3>
-                      <p className="mt-1.5 text-[15px] leading-relaxed text-white/75">{body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">{t.visNote}</p>
+              <p className="mt-6 text-[17px] sm:text-[19px] leading-relaxed text-white font-medium">{t.sp1}</p>
+              <p className="mt-5 text-[15px] leading-relaxed text-white/80">{t.sp2}</p>
+              <p className="mt-5 text-[15px] leading-relaxed text-white/80">{t.sp3}</p>
             </div>
           </div>
           </div>
@@ -340,6 +342,36 @@ const Landing = () => {
           <p className="mt-12 sm:mt-14 mx-auto max-w-2xl text-center text-[17px] sm:text-[20px] leading-relaxed text-black/70 font-medium">
             {t.feelBody}
           </p>
+        </section>
+
+        {/* ---------------- VISION 2030 ---------------- */}
+        {/* Its own section on the cream page (the story keeps the teal band
+            above), so the two don't read as one. Plain numbered list, no cards. */}
+        <section className="relative px-5 sm:px-8 md:px-14 pt-6 sm:pt-10 pb-12 sm:pb-16">
+          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] gap-10 lg:gap-16">
+            <div>
+              <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.visKicker}</span>
+              <h2 className="mt-3 text-[26px] sm:text-[36px] tracking-tight leading-[1.15]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
+                {t.visTitle}
+              </h2>
+              <p className="mt-5 text-[15px] leading-relaxed text-black/65">{t.visIntro}</p>
+            </div>
+            <div>
+              <div className="h-1 w-16 rounded-full" style={{ background: LIME }} />
+              <ol className="mt-4 divide-y divide-black/10">
+                {t.visItems.map(([head, body], i) => (
+                  <li key={head} className="flex gap-5 py-6">
+                    <span className="shrink-0 w-9 text-[30px] leading-none font-semibold" style={{ color: TEAL, fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{isAr ? ["١", "٢", "٣"][i] : `0${i + 1}`}</span>
+                    <div>
+                      <h3 className="text-[18px] sm:text-[20px] font-semibold" style={{ color: "#3F5A63" }}>{head}</h3>
+                      <p className="mt-1.5 text-[15px] leading-relaxed text-black/65">{body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-black/45">{t.visNote}</p>
+            </div>
+          </div>
         </section>
 
         {/* ---------------- FOR WHO ---------------- */}
