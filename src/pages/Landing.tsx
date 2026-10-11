@@ -15,6 +15,9 @@ import saudiMap from "@/assets/saudi-map.svg";
 
 /* ---------- helpers ---------- */
 
+const INK = "#14282D";   // the Vision 2030 band: deep ink so lime and sand light up on it
+
+
 const Landing = () => {
   const { user } = useAuth();
   const { i18n } = useTranslation();
@@ -39,13 +42,15 @@ const Landing = () => {
         sp2: "والمعلم يحارب معركة خاسرة. ينافس جوالات وتطبيقات على انتباهٍ ما عاد يطول أكثر من دقايق. يجتهد ويجهّز زين، بس الصف طافي قبل لا يبدأ الدرس.",
         sp3: "هالمفهوم — تجربة تعليمية تخلي الطالب يحب التعلّم بدل ما يهرب منه — ما موجود في الفصول العربية. قررنا نكون أول واحد يبنيه. من هني طلعت نفلها.",
 
-        visKicker: "رؤية السعودية ٢٠٣٠",
-        visTitle: "تعليم يبني الإنسان، كما تريد الرؤية",
-        visIntro: "رؤية ٢٠٣٠ تضع الإنسان في قلب التنمية، وبرنامج تنمية القدرات البشرية يستهدف جيلًا متمكنًا من المعرفة والمهارات. هذا الجيل يتشكل في الفصل كل يوم، ونفلها تشتغل هناك بالذات.",
+        visKicker: "رؤية السعودية 2030",
+        visTitleA: "الرؤية تنبني",
+        visTitleB: "داخل الفصل",
+        visIntro: "رؤية 2030 تضع الإنسان في قلب التنمية، والتعليم هو الطريق لهذا الهدف. قطاع التعليم قطع خطوات كبيرة، لكن فيه مساحة واسعة للتطوير لسا: حصص تعتمد على التلقين، وطلاب حاضرين بأجسامهم بس، ومعلمين ما عندهم أدوات تعرّفهم مين فهم ومين ضاع. هنا نشتغل، داخل الحصة نفسها.",
+        visPillar: "ركيزة",
         visItems: [
-          ["مجتمع حيوي", "الطالب اللي يحب الحصة يحب المدرسة. نحوّل المراجعة لتجربة يشاركون فيها بحماس، فيصير التعلم عادة يومية مو واجب ثقيل."],
-          ["مهارات اقتصاد المستقبل", "كل طالب يتعامل مع التقنية في كل حصة، والمعلم يشتغل مع الذكاء الاصطناعي وبيانات الفصل، فتتكوّن الثقة الرقمية من الدرس نفسه."],
-          ["عربية أولًا", "أسئلة وتقارير وواجهة بالعربية وبلهجة الفصل، لأن الهوية واللغة جزء من بناء الإنسان، مو شي نضيفه في الآخر."],
+          ["مجتمع حيوي", "طالب يحب يجي المدرسة", "الحصة اللي يستناها الطالب تبني علاقة جديدة مع المدرسة. وكلها بالعربية وبلغة الفصل، لأن الهوية واللغة جزء من بناء الإنسان."],
+          ["اقتصاد مزدهر", "مهارات المستقبل داخل كل درس", "الطالب يتعامل مع التقنية في كل حصة، والمعلم يبني أسئلته بالذكاء الاصطناعي، فتنمو الثقة الرقمية من الدرس نفسه."],
+          ["وطن طموح", "معلم يشوف كل طالب", "تقارير بعد كل لعبة توضح مين فهم ومين يحتاج مساعدة، فيصير القرار في الفصل مبني على بيانات، مو على إحساس."],
         ],
         visNote: "نفلها منتج مستقل، وليست جهة حكومية ولا شريكًا رسميًا لبرامج الرؤية. نبني باتجاهها.",
 
@@ -87,12 +92,14 @@ const Landing = () => {
         sp3: "The idea of making students actually want to learn — of creating an experience that intrinsically engages instead of coercing compliance — doesn't exist yet in Arabic classrooms. We decided to build it first. That's how nefelha started.",
 
         visKicker: "SAUDI VISION 2030",
-        visTitle: "Education that builds people, the way the Vision intends",
-        visIntro: "Vision 2030 puts people at the center of development, and the Human Capability Development Program aims for a generation strong in knowledge and skills. That generation is shaped in the classroom every day, and that is exactly where nefelha works.",
+        visTitleA: "The Vision is built",
+        visTitleB: "in the classroom",
+        visIntro: "Vision 2030 puts people at the center of development, and education is the road there. The sector has come a long way, but there is still a lot of room to grow: lessons built on memorizing, students who are in the room but not in the lesson, and teachers without the tools to see who understood and who got lost. That is where we work, inside the lesson itself.",
+        visPillar: "PILLAR",
         visItems: [
-          ["A vibrant society", "A student who likes the lesson likes school. We turn review into something they join in on, so learning becomes a daily habit instead of a chore."],
-          ["Skills for the future economy", "Every student works with technology in every lesson, and the teacher works with AI and class data, so digital confidence grows inside the lesson itself."],
-          ["Arabic first", "Questions, reports and the interface in Arabic, in the voice of the classroom, because language and identity are part of building people, not an add-on."],
+          ["Vibrant society", "Students who want to be at school", "A lesson students look forward to builds a new relationship with school. And all of it is in Arabic, in the voice of the classroom, because language and identity are part of building people."],
+          ["Thriving economy", "Future skills inside every lesson", "Students work with technology in every lesson, and teachers build their questions with AI, so digital confidence grows inside the lesson itself."],
+          ["Ambitious nation", "A teacher who sees every student", "Reports after every game show who understood and who needs help, so decisions in class rest on data, not guesswork."],
         ],
         visNote: "nefelha is an independent product, not a government body or an official partner of the Vision programs. We build in its direction.",
 
@@ -120,7 +127,7 @@ const Landing = () => {
   return (
     <div
       className="min-h-screen w-full"
-      style={{ background: "hsl(var(--cream-panel))", fontFamily: "'Outfit', 'Almarai', system-ui, sans-serif" }}
+      style={{ background: "#F3E7C9", fontFamily: "'Outfit', 'Almarai', system-ui, sans-serif" }}
     >
       <Seo
         path="/"
@@ -257,8 +264,7 @@ const Landing = () => {
         </section>
 
         {/* ---------------- WHAT WE BELIEVE ---------------- */}
-        {/* z-20 so the corner shapes' heads stay over the teal band above. */}
-        <div data-skew className="relative z-20">
+        <div data-skew className="relative">
         {/* A teal and sand wave coming in from the page edge and crossing from
             this section into the next, so the two read as one stretch of page
             instead of the wave being cut where a section ends. */}
@@ -270,25 +276,21 @@ const Landing = () => {
             </svg>
           </div>
         </div>
-        {/* The two upper corner shapes, above the teal band: each ends in a
-            round head that rises over the band's wave, like it's flowing up
-            into it. Own layer, since the section below clips its top. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-12 h-[240px] md:h-[420px] overflow-hidden z-20">
-          <div className="absolute top-0 -start-16 w-[200px] md:w-[360px] ltr:-scale-x-100">
-            <svg viewBox="0 0 400 400" className="w-full">
-              <path fill={SAND} d="M400 80H150L126 58C118 44 100 34 80 34C58 34 44 44 43.9 60C45.3 96.8 68.1 138.9 100 172C154 228 132 300 204 356C254 396 338 404 400 392Z" />
-              <path fill={LIME} d="M400 56C340 30 220 18 168 32C142 40 129 48 126.3 60C129.4 90.5 149.2 124 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
-            </svg>
-          </div>
-          <div className="absolute top-0 -end-16 w-[200px] md:w-[360px] rtl:-scale-x-100">
-            <svg viewBox="0 0 400 400" className="w-full">
-              <path fill={SAND} d="M400 0H200L170 60C156 42 136 32 112 32C88 32 70 42 69.7 60C72.2 87.1 87.6 116.6 112 140C164 190 150 252 214 300C262 336 344 344 400 332Z" />
-              <path fill={TEAL} d="M400 0H178C140 26 156 84 192 120C232 160 222 214 274 252C314 282 362 284 400 276Z" />
-            </svg>
-          </div>
-        </div>
         <section className="relative isolate overflow-hidden px-5 sm:px-8 md:px-14 pt-24 sm:pt-32 pb-12 sm:pb-16">
           <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute -top-12 -start-16 w-[200px] md:w-[360px] ltr:-scale-x-100">
+              <svg viewBox="0 0 400 400" className="w-full">
+                <path fill={SAND} d="M400 0H70C20 40 48 118 100 172C154 228 132 300 204 356C254 396 338 404 400 392Z" />
+                <path fill={LIME} d="M400 0H154C102 34 130 104 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
+              </svg>
+            </div>
+            {/* the opposite upper corner: a teal wave over sand, mirroring the lime one */}
+            <div className="absolute -top-12 -end-16 w-[200px] md:w-[360px] rtl:-scale-x-100">
+              <svg viewBox="0 0 400 400" className="w-full">
+                <path fill={SAND} d="M400 0H96C52 30 66 96 112 140C164 190 150 252 214 300C262 336 344 344 400 332Z" />
+                <path fill={TEAL} d="M400 0H178C140 26 156 84 192 120C232 160 222 214 274 252C314 282 362 284 400 276Z" />
+              </svg>
+            </div>
             {/* beside the phones, on the lime side: a thin oval with a teal and a lime drop */}
             <div className="absolute top-[54%] start-[6%] w-[220px] h-[180px] hidden md:block">
               <svg viewBox="0 0 240 140" className="absolute inset-x-0 top-0 w-full">
@@ -345,33 +347,60 @@ const Landing = () => {
         </section>
 
         {/* ---------------- VISION 2030 ---------------- */}
-        {/* Its own section on the cream page (the story keeps the teal band
-            above), so the two don't read as one. Plain numbered list, no cards. */}
-        <section className="relative px-5 sm:px-8 md:px-14 pt-6 sm:pt-10 pb-12 sm:pb-16">
-          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] gap-10 lg:gap-16">
-            <div>
-              <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.visKicker}</span>
-              <h2 className="mt-3 text-[26px] sm:text-[36px] tracking-tight leading-[1.15]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-                {t.visTitle}
-              </h2>
-              <p className="mt-5 text-[15px] leading-relaxed text-black/65">{t.visIntro}</p>
+        {/* A deep ink band (the story keeps the teal one above, so the two
+            don't read as one). A huge outlined 2030 sits behind the text, and
+            each of the Vision's three pillars gets what nefelha does for it.
+            Columns split by thin rules, no cards. */}
+        <section className="relative z-10 -mt-6 sm:-mt-10 -mb-12 text-white">
+          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[56px] -mb-px">
+            <path fill={INK} d="M0 40C260 4 520 60 800 28C1060 0 1260 12 1440 30V72H0Z" />
+          </svg>
+          <div className="relative isolate overflow-hidden px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: INK }}>
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+              <span
+                className="absolute top-2 -end-4 sm:end-0 select-none leading-none font-extrabold tracking-tight text-[30vw] lg:text-[19rem]"
+                style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(169,203,30,0.16)", fontFamily: "'Outfit', 'Almarai', sans-serif" }}
+              >
+                2030
+              </span>
+              <svg viewBox="0 0 120 120" className="absolute bottom-10 -start-6 w-[70px] md:w-[110px]">
+                <path fill={TEAL} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
+              </svg>
             </div>
-            <div>
-              <div className="h-1 w-16 rounded-full" style={{ background: LIME }} />
-              <ol className="mt-4 divide-y divide-black/10">
-                {t.visItems.map(([head, body], i) => (
-                  <li key={head} className="flex gap-5 py-6">
-                    <span className="shrink-0 w-9 text-[30px] leading-none font-semibold" style={{ color: TEAL, fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{isAr ? ["١", "٢", "٣"][i] : `0${i + 1}`}</span>
-                    <div>
-                      <h3 className="text-[18px] sm:text-[20px] font-semibold" style={{ color: "#3F5A63" }}>{head}</h3>
-                      <p className="mt-1.5 text-[15px] leading-relaxed text-black/65">{body}</p>
-                    </div>
+
+            <div className="wrap">
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] gap-6 lg:gap-16 items-end">
+                <div>
+                  <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: LIME }}>{t.visKicker}</span>
+                  <h2 className="mt-4 text-[32px] sm:text-[46px] md:text-[54px] tracking-tight leading-[1.1]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
+                    <span className="block">{t.visTitleA}</span>
+                    <span className="block italic" style={{ color: LIME }}>{t.visTitleB}</span>
+                  </h2>
+                </div>
+                <p className="text-[15px] leading-relaxed text-white/70">{t.visIntro}</p>
+              </div>
+
+              {/* the three pillars */}
+              <ol className="mt-12 sm:mt-16 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
+                {t.visItems.map(([pillar, head, body], i) => (
+                  <li key={pillar} className="border-t border-white/15 pt-6">
+                    <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.2em]"}`} style={{ color: SAND }}>
+                      {t.visPillar} {isAr ? ["١", "٢", "٣"][i] : `0${i + 1}`}
+                      <span className="mx-2 text-white/30">/</span>
+                      <span style={{ color: LIME }}>{pillar}</span>
+                    </span>
+                    <h3 className="mt-4 text-[20px] sm:text-[22px] font-semibold leading-snug">{head}</h3>
+                    <p className="mt-2.5 text-[15px] leading-relaxed text-white/65">{body}</p>
                   </li>
                 ))}
               </ol>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-black/45">{t.visNote}</p>
+
+              <p className="mt-14 text-[12.5px] leading-relaxed text-white/40 max-w-2xl">{t.visNote}</p>
             </div>
           </div>
+          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[56px] -mt-px">
+            <path fill={INK} d="M0 0H1440V30C1190 62 940 10 680 40C420 66 190 60 0 26Z" />
+          </svg>
         </section>
 
         {/* ---------------- FOR WHO ---------------- */}
