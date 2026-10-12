@@ -274,7 +274,8 @@ const ServiceBand = ({
 
 /* ---------- pictures of each service ---------- */
 /* Small drawings of the real thing (phones, the quiz builder, the printed
-   board, a live ranking), flat colors on the band, no card boxes. */
+   board, a live ranking). The question cards and the ranking screen use the
+   nav's hard border and offset shadow. */
 
 const Blob = ({ color, className }: { color: string; className: string }) => (
   <svg aria-hidden viewBox="0 0 120 120" className={`absolute ${className}`}>
@@ -305,7 +306,7 @@ const AiVisual = ({ isAr }: { isAr: boolean }) => {
       <div className="ms-8 h-8 w-px border-s-2 border-dashed border-white/40" />
       <div className="space-y-3">
         {qs.map(([q, opts, right], qi) => (
-          <div key={qi} className="rounded-2xl p-4" style={{ background: "#FFFFFF" }}>
+          <div key={qi} className="rounded-2xl p-4 border-2 border-[hsl(var(--nb-border))] shadow-[4px_4px_0_0_hsl(var(--nb-border))]" style={{ background: "#FFFFFF" }}>
             <p className="text-[15px] font-semibold" style={{ color: SLATE }}>{q as string}</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {(opts as string[]).map((o, oi) => (
@@ -373,7 +374,7 @@ const EventVisual = ({ isAr }: { isAr: boolean }) => {
     : [["3A", 2480], ["3C", 2310], ["3B", 1975], ["3D", 1640]];
   const max = 2480;
   return (
-    <div className="relative mx-auto max-w-md rounded-3xl p-6 sm:p-8 text-white" style={{ background: INK }}>
+    <div className="relative mx-auto max-w-md rounded-3xl p-6 sm:p-8 text-white border-2 border-[hsl(var(--nb-border))] shadow-[5px_5px_0_0_#0E7C7B]" style={{ background: INK }}>
       <Blob color={LIME} className="w-[44px] -top-4 -end-3" />
       <p className={`text-[11px] font-semibold text-white/50 ${isAr ? "" : "tracking-[0.25em]"}`}>{isAr ? "بطولة الفصول — مباشر" : "CLASS TOURNAMENT — LIVE"}</p>
       <div className="mt-5 space-y-4">
