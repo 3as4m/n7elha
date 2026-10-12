@@ -51,6 +51,7 @@ const LavaPreview = lazy(() => import("./pages/play/LavaPreview"));
 const NotFound    = lazy(() => import("./pages/NotFound"));
 
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { PageCurtain } from "@/components/site/PageCurtain";
 
 const queryClient = new QueryClient();
 
@@ -81,8 +82,12 @@ const AppContent = () => {
         <LangTransitionOverlay />
         <AuthProvider>
           <ScrollToTop />
-          {/* keyed on pathname so the enter animation replays per navigation */}
-          <div key={location.pathname} className="page-enter">
+          <PageCurtain />
+          {/* No per-page fade (it blanked the whole screen on every click);
+              site pages get PageCurtain instead. Navigations run as
+              transitions (see BrowserRouter below), so the old page stays up
+              while the next page's chunk loads, and the loader only shows on
+              a cold first load. */}
           <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Landing />} />
@@ -125,7 +130,6 @@ const AppContent = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
-          </div>
         </AuthProvider>
       </div>
     </>
@@ -137,7 +141,7 @@ const App = () => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true }}>
             <AppContent />
           </BrowserRouter>
         </TooltipProvider>
