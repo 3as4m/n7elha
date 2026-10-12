@@ -208,11 +208,11 @@ const Landing = () => {
 
               <Link
                 to="/join"
-                className="group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#8FC44A] text-[#3F5A63] pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+                className="group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#A9CB1E] text-[#3F5A63] pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
               >
                 {t.joinGame}
-                <span className="h-9 w-9 rounded-full bg-white text-[#8FC44A] flex items-center justify-center">
-                  <Play className="h-4 w-4 fill-[#8FC44A]" strokeLinejoin="round" strokeWidth={4} />
+                <span className="h-9 w-9 rounded-full bg-white text-[#A9CB1E] flex items-center justify-center">
+                  <Play className="h-4 w-4 fill-[#A9CB1E]" strokeLinejoin="round" strokeWidth={4} />
                 </span>
               </Link>
 
