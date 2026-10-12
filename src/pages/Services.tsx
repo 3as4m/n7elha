@@ -1,267 +1,191 @@
-import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Sparkles,
-  FileText,
-  Radio,
-  BarChart3,
-  Upload,
-  Users,
-  Trophy,
-  Swords,
-  Flame,
-  Skull,
-  Mountain,
-  Palette,
-  QrCode,
-  Coins,
-} from "lucide-react";
-import triDoodle from "@/assets/doodles/triangle-trio.png";
+import { ArrowUpRight, FileText, Check } from "lucide-react";
+import { LIME, SAND, TEAL } from "@/components/teacher/DashboardAccents";
 import { SQUARE_TYPES } from "@/lib/physicalGames";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
+import phoneClassic from "@/assets/phone-classic.png";
+import phoneCrypto from "@/assets/phone-crypto.png";
 
+const INK = "#14282D";
+const SLATE = "#3F5A63";
+const DISPLAY = "'ArslanWessam', 'Almarai', sans-serif";
+
+type Service = { name: string; pitch: string; gets: string[]; forWho: string };
+
+/* What a school or teacher can actually order from nefelha. Each service is
+   its own band with a picture of what it looks like, alternating sides and
+   colors so the page reads as a menu of offerings, not a feature list. */
 const Services = () => {
   const { i18n } = useTranslation();
   const isAr = i18n.language === "ar";
 
   const t = isAr
     ? {
-        kicker: "الخدمات",
-        title: "كل ما يحتاجه فصلك في مكان واحد",
-        sub: "نفلها مو مجموعة أدوات، ولا نظام إدارة تعلّم. هي طريقة تخلي طلابك يحبون الحصة — وخلف هالتجربة كل اللي تحتاجه: من تجهيز السؤال بالذكاء الاصطناعي إلى تحليل النتيجة، يشتغل من أول ثانية بدون تعقيد.",
-
-        f1Title: "توليد الأسئلة بالذكاء الاصطناعي",
-        f1Desc: "ارفع ملف الدرس (PDF أو Word أو PowerPoint) واترك المنصة تستخرج لك أسئلة دقيقة بمستويات صعوبة مختلفة، جاهزة للمراجعة والتعديل قبل النشر.",
-        f2Title: "بناء يدوي مرن",
-        f2Desc: "حرر، أضف، وأعد ترتيب الأسئلة بسهولة. اختر الإجابات الصحيحة، أضف صورًا توضيحية، وحدّد الوقت المناسب لكل سؤال على حدة.",
-        f3Title: "بث مباشر للفصل",
-        f3Desc: "ادعُ طلابك برمز قصير من أربعة أحرف، وشاهدهم ينضمون لحظة بلحظة على شاشة العرض في صفك — بلا تطبيقات، بلا تسجيل دخول.",
-        f4Title: "تحليلات مفصلة",
-        f4Desc: "اعرف من أتقن الدرس ومن يحتاج إلى مراجعة، عبر تقارير واضحة بعد كل جلسة تُظهر أداء كل طالب وكل سؤال على حدة.",
-
-        modesKicker: "أنماط اللعب",
-        modesTitle: "ثمانية أنماط، هدف واحد: الطالب يطلع وهو يحب المادة",
-        modesSub: "كل نمط يحوّل نفس الأسئلة إلى تجربة مختلفة — من سباق سريع إلى بقاء جماعي إلى لوح مطبوع بلا أجهزة إطلاقًا.",
-
-        m1: "الوضع الكلاسيكي", m1d: "سباق الاختبار الأصلي — أجب بسرعة، اكسب أكثر.",
-        m2: "سباق التشفير", m2d: "أجب بشكل صحيح لتكسب عملات، واستخدم قوة الاختراق لسرقة عملات المنافسين.",
-        m4: "البطاطا الساخنة", m4d: "قنبلة حية تنتقل بين اللاعبين — أجب بسرعة أو ستنفجر بين يديك.",
-        m5: "أرضية الحمم", m5d: "تعاوني بالكامل: اكسبوا عملة من الإجابات الصحيحة وابنوا فوق الحمم المرتفعة.",
-        m6: "بشر ضد الزومبي", m6d: "فريقان، شريطا صحة. الإجابات الصحيحة تموّل ترقيات فريقك.",
-        m7: "لا تنظر للأسفل", m7d: "منصة قفز ثنائية الأبعاد — الطاقة من الإجابات الصحيحة تحرّك لاعبك وتُبقيه صاعدًا.",
-        m8: "معركة الطلاء", m8d: "ساحة تلوين حرة للجميع — تحرك بعصا افتراضية واترك أثر لونك.",
-        m9: "الألعاب الفعلية", m9d: "لوح مطبوع ورموز QR — بلا حاجة لجهاز لكل طالب، جهاز واحد فقط يمسح الرموز.",
-
-        physicalKicker: "الفرق",
-        physicalTitle: "ألعاب مادية و رقمية معاً",
-        physicalDesc: "نفلها تجمع بين الألعاب الرقمية الكاملة وألعاب مادية بلوح ورموز QR — تجربة يلمسها الطالب ويتفاعل معها فعلياً في الفصل. جهاز واحد يمسح لكل الفصل، وما تحتاج لكل طالب جهاز خاص. نفس الأسئلة، طريقتين مختلفتين للتفاعل.",
-        boardKicker: "مربعات اللوح المطبوع",
-
-        platformKicker: "منصة وحيدة",
-        platformTitle: "منصة واحدة لكل المواد",
-        platformDesc: "نفس المنصة، نفس الأدوات، نفس التجربة. ما تحتاج شراء منفصل لكل قسم. المعلم في الفيزياء والمعلمة في اللغة العربية، كلهم على نفس النظام.",
-        subjects: ["إسلامية", "عربي", "رياضيات", "علوم"],
-
-        howKicker: "كيف تعمل؟",
-        howTitle: "ثلاث خطوات بس",
-        s1: "ارفع المحتوى", s1d: "ملف الدرس أو ملاحظاتك. تتكفّل المنصة بالباقي.",
-        s2: "ادعُ طلابك", s2d: "شارك رمز اللعبة، وسينضم الجميع من أي جهاز.",
-        s3: "اعرض النتائج", s3d: "ترتيب لحظي، وتقرير كامل بعد انتهاء الاختبار.",
+        kicker: "خدماتنا",
+        title: "كل اللي نقدّمه، من معلم واحد لمدرسة كاملة",
+        sub: "تبي حساب لك وبس، أو تبي نفلها في مدرستك كلها، أو بطولة بين الفصول قدام الكل؟ اختر اللي يناسبك، والباقي علينا.",
+        serviceLabel: "خدمة",
+        getsLabel: "وش تحصل",
+        forLabel: "لمن",
+        request: "اطلب الخدمة",
+        services: [
+          {
+            name: "منصة نفلها للمعلم",
+            pitch: "حساب واحد وكل الألعاب. تجهّز أسئلتك، تشغّل اللعبة على شاشة الفصل، والطلاب يدخلون من جوالاتهم برمز قصير.",
+            gets: ["ثمانية أنماط لعب على نفس الأسئلة", "بدون تطبيق وبدون تسجيل للطلاب", "تقرير بعد كل لعبة لكل طالب وكل سؤال"],
+            forWho: "المعلم والمدرّس الخصوصي",
+          },
+          {
+            name: "أسئلة بالذكاء الاصطناعي",
+            pitch: "ارفع ملف الدرس، والذكاء الاصطناعي يطلّع لك أسئلة جاهزة للعب خلال دقايق. تراجعها وتعدّل عليها قبل ما تبدأ.",
+            gets: ["يقرأ ملفات PDF وWord وPowerPoint", "أسئلة بمستويات صعوبة مختلفة", "صور توضيحية للأسئلة تنرسم لك"],
+            forWho: "كل معلم يبي يختصر وقت التحضير",
+          },
+          {
+            name: "نفلها لمدرستك كاملة",
+            pitch: "نجهّز نفلها لكل معلمين المدرسة، نسوي لهم ورشة تدريب، ونتابع معكم أول الأسابيع لين تصير اللعبة جزء من الحصة.",
+            gets: ["حسابات لكل معلمين المدرسة", "ورشة تدريب داخل المدرسة", "متابعة ودعم بالعربي"],
+            forWho: "المدارس الخاصة والحكومية",
+          },
+          {
+            name: "ألواح اللعب المطبوعة",
+            pitch: "لوح لعب مطبوع نوصله لمدرستك، والفصل كله يلعب عليه بجوال واحد يمسح الرموز. حل للفصول اللي ما فيها جهاز لكل طالب.",
+            gets: ["لوح ورموز QR جاهزة للعب", "جوال واحد يكفي الفصل كله", "يشتغل على أسئلة المعلم نفسه"],
+            forWho: "الفصول بدون أجهزة والصفوف الأولية",
+          },
+          {
+            name: "فعاليات ومسابقات المدرسة",
+            pitch: "بطولة بين الفصول، يوم مفتوح، اليوم الوطني أو أسبوع المراجعة. نجهّز الفعالية وأسئلتها، ونشغّل اللعبة على الشاشة الكبيرة قدام الكل.",
+            gets: ["تجهيز الفعالية والأسئلة كاملة", "تشغيل مباشر على شاشة المسرح أو الساحة", "ترتيب ونتائج لحظية للفصول"],
+            forWho: "المدارس وإدارات التعليم",
+          },
+        ] as Service[],
+        ctaTitle: "مو متأكد وش يناسبك؟",
+        ctaSub: "قل لنا عن فصلك أو مدرستك، ونقترح عليك البداية الصح.",
+        ctaLink: "كلّمنا",
       }
     : {
         kicker: "SERVICES",
-        title: "Everything your classroom needs, in one place",
-        sub: "nefelha isn't a set of tools, and it isn't an LMS. It's a way to make your students love class — and behind that experience is everything you need: from AI-powered question generation to real-time analytics, working from the first second with zero friction.",
-
-        f1Title: "AI question generation",
-        f1Desc: "Upload your lesson (PDF, Word or PowerPoint) and let the platform extract precise questions across difficulty levels, ready to review and edit before you publish.",
-        f2Title: "Flexible manual builder",
-        f2Desc: "Edit, add and reorder questions effortlessly. Choose correct answers, attach images, and tune the timing per question individually.",
-        f3Title: "Live classroom broadcast",
-        f3Desc: "Invite your students with a short four-character code and watch them join in real time on your projector — no apps, no sign-up.",
-        f4Title: "Deep analytics",
-        f4Desc: "Know who mastered the lesson and who needs a review, through clear reports after every session breaking down each student and each question.",
-
-        modesKicker: "GAME MODES",
-        modesTitle: "Eight modes, one goal: students leave class loving the subject",
-        modesSub: "Every mode turns the same question set into a different experience — from a fast-paced race to co-op survival to a printed board with no student devices at all.",
-
-        m1: "Classic", m1d: "The original quiz race — answer fast, earn more.",
-        m2: "Crypto Rush", m2d: "Correct answers earn crypto; a hack power-up lets you steal from rivals.",
-        m4: "Hot Potato", m4d: "A live bomb on a fuse passes between players — answer fast or get caught holding it.",
-        m5: "Lava Floor", m5d: "Full co-op: earn currency from correct answers and build above the rising lava together.",
-        m6: "Humans vs Zombies", m6d: "Two teams, two health bars. Correct answers fund your team's upgrades.",
-        m7: "Don't Look Down", m7d: "A 2D parkour platformer — energy from correct answers moves your climber upward.",
-        m8: "Paint Fight", m8d: "A free-for-all territory arena — move with a virtual joystick and leave your color's trail.",
-        m9: "Physical Games", m9d: "A printed board and QR codes — no device per student, just one shared scanner.",
-
-        physicalKicker: "THE DIFFERENCE",
-        physicalTitle: "Physical + Digital Games Together",
-        physicalDesc: "nefelha combines full digital games with physical games using a board and QR codes — an experience students touch and engage with in real space. One device scans for the whole class, no device needed per student. Same questions, two different ways to play.",
-        boardKicker: "PRINTED BOARD SQUARES",
-
-        platformKicker: "ONE PLATFORM",
-        platformTitle: "One Platform for Every Subject",
-        platformDesc: "Same platform, same tools, same experience. One purchase covers every subject. Your physics teacher and your Arabic teacher work on the same system.",
-        subjects: ["Islamic Studies", "Arabic", "Math", "Science"],
-
-        howKicker: "HOW IT WORKS",
-        howTitle: "Three steps to your first live session",
-        s1: "Upload content", s1d: "Your lesson file or notes. The platform handles the rest.",
-        s2: "Invite students", s2d: "Share the game code — anyone can join from any device.",
-        s3: "See results", s3d: "Live leaderboard plus a full report once the quiz ends.",
+        title: "Everything we offer, from one teacher to a whole school",
+        sub: "Just an account for yourself, nefelha across your whole school, or a class-vs-class tournament in front of everyone? Pick what fits, and we handle the rest.",
+        serviceLabel: "SERVICE",
+        getsLabel: "What you get",
+        forLabel: "For",
+        request: "Request this",
+        services: [
+          {
+            name: "nefelha for teachers",
+            pitch: "One account, every game. Prepare your questions, run the game on the classroom screen, and students join from their phones with a short code.",
+            gets: ["Eight game modes on the same questions", "No app and no sign-up for students", "A report after every game, per student and per question"],
+            forWho: "Teachers and private tutors",
+          },
+          {
+            name: "AI-made quizzes",
+            pitch: "Upload your lesson file and the AI turns it into questions ready to play in minutes. You review and edit them before you start.",
+            gets: ["Reads PDF, Word and PowerPoint files", "Questions at different difficulty levels", "Illustrations drawn for your questions"],
+            forWho: "Every teacher who wants prep time back",
+          },
+          {
+            name: "nefelha for your whole school",
+            pitch: "We set nefelha up for every teacher in the school, run a training workshop, and stay with you for the first weeks until the game is part of the lesson.",
+            gets: ["Accounts for every teacher", "A training workshop at your school", "Follow-up and support in Arabic"],
+            forWho: "Private and public schools",
+          },
+          {
+            name: "Printed game boards",
+            pitch: "A printed game board delivered to your school. The whole class plays on it with one phone scanning the codes, built for classrooms without a device per student.",
+            gets: ["A board and QR codes ready to play", "One phone is enough for the whole class", "Runs on the teacher's own questions"],
+            forWho: "Classrooms without devices and early grades",
+          },
+          {
+            name: "School events and competitions",
+            pitch: "A tournament between classes, an open day, National Day or review week. We prepare the event and its questions, and run the game on the big screen in front of everyone.",
+            gets: ["The event and its questions, fully prepared", "Run live on the stage or courtyard screen", "Live rankings and results for every class"],
+            forWho: "Schools and education offices",
+          },
+        ] as Service[],
+        ctaTitle: "Not sure what fits?",
+        ctaSub: "Tell us about your class or school, and we'll suggest the right place to start.",
+        ctaLink: "Talk to us",
       };
 
-  const features: { icon: React.ReactNode; title: string; desc: string; emphasis?: boolean }[] = [
-    { icon: <Sparkles className="h-5 w-5" />, title: t.f1Title, desc: t.f1Desc, emphasis: true },
-    { icon: <FileText className="h-5 w-5" />, title: t.f2Title, desc: t.f2Desc },
-    { icon: <Radio className="h-5 w-5" />, title: t.f3Title, desc: t.f3Desc },
-    { icon: <BarChart3 className="h-5 w-5" />, title: t.f4Title, desc: t.f4Desc, emphasis: true },
+  const visuals = [
+    <PhonesVisual key="phones" />,
+    <AiVisual key="ai" isAr={isAr} />,
+    <TeachersVisual key="teachers" isAr={isAr} />,
+    <BoardVisual key="board" />,
+    <EventVisual key="event" isAr={isAr} />,
   ];
-
-  const modes: { n: string; icon: React.ReactNode; title: string; desc: string }[] = [
-    { n: "00", icon: <Trophy className="h-4 w-4" />, title: t.m1, desc: t.m1d },
-    { n: "01", icon: <Coins className="h-4 w-4" />, title: t.m2, desc: t.m2d },
-    { n: "02", icon: <Flame className="h-4 w-4" />, title: t.m4, desc: t.m4d },
-    { n: "03", icon: <Mountain className="h-4 w-4" />, title: t.m5, desc: t.m5d },
-    { n: "04", icon: <Skull className="h-4 w-4" />, title: t.m6, desc: t.m6d },
-    { n: "05", icon: <Swords className="h-4 w-4" />, title: t.m7, desc: t.m7d },
-    { n: "06", icon: <Palette className="h-4 w-4" />, title: t.m8, desc: t.m8d },
-    { n: "07", icon: <QrCode className="h-4 w-4" />, title: t.m9, desc: t.m9d },
-  ];
-
-  const steps = [
-    { n: "01", icon: <Upload className="h-4 w-4" />, title: t.s1, desc: t.s1d },
-    { n: "02", icon: <Users className="h-4 w-4" />, title: t.s2, desc: t.s2d },
-    { n: "03", icon: <Trophy className="h-4 w-4" />, title: t.s3, desc: t.s3d },
-  ];
+  // band color per service: cream, teal, cream, ink, cream
+  const tones: Tone[] = ["cream", "teal", "cream", "ink", "cream"];
 
   return (
     <div
       className="relative isolate overflow-x-clip min-h-screen w-full"
-      style={{ background: "hsl(var(--cream-panel))", fontFamily: "'Outfit', 'Almarai', system-ui, sans-serif" }}
+      style={{ background: "#F3E7C9", fontFamily: "'Outfit', 'Almarai', system-ui, sans-serif" }}
     >
       <Seo
         path="/services"
-        titleAr="تجربة تعليمية تفاعلية تخلي الطلاب يحبون التعلّم — ثمانية أنماط لعب"
-        titleEn="Interactive Educational Experience That Makes Students Love Learning — Eight Play Modes"
-        descriptionAr="تجربة تفاعلية تخلي طلابك يحبون الحصة: توليد أسئلة بالذكاء الاصطناعي، بث مباشر برمز واحد، وثمانية أنماط لعب من سباق كلاسيكي إلى حرب الزومبي — كل ما يحتاجه معلم الفصل العربي."
-        descriptionEn="An interactive experience that makes students love learning: AI question generation, one-code live sessions, and eight play modes from Classic to Humans vs Zombies — everything an Arabic-classroom teacher needs."
+        titleAr="خدمات نفلها — منصة للمعلم، أسئلة بالذكاء الاصطناعي، تفعيل المدارس، ألواح مطبوعة وفعاليات"
+        titleEn="nefelha Services — Teacher Platform, AI-Made Quizzes, School Rollout, Printed Boards and Events"
+        descriptionAr="كل اللي تقدّمه نفلها: منصة ألعاب تعليمية للمعلم، أسئلة جاهزة بالذكاء الاصطناعي من ملف الدرس، تفعيل وتدريب لمدرسة كاملة، ألواح لعب مطبوعة بجوال واحد، وفعاليات ومسابقات مدرسية على الشاشة الكبيرة."
+        descriptionEn="Everything nefelha offers: a classroom game platform for teachers, AI-made quizzes from your lesson file, rollout and training for a whole school, printed game boards played with one phone, and school events on the big screen."
       />
       <PageShapes />
       <SiteNav />
 
       {/* ---------------- HERO ---------------- */}
-      <section className="wrap relative overflow-hidden px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14 sm:pb-20">
-        <img src={triDoodle} alt="" aria-hidden className="pointer-events-none absolute end-[6%] top-10 w-24 opacity-25 rotate-6 hidden md:block" />
-        <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
-        <h1
-          className="mt-3 max-w-2xl leading-[1.1] tracking-tight text-[32px] sm:text-[46px]"
-          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
-        >
+      <section className="wrap relative px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-10 sm:pb-14">
+        <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SLATE }}>{t.kicker}</span>
+        <h1 className="mt-3 max-w-3xl leading-[1.1] tracking-tight text-[32px] sm:text-[48px]" style={{ fontFamily: DISPLAY, color: SLATE }}>
           {t.title}
         </h1>
-        <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-black/65">{t.sub}</p>
-      </section>
+        <p className="mt-5 max-w-xl text-[15px] sm:text-[16px] leading-relaxed text-black/65">{t.sub}</p>
 
-      {/* ---------------- FEATURES ---------------- */}
-      <section className="wrap px-5 sm:px-8 md:px-14 pb-16 sm:pb-24 pt-16 sm:pt-24">
-        <div className="border-t-2 border-[hsl(var(--nb-border))]">
-          {features.map((f, i) => (
-            <FeatureRow key={f.title} n={`0${i + 1}`} icon={f.icon} title={f.title} desc={f.desc} emphasis={f.emphasis} />
+        {/* the five services as a quick index */}
+        <ol className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+          {t.services.map((s, i) => (
+            <li key={s.name}>
+              <a href={`#service-${i + 1}`} className="group inline-flex items-baseline gap-2 text-[14px] font-semibold" style={{ color: SLATE }}>
+                <span className="text-[12px]" style={{ color: TEAL }}>{num(i, isAr)}</span>
+                <span className="underline decoration-transparent group-hover:decoration-current underline-offset-4 transition-colors">{s.name}</span>
+              </a>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      {/* ---------------- GAME MODES ---------------- */}
-      <section className="bg-[#14212A] text-white px-5 sm:px-8 md:px-14 py-20 sm:py-28">
-        <div className="wrap"><div className="max-w-2xl">
-          <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.modesKicker}</span>
-          <h2 className="mt-3 text-[26px] sm:text-[36px] tracking-tight leading-[1.15] text-white" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-            {t.modesTitle}
-          </h2>
-          <p className="mt-4 text-[15px] text-white/65 leading-relaxed">{t.modesSub}</p>
-        </div>
+      {/* ---------------- SERVICES ---------------- */}
+      {t.services.map((s, i) => (
+        <ServiceBand
+          key={s.name}
+          id={`service-${i + 1}`}
+          tone={tones[i]}
+          flip={i % 2 === 1}
+          n={num(i, isAr)}
+          s={s}
+          labels={{ service: t.serviceLabel, gets: t.getsLabel, forWho: t.forLabel, request: t.request }}
+          isAr={isAr}
+          visual={visuals[i]}
+        />
+      ))}
 
-        <div className="mt-10 sm:mt-14 border-t border-white/10">
-          {modes.map((m) => (
-            <ModeRow key={m.title} n={m.n} icon={m.icon} title={m.title} desc={m.desc} />
-          ))}
-        </div>
-        </div>
-      </section>
-
-      {/* ---------------- PHYSICAL + DIGITAL GAMES ---------------- */}
-      <section className="wrap px-5 sm:px-8 md:px-14 py-16 sm:py-20 bg-[#F5F1E8]">
-        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-          <div className="max-w-lg">
-            <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.physicalKicker}</span>
-            <h2 className="mt-3 text-[28px] sm:text-[40px] tracking-tight leading-[1.1] mb-4" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-              {t.physicalTitle}
-            </h2>
-            <p className="text-[15px] leading-relaxed text-black/70">{t.physicalDesc}</p>
-          </div>
-
-          <div>
-            <p className={`text-[11px] font-semibold text-black/40 mb-3 ${isAr ? "" : "tracking-[0.2em]"}`}>{t.boardKicker}</p>
-            <div className="border-t border-black/15">
-              {Object.values(SQUARE_TYPES).map((sq) => (
-                <div key={sq.code} className="flex items-center gap-3 py-2.5 border-b border-black/15">
-                  <span className="h-3.5 w-3.5 rounded-sm shrink-0" style={{ background: sq.color }} aria-hidden />
-                  <span className="text-[13.5px] text-black/75">{isAr ? sq.label_ar : sq.label_en}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------------- ONE PLATFORM, EVERY SUBJECT ---------------- */}
-      <section className="wrap px-5 sm:px-8 md:px-14 py-16 sm:py-20">
-        <div className="max-w-3xl">
-          <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.platformKicker}</span>
-          <h2 className="mt-3 text-[28px] sm:text-[40px] tracking-tight leading-[1.1]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-            {t.platformTitle}
-          </h2>
-        </div>
-
-        <div className={`mt-8 sm:mt-10 flex flex-wrap items-baseline gap-x-3 gap-y-2 ${isAr ? "" : "tracking-tight"}`}>
-          {t.subjects.map((subj, i) => (
-            <Fragment key={subj}>
-              <span
-                className="text-[26px] sm:text-[38px] leading-none"
-                style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
-              >
-                {subj}
-              </span>
-              {i < t.subjects.length - 1 && <span className="text-[20px] sm:text-[28px] text-[#8FC44A]">·</span>}
-            </Fragment>
-          ))}
-        </div>
-
-        <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-black/70">{t.platformDesc}</p>
-      </section>
-
-      {/* ---------------- HOW IT WORKS ---------------- */}
-      <section id="how" className="wrap px-5 sm:px-8 md:px-14 py-16 sm:py-20">
-        <div className="max-w-2xl">
-          <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.howKicker}</span>
-          <h2 className="mt-3 text-[28px] sm:text-[40px] tracking-tight leading-[1.1]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-            {t.howTitle}
-          </h2>
-        </div>
-
-        <div className="mt-10 sm:mt-14 flex flex-col sm:flex-row sm:items-start gap-8 sm:gap-6">
-          {steps.map((s, i) => (
-            <Fragment key={s.n}>
-              <StepItem n={s.n} icon={s.icon} title={s.title} desc={s.desc} />
-              {i < steps.length - 1 && <div className="hidden sm:block flex-1 h-px bg-black/15 mt-4" />}
-            </Fragment>
-          ))}
-        </div>
+      {/* ---------------- CTA ---------------- */}
+      <section className="wrap px-5 sm:px-8 md:px-14 pt-8 pb-20 sm:pb-28 text-center">
+        <h2 className="text-[28px] sm:text-[40px] tracking-tight leading-[1.15]" style={{ fontFamily: DISPLAY, color: SLATE }}>{t.ctaTitle}</h2>
+        <p className="mt-3 mx-auto max-w-md text-[15px] leading-relaxed text-black/65">{t.ctaSub}</p>
+        <Link
+          to="/contact"
+          className="mt-7 inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
+          style={{ background: INK }}
+        >
+          {t.ctaLink}
+          <ArrowUpRight className="h-4 w-4" />
+        </Link>
       </section>
 
       <SiteFooter />
@@ -270,49 +194,202 @@ const Services = () => {
 };
 
 /* ---------- helpers ---------- */
-/* No card boxes: every list below is rows separated by a single hairline
-   divider, distinguished by index number, icon and type scale rather than
-   a bordered/shadowed container per item. */
 
-const FeatureRow = ({ n, icon, title, desc, emphasis }: { n: string; icon: React.ReactNode; title: string; desc: string; emphasis?: boolean }) => (
-  <div className="group grid grid-cols-[40px_1fr] sm:grid-cols-[56px_44px_1fr] items-start gap-x-4 sm:gap-x-6 gap-y-3 py-7 sm:py-9 border-b-2 border-[hsl(var(--nb-border))]">
-    <span className="hidden sm:block pt-2 text-[13px] font-mono tracking-widest text-black/30">{n}</span>
-    <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-[#3F5A63] text-white flex items-center justify-center shrink-0 group-hover:bg-[#8FC44A] group-hover:text-[#14212A] transition-colors">
-      {icon}
+const num = (i: number, isAr: boolean) => (isAr ? ["١", "٢", "٣", "٤", "٥"][i] : `0${i + 1}`);
+
+type Tone = "cream" | "teal" | "ink";
+
+/* One service. Cream bands sit straight on the page; teal and ink bands get
+   wavy top and bottom edges like the home page's story band. */
+const ServiceBand = ({
+  id, tone, flip, n, s, labels, isAr, visual,
+}: {
+  id: string; tone: Tone; flip: boolean; n: string; s: Service;
+  labels: { service: string; gets: string; forWho: string; request: string };
+  isAr: boolean; visual: React.ReactNode;
+}) => {
+  const dark = tone !== "cream";
+  const bg = tone === "teal" ? TEAL : tone === "ink" ? INK : undefined;
+  const accent = tone === "teal" ? SAND : tone === "ink" ? LIME : TEAL;
+
+  const body = (
+    <div className="wrap grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+      <div className={flip ? "lg:order-2" : ""}>
+        <div className="flex items-baseline gap-3">
+          <span className="text-[44px] sm:text-[56px] leading-none font-extrabold" style={{ color: accent, fontFamily: "'Outfit', 'Almarai', sans-serif" }}>{n}</span>
+          <span className={`text-[12px] font-semibold ${dark ? "text-white/60" : "text-black/45"} ${isAr ? "" : "tracking-[0.25em]"}`}>{labels.service}</span>
+        </div>
+        <h2 className="mt-3 text-[30px] sm:text-[42px] tracking-tight leading-[1.1]" style={{ fontFamily: DISPLAY, color: dark ? "#FFFFFF" : SLATE }}>
+          {s.name}
+        </h2>
+        <p className={`mt-4 max-w-lg text-[16px] sm:text-[17px] leading-relaxed ${dark ? "text-white/80" : "text-black/70"}`}>{s.pitch}</p>
+
+        <p className={`mt-8 text-[12px] font-semibold ${isAr ? "" : "tracking-[0.2em] uppercase"}`} style={{ color: accent }}>{labels.gets}</p>
+        <ul className="mt-3 space-y-2.5">
+          {s.gets.map((g) => (
+            <li key={g} className={`flex items-start gap-3 text-[15px] ${dark ? "text-white" : "text-black/80"}`}>
+              <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: tone === "cream" ? TEAL : LIME }} strokeWidth={3} />
+              <span>{g}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className={`mt-8 pt-5 border-t flex flex-wrap items-center justify-between gap-4 ${dark ? "border-white/15" : "border-black/10"}`}>
+          <p className={`text-[14px] ${dark ? "text-white/70" : "text-black/60"}`}>
+            <span className="font-semibold" style={{ color: dark ? "#FFFFFF" : SLATE }}>{labels.forWho}: </span>{s.forWho}
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-1.5 text-[14px] font-semibold underline decoration-2 underline-offset-[6px] hover:decoration-transparent transition-colors"
+            style={{ color: dark ? "#FFFFFF" : SLATE, textDecorationColor: tone === "cream" ? LIME : accent }}
+          >
+            {labels.request}
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+      <div className={flip ? "lg:order-1" : ""}>{visual}</div>
     </div>
-    <div>
-      <h3 className={emphasis ? "text-[20px] sm:text-[24px] font-semibold leading-tight" : "text-[17px] font-semibold leading-tight"} style={{ color: "#3F5A63" }}>
-        {title}
-      </h3>
-      <p className={`mt-2 leading-relaxed text-black/65 ${emphasis ? "text-[15px] max-w-xl" : "text-[14px] max-w-lg"}`}>{desc}</p>
+  );
+
+  if (!dark) {
+    return (
+      <section id={id} className="scroll-mt-24 px-5 sm:px-8 md:px-14 py-16 sm:py-24">
+        {body}
+      </section>
+    );
+  }
+  return (
+    <section id={id} className="scroll-mt-24 relative z-10 my-4">
+      <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mb-px">
+        <path fill={bg} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
+      </svg>
+      <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: bg }}>{body}</div>
+      <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mt-px">
+        <path fill={bg} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
+      </svg>
+    </section>
+  );
+};
+
+/* ---------- pictures of each service ---------- */
+/* Small drawings of the real thing (phones, the quiz builder, the printed
+   board, a live ranking), flat colors on the band, no card boxes. */
+
+const Blob = ({ color, className }: { color: string; className: string }) => (
+  <svg aria-hidden viewBox="0 0 120 120" className={`absolute ${className}`}>
+    <path fill={color} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
+  </svg>
+);
+
+const PhonesVisual = () => (
+  <div dir="ltr" className="relative mx-auto max-w-md flex items-end justify-center py-4">
+    <Blob color={SAND} className="w-[78%] left-[11%] top-[8%] -z-10" />
+    <Blob color={LIME} className="w-[64px] right-[6%] top-[4%] -z-10" />
+    <img src={phoneClassic} alt="" loading="lazy" className="relative z-10 w-[46%] max-w-[210px] h-auto -rotate-[6deg] translate-x-3 drop-shadow-[0_20px_30px_rgba(20,33,42,0.28)]" />
+    <img src={phoneCrypto} alt="" loading="lazy" className="w-[42%] max-w-[190px] h-auto rotate-[7deg] -translate-x-3 translate-y-4 drop-shadow-[0_18px_28px_rgba(20,33,42,0.26)]" />
+  </div>
+);
+
+const AiVisual = ({ isAr }: { isAr: boolean }) => {
+  const file = isAr ? "درس_الخلية_النباتية.pdf" : "plant-cells-lesson.pdf";
+  const qs = isAr
+    ? [["ما وظيفة الجدار الخلوي؟", ["الدعم والحماية", "صنع الغذاء", "التنفس", "التكاثر"], 0], ["أين تتم عملية البناء الضوئي؟", ["النواة", "البلاستيدات الخضراء", "الفجوة", "الغشاء"], 1]]
+    : [["What does the cell wall do?", ["Support and protection", "Makes food", "Respiration", "Reproduction"], 0], ["Where does photosynthesis happen?", ["Nucleus", "Chloroplasts", "Vacuole", "Membrane"], 1]];
+  return (
+    <div className="relative mx-auto max-w-md">
+      <div className="inline-flex items-center gap-3 rounded-2xl px-4 py-3 text-white" style={{ background: "rgba(255,255,255,0.12)" }}>
+        <FileText className="h-5 w-5" style={{ color: SAND }} />
+        <span className="text-[14px] font-semibold" dir="ltr">{file}</span>
+      </div>
+      <div className="ms-8 h-8 w-px border-s-2 border-dashed border-white/40" />
+      <div className="space-y-3">
+        {qs.map(([q, opts, right], qi) => (
+          <div key={qi} className="rounded-2xl p-4" style={{ background: "#FFFFFF" }}>
+            <p className="text-[15px] font-semibold" style={{ color: SLATE }}>{q as string}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {(opts as string[]).map((o, oi) => (
+                <span
+                  key={o}
+                  className="rounded-lg px-3 py-1.5 text-[12.5px] font-medium"
+                  style={oi === right ? { background: LIME, color: INK } : { background: "#F1EEE6", color: "rgba(0,0,0,0.6)" }}
+                >
+                  {o}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const AV_COLORS = ["#2563eb", "#16a34a", "#b45309", "#dc2626", "#7c3aed", "#0891b2", "#c2410c", "#0f766e"];
+
+const TeachersVisual = ({ isAr }: { isAr: boolean }) => {
+  const letters = isAr
+    ? ["م", "ن", "ع", "س", "ف", "ر", "ه", "ل", "خ", "ج", "ب", "ي", "د", "ش", "ك"]
+    : ["M", "N", "A", "S", "F", "R", "H", "L", "K", "J", "B", "Y", "D", "O", "T"];
+  return (
+    <div className="relative mx-auto max-w-sm py-6">
+      <Blob color={SAND} className="w-[90%] left-[5%] top-0 -z-10" />
+      <div dir="ltr" className="grid grid-cols-5 gap-3 sm:gap-4 px-6 pt-10 pb-6">
+        {letters.map((l, i) => (
+          <span key={i} className="relative aspect-square rounded-full flex items-center justify-center text-white text-[18px] sm:text-[20px] font-bold" style={{ background: AV_COLORS[(i * 5) % AV_COLORS.length] }}>
+            {l}
+            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full flex items-center justify-center ring-2 ring-[#F3E7C9]" style={{ background: LIME }}>
+              <Check className="h-2.5 w-2.5" style={{ color: INK }} strokeWidth={4} />
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// a fixed path of squares, like a printed board laid out on the table
+const BOARD = [1, 2, 4, 3, 1, 5, 2, 6, 1, 3, 4, 2, 5, 1, 6, 3, 2, 1, 4, 5, 3, 2, 6, 1];
+
+const BoardVisual = () => (
+  <div className="relative mx-auto max-w-md">
+    <div dir="ltr" className="grid grid-cols-6 gap-2 sm:gap-2.5 rotate-[-4deg]">
+      {BOARD.map((code, i) => {
+        const sq = SQUARE_TYPES[code];
+        const fill = code === 2 ? "#F4F1EA" : sq.color;
+        return (
+          <span key={i} className="aspect-square rounded-lg flex items-center justify-center text-[18px] font-extrabold" style={{ background: fill, color: code === 2 ? INK : "#FFFFFF" }}>
+            {sq.kind === "wildcard" ? "?" : sq.kind === "double" ? "x2" : ""}
+          </span>
+        );
+      })}
     </div>
   </div>
 );
 
-const ModeRow = ({ n, icon, title, desc }: { n: string; icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="group grid grid-cols-[36px_36px_1fr] sm:grid-cols-[48px_40px_1fr] items-start gap-x-4 sm:gap-x-6 gap-y-1.5 py-5 sm:py-6 border-b border-white/10">
-    <span className="pt-1.5 text-[12px] font-mono tracking-widest text-white/30">{n}</span>
-    <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg border border-white/15 text-[#8FC44A] flex items-center justify-center shrink-0 group-hover:border-[#8FC44A] transition-colors">
-      {icon}
+const EventVisual = ({ isAr }: { isAr: boolean }) => {
+  const rows = isAr
+    ? [["ثالث أ", 2480], ["ثالث ج", 2310], ["ثالث ب", 1975], ["ثالث د", 1640]]
+    : [["3A", 2480], ["3C", 2310], ["3B", 1975], ["3D", 1640]];
+  const max = 2480;
+  return (
+    <div className="relative mx-auto max-w-md rounded-3xl p-6 sm:p-8 text-white" style={{ background: INK }}>
+      <Blob color={LIME} className="w-[44px] -top-4 -end-3" />
+      <p className={`text-[11px] font-semibold text-white/50 ${isAr ? "" : "tracking-[0.25em]"}`}>{isAr ? "بطولة الفصول — مباشر" : "CLASS TOURNAMENT — LIVE"}</p>
+      <div className="mt-5 space-y-4">
+        {rows.map(([name, score], i) => (
+          <div key={name as string} className="flex items-center gap-3">
+            <span className="w-5 text-[14px] font-bold" style={{ color: i === 0 ? LIME : "rgba(255,255,255,0.45)" }}>{isAr ? "١٢٣٤"[i] : i + 1}</span>
+            <span className="w-16 text-[15px] font-semibold whitespace-nowrap">{name as string}</span>
+            <span className="flex-1 h-2.5 rounded-full bg-white/10 overflow-hidden">
+              <span className="block h-full rounded-full" style={{ width: `${((score as number) / max) * 100}%`, background: i === 0 ? LIME : SAND }} />
+            </span>
+            <span className="w-14 text-end text-[14px] font-semibold tabular-nums">{(score as number).toLocaleString(isAr ? "ar-EG" : "en-US")}</span>
+          </div>
+        ))}
+      </div>
     </div>
-    <div>
-      <h3 className="inline text-[16px] sm:text-[17px] font-semibold leading-tight text-white underline decoration-transparent group-hover:decoration-[#8FC44A] decoration-2 underline-offset-4 transition-[text-decoration-color]">
-        {title}
-      </h3>
-      <p className="mt-1 text-[13.5px] leading-relaxed text-white/55 max-w-xl">{desc}</p>
-    </div>
-  </div>
-);
-
-const StepItem = ({ n, icon, title, desc }: { n: string; icon: React.ReactNode; title: string; desc: string }) => (
-  <div className="sm:flex-1 min-w-0 shrink-0">
-    <div className="flex items-center gap-3">
-      <span className="text-[12px] font-mono tracking-widest text-black/40">{n}</span>
-      <div className="h-8 w-8 rounded-full border-2 border-[hsl(var(--nb-border))] text-[#3F5A63] flex items-center justify-center">{icon}</div>
-    </div>
-    <h3 className="mt-4 text-[17px] font-semibold" style={{ color: "#3F5A63" }}>{title}</h3>
-    <p className="mt-1.5 text-[13.5px] leading-relaxed text-black/65 max-w-[22ch]">{desc}</p>
-  </div>
-);
+  );
+};
 
 export default Services;
