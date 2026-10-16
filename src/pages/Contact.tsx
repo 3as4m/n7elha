@@ -9,6 +9,7 @@ import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
+import logoMark from "@/assets/logo-mark.png";
 
 const SUPPORT_EMAIL = "hello@nefelha.com";
 // TODO: placeholder — swap for the real support line once one exists.
@@ -56,6 +57,27 @@ const Contact = () => {
       />
       <PageShapes />
       <SiteNav />
+
+      <div className="relative">
+      {/* the empty side next to the contact details: the logo, white on a
+          teal drop, with a lime drop and the thin oval from the home page */}
+      <div aria-hidden className="pointer-events-none absolute inset-y-0 end-[4%] hidden lg:flex w-[40%] items-center justify-center">
+        <div className="relative w-[340px] xl:w-[380px] aspect-square">
+          <svg viewBox="0 0 120 120" className="absolute inset-0 w-full h-full">
+            <path fill="#0E7C7B" d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
+          </svg>
+          <svg viewBox="0 0 240 140" className="absolute -inset-x-[14%] top-[18%] w-[128%]">
+            <ellipse cx="120" cy="70" rx="112" ry="52" transform="rotate(-18 120 70)" fill="none" stroke="#12262B" strokeWidth="1.2" opacity="0.4" />
+          </svg>
+          <svg viewBox="0 0 120 120" className="absolute w-[22%] -top-[2%] end-[2%]">
+            <path fill="#A9CB1E" d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
+          </svg>
+          <svg viewBox="0 0 120 120" className="absolute w-[11%] bottom-[6%] start-[4%]">
+            <path fill="#EAD7B0" d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
+          </svg>
+          <img src={logoMark} alt="" className="absolute inset-[27%] w-[46%] h-[46%] object-contain brightness-0 invert" />
+        </div>
+      </div>
 
       {/* ---------------- HERO ---------------- */}
       <section className="wrap px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14">
@@ -110,6 +132,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
+      </div>
 
       <SiteFooter />
     </div>
