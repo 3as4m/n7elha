@@ -12,7 +12,7 @@ npm run test                 # Run tests once (vitest)
 npm run test:watch           # Watch mode
 ```
 
-> **`/tmp` wipe warning:** The project lives at `/tmp/knowledge-hack-v2` which is wiped on every Mac reboot. After a reboot you must recreate `.env.local` — credentials are saved in Claude memory (`project_supabase_credentials.md`). Always commit and push before shutting down. GitHub repo: `https://github.com/nigatheata-spec/knowledge-hack`
+> GitHub repo: `https://github.com/3as4m/n7elha`. The project lives at `~/n7elha-work`; `.env.local` is not in git, so keep a copy of it somewhere safe.
 
 Single test file: `npx vitest run src/test/example.test.ts`
 

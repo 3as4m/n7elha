@@ -13,8 +13,8 @@ An AI-powered quiz platform for teachers. Create, host, and play knowledge-based
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/nigatheata-spec/knowledge-hack.git
-cd knowledge-hack
+git clone https://github.com/3as4m/n7elha.git
+cd n7elha
 npm install
 ```
 
