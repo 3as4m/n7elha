@@ -1,7 +1,7 @@
 import { useEffect, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
-import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Notifications } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "@/lib/i18n";
@@ -52,32 +52,18 @@ const NotFound    = lazy(() => import("./pages/NotFound"));
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { PageCurtain } from "@/components/site/PageCurtain";
+import { liftIntro } from "@/lib/intro";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const location = useLocation();
 
-  const getSweepColor = () => {
-    if (location.pathname.startsWith("/join")) {
-      return "rgba(255,255,255,0.7)";
-    }
-    return "#EBDFC7";
-  };
-
-  useEffect(() => {
-    const sweep = document.getElementById("app-scan-sweep");
-    if (sweep) {
-      const handleAnimEnd = () => sweep.remove();
-      sweep.addEventListener("animationend", handleAnimEnd);
-      return () => sweep.removeEventListener("animationend", handleAnimEnd);
-    }
-  }, []);
+  // the first-load intro in index.html lifts once the app is up
+  useEffect(() => { liftIntro(); }, []);
 
   return (
     <>
-      <div id="app-scan-sweep" className="scan-sweep" style={{ "--sweep-color": getSweepColor() } as React.CSSProperties} />
-      <div className="scan-sweep-fade">
+      <div>
         <Notifications />
         <LangTransitionOverlay />
         <AuthProvider>
