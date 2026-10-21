@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 
 const INK = "#14282D";
-const SLATE = "#3F5A63";
+const SLATE = "#2B3F45";
 const DISPLAY = "'ArslanWessam', 'Almarai', sans-serif";
 
 type Gain = { word: string; title: string; points: [string, string][] };
@@ -222,7 +222,7 @@ const Schools = () => {
         <ol className="mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
           {t.steps.map(([head, body], i) => (
             <li key={head} className="border-t-2 pt-6" style={{ borderColor: i === 0 ? LIME : "rgba(0,0,0,0.12)" }}>
-              <span className="text-[44px] leading-none font-extrabold" style={{ color: i === 0 ? TEAL : "rgba(63,90,99,0.35)", fontFamily: "'Outfit', 'Almarai', sans-serif" }}>{num(i)}</span>
+              <span className="text-[44px] leading-none font-extrabold" style={{ color: i === 0 ? TEAL : "rgba(43,63,69,0.35)", fontFamily: "'Outfit', 'Almarai', sans-serif" }}>{num(i)}</span>
               <h3 className="mt-4 text-[19px] sm:text-[21px] font-semibold" style={{ color: SLATE }}>{head}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-black/65">{body}</p>
             </li>

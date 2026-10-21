@@ -54,10 +54,10 @@ const Blog = () => {
       <SiteNav />
 
       <section className="wrap relative overflow-hidden px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14 sm:pb-20">
-        <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
+        <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
         <h1
           className="mt-3 max-w-2xl leading-[1.1] tracking-tight text-[32px] sm:text-[46px]"
-          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
         >
           {t.title}
         </h1>
@@ -83,13 +83,13 @@ const Blog = () => {
                   <span className="text-[11px] font-medium text-black/40">
                     {new Date(p.published_at).toLocaleDateString(isAr ? "ar" : "en-US", { year: "numeric", month: "short", day: "2-digit", calendar: "gregory" })}
                   </span>
-                  <h3 className="mt-3 text-[17px] font-semibold leading-tight" style={{ color: "#3F5A63" }}>
+                  <h3 className="mt-3 text-[17px] font-semibold leading-tight" style={{ color: "#2B3F45" }}>
                     {isAr ? p.title_ar : p.title_en}
                   </h3>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-black/65 flex-1">
                     {isAr ? p.excerpt_ar : p.excerpt_en}
                   </p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#3F5A63]">
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#2B3F45]">
                     {t.readMore}
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </span>

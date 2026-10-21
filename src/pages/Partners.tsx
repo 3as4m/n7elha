@@ -66,10 +66,10 @@ const Partners = () => {
       {/* ---------------- HERO ---------------- */}
       <section className="wrap relative overflow-hidden px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14 sm:pb-20">
         <img src={commas} alt="" aria-hidden className="pointer-events-none absolute end-[6%] top-10 w-24 opacity-25 rotate-6 hidden md:block" />
-        <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
+        <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
         <h1
           className="mt-3 max-w-2xl leading-[1.1] tracking-tight text-[32px] sm:text-[46px]"
-          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
         >
           {t.title}
         </h1>
@@ -86,8 +86,8 @@ const Partners = () => {
             desc={t.schoolsDesc}
             cta={t.schoolsCta}
             href="mailto:hello@nefelha.com?subject=School%20partnership"
-            iconStyle={{ background: "#3F5A63", color: "#fff" }}
-            ctaStyle={{ background: "#3F5A63", color: "#fff" }}
+            iconStyle={{ background: "#2B3F45", color: "#fff" }}
+            ctaStyle={{ background: "#2B3F45", color: "#fff" }}
           />
           <PathRow
             n="02"
@@ -97,7 +97,7 @@ const Partners = () => {
             cta={t.teachersCta}
             href="mailto:hello@nefelha.com?subject=Support"
             iconStyle={{ background: "#8FC44A", color: "#14212A" }}
-            ctaStyle={{ background: "#fff", color: "#3F5A63" }}
+            ctaStyle={{ background: "#fff", color: "#2B3F45" }}
           />
         </div>
       </section>
@@ -114,19 +114,19 @@ const Partners = () => {
             href="mailto:hello@nefelha.com"
             className="inline-flex items-center gap-2 rounded-full border-2 border-[#22333A] bg-white px-5 py-2.5 text-[14px] font-medium text-black shadow-[3px_3px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_#22333A] transition-all"
           >
-            <Mail className="h-4 w-4 text-[#3F5A63]" />
+            <Mail className="h-4 w-4 text-[#2B3F45]" />
             hello@nefelha.com
           </a>
 
           <div className="flex items-center gap-2">
             <span className="text-[13px] text-white/55">{t.socialLabel}</span>
-            <a href="#" aria-label="Twitter" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#3F5A63] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
+            <a href="#" aria-label="Twitter" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#2B3F45] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
               <Twitter className="h-4 w-4" />
             </a>
-            <a href="#" aria-label="Instagram" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#3F5A63] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
+            <a href="#" aria-label="Instagram" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#2B3F45] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
               <Instagram className="h-4 w-4" />
             </a>
-            <a href="#" aria-label="GitHub" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#3F5A63] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
+            <a href="#" aria-label="GitHub" className="h-9 w-9 rounded-full border-2 border-[#22333A] bg-white text-[#2B3F45] flex items-center justify-center shadow-[2px_2px_0_0_#22333A] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0_0_#22333A] transition-all">
               <Github className="h-4 w-4" />
             </a>
           </div>
@@ -168,7 +168,7 @@ const PathRow = ({
       {icon}
     </div>
     <div>
-      <h3 className="text-[20px] sm:text-[24px] font-semibold leading-tight" style={{ color: "#3F5A63" }}>
+      <h3 className="text-[20px] sm:text-[24px] font-semibold leading-tight" style={{ color: "#2B3F45" }}>
         {title}
       </h3>
       <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-black/65">{desc}</p>

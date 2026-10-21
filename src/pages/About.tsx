@@ -95,16 +95,16 @@ const About = () => {
 
       {/* ---------------- HERO ---------------- */}
       <section className="wrap px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14 sm:pb-20">
-        <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
+        <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.kicker}</span>
         <h1
           className="mt-3 max-w-2xl leading-[1.1] tracking-tight text-[32px] sm:text-[46px]"
-          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
         >
           {t.title}
         </h1>
         <p className="mt-5 max-w-xl text-[16px] sm:text-[17px] leading-relaxed text-black/70">{t.sub}</p>
         <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-black/60">{t.sub2}</p>
-        <p className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[22px] sm:text-[28px]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}>
+        <p className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[22px] sm:text-[28px]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}>
           {t.motto.map((w, i) => (
             <span key={w} className="inline-flex items-center gap-4">
               {i > 0 && <span className="h-2.5 w-2.5 rounded-full" style={{ background: i === 1 ? LIME : TEAL }} />}
@@ -232,7 +232,7 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] gap-10 lg:gap-16">
           <div>
             <span className={`text-[13px] font-bold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: TEAL }}>{t.valuesKicker}</span>
-            <h2 className="mt-3 text-[30px] sm:text-[42px] tracking-tight leading-[1.1]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
+            <h2 className="mt-3 text-[30px] sm:text-[42px] tracking-tight leading-[1.1]" style={{ color: "#2B3F45", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
               {t.valuesTitle}
             </h2>
           </div>
@@ -247,7 +247,7 @@ const About = () => {
                   {isAr ? ["١", "٢", "٣"][i] : i + 1}
                 </span>
                 <div>
-                  <h3 className="text-[24px] sm:text-[32px] tracking-tight leading-[1.15]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{v.title}</h3>
+                  <h3 className="text-[24px] sm:text-[32px] tracking-tight leading-[1.15]" style={{ color: "#2B3F45", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{v.title}</h3>
                   <p className="mt-3 max-w-xl text-[15px] sm:text-[16px] leading-relaxed text-black/65">{v.desc}</p>
                 </div>
               </li>
@@ -264,7 +264,7 @@ const About = () => {
 
 /* ---------- story poster pieces ---------- */
 
-const NAVY = "#3F5A63";  // the mission band, same slate teal as the nav's register button
+const NAVY = "#2B3F45";  // the mission band, the dark slate of the footer and the nav buttons
 const PAPER = "#F4F2E5";     // the photo's own paper color
 const INKBROWN = "#2B211C";  // quote text, as on the poster
 

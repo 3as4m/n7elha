@@ -11,7 +11,7 @@ import phoneClassic from "@/assets/phone-classic.png";
 import phoneCrypto from "@/assets/phone-crypto.png";
 
 const INK = "#14282D";
-const SLATE = "#3F5A63";
+const SLATE = "#2B3F45";
 const DISPLAY = "'ArslanWessam', 'Almarai', sans-serif";
 
 type Service = { name: string; pitch: string; gets: string[]; forWho: string };

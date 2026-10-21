@@ -59,7 +59,7 @@ const BlogPost = () => {
         />
         <SiteNav />
         <section className="wrap px-5 sm:px-8 md:px-14 py-24 text-center">
-          <Link to="/blog" className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#3F5A63]">
+          <Link to="/blog" className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#2B3F45]">
             <ArrowLeft className="h-4 w-4" />
             {backLabel}
           </Link>
@@ -83,7 +83,7 @@ const BlogPost = () => {
       <SiteNav />
 
       <div className="wrap px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-20 sm:pb-28 max-w-2xl">
-        <Link to="/blog" className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#3F5A63]/70 hover:text-[#3F5A63]">
+        <Link to="/blog" className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#2B3F45]/70 hover:text-[#2B3F45]">
           <ArrowLeft className="h-3.5 w-3.5" />
           {backLabel}
         </Link>
@@ -97,13 +97,13 @@ const BlogPost = () => {
           </span>
           <h1
             className="mt-2 leading-[1.15] tracking-tight text-[28px] sm:text-[38px]"
-            style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+            style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
           >
             {title}
           </h1>
           <p className="mt-4 text-[15px] leading-relaxed text-black/60">{excerpt}</p>
 
-          <div className="mt-10 prose prose-neutral max-w-none text-[15px] leading-relaxed text-black/80 prose-headings:text-[#3F5A63] prose-a:text-[#3F5A63]">
+          <div className="mt-10 prose prose-neutral max-w-none text-[15px] leading-relaxed text-black/80 prose-headings:text-[#2B3F45] prose-a:text-[#2B3F45]">
             <ReactMarkdown>{body}</ReactMarkdown>
           </div>
         </article>

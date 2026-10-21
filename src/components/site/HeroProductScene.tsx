@@ -15,7 +15,7 @@ import { Avatar } from "@/components/Avatar";
  * same composition renders flat and straight-on.
  */
 
-const ANSWER_COLORS = ["#3a9e6e", "#3F5A63", "#C8783A", "#8B4A3A"];
+const ANSWER_COLORS = ["#3a9e6e", "#2B3F45", "#C8783A", "#8B4A3A"];
 
 type Copy = {
   question: string;
@@ -107,7 +107,7 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
               <div className="text-[10px] font-bold tracking-[0.18em]" style={{ color: "hsl(199 15% 50%)" }}>
                 CLASSIC
               </div>
-              <div className="text-[13px] sm:text-[15px] font-black truncate" style={{ color: "#3F5A63" }}>
+              <div className="text-[13px] sm:text-[15px] font-black truncate" style={{ color: "#2B3F45" }}>
                 {t.quizTitle}
               </div>
             </div>
@@ -120,7 +120,7 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
               </div>
             </div>
             <div className={`shrink-0 rounded-xl bg-white px-3 py-1.5 ${NB} shadow-[3px_3px_0_0_hsl(var(--nb-border))]`}>
-              <div dir="ltr" className="text-[17px] sm:text-[20px] font-black tabular-nums leading-tight" style={{ color: "#3F5A63" }}>
+              <div dir="ltr" className="text-[17px] sm:text-[20px] font-black tabular-nums leading-tight" style={{ color: "#2B3F45" }}>
                 0:24
               </div>
             </div>
@@ -129,7 +129,7 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
           {/* question */}
           <div className="px-4 sm:px-5 pt-4">
             <div className={`rounded-2xl bg-white px-4 py-4 ${NB} shadow-[4px_4px_0_0_hsl(var(--nb-border))]`}>
-              <p dir="auto" className="text-[15px] sm:text-[17px] font-bold text-center leading-snug" style={{ color: "#3F5A63" }}>
+              <p dir="auto" className="text-[15px] sm:text-[17px] font-bold text-center leading-snug" style={{ color: "#2B3F45" }}>
                 {t.question}
               </p>
             </div>
@@ -150,11 +150,11 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
                     {i + 1}
                   </span>
                   <Avatar name={s.name} size={24} />
-                  <span className="flex-1 truncate text-[13px] font-bold" style={{ color: "#3F5A63" }}>
+                  <span className="flex-1 truncate text-[13px] font-bold" style={{ color: "#2B3F45" }}>
                     {s.name}
                   </span>
                   {i === 0 && <Trophy className="h-3.5 w-3.5 shrink-0" style={{ color: "#8FC44A" }} />}
-                  <span className="text-[13px] font-black tabular-nums" style={{ color: "#3F5A63" }}>
+                  <span className="text-[13px] font-black tabular-nums" style={{ color: "#2B3F45" }}>
                     {s.pts}
                   </span>
                 </div>
@@ -186,7 +186,7 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
             <div className="mx-auto mb-2 h-1 w-8 rounded-full bg-[hsl(var(--nb-border))]/30" />
 
             <div className={`mb-2 rounded-xl bg-white px-2.5 py-2 ${NB}`}>
-              <p dir="auto" className="text-[10px] font-bold leading-snug text-center" style={{ color: "#3F5A63" }}>
+              <p dir="auto" className="text-[10px] font-bold leading-snug text-center" style={{ color: "#2B3F45" }}>
                 {t.question}
               </p>
             </div>
@@ -210,7 +210,7 @@ export const HeroProductScene = ({ isAr, tilted = false }: { isAr: boolean; tilt
               <span className="text-[9px] font-bold" style={{ color: "hsl(199 15% 55%)" }}>
                 {t.you}
               </span>
-              <span dir="ltr" className="text-[11px] font-black tabular-nums" style={{ color: "#3F5A63" }}>
+              <span dir="ltr" className="text-[11px] font-black tabular-nums" style={{ color: "#2B3F45" }}>
                 {isAr ? "٢٬٩٤٠" : "2,940"}
               </span>
             </div>

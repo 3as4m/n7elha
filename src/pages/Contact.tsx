@@ -81,12 +81,12 @@ const Contact = () => {
 
       {/* ---------------- HERO ---------------- */}
       <section className="wrap px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14">
-        <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
+        <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
           {t.kicker}
         </span>
         <h1
           className="mt-3 max-w-2xl leading-[1.1] tracking-tight text-[32px] sm:text-[46px]"
-          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+          style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
         >
           {t.title}
         </h1>
@@ -99,7 +99,7 @@ const Contact = () => {
             <Mail className="h-5 w-5 shrink-0" style={{ color: "#8FC44A" }} />
             <div className="min-w-0">
               <div className="text-[11px] font-semibold tracking-widest uppercase text-black/40">{t.emailLabel}</div>
-              <div className="text-[19px] font-semibold group-hover:underline underline-offset-4" style={{ color: "#3F5A63" }} dir="ltr">
+              <div className="text-[19px] font-semibold group-hover:underline underline-offset-4" style={{ color: "#2B3F45" }} dir="ltr">
                 {SUPPORT_EMAIL}
               </div>
             </div>
@@ -110,7 +110,7 @@ const Contact = () => {
             <Phone className="h-5 w-5 shrink-0" style={{ color: "#8FC44A" }} />
             <div className="min-w-0">
               <div className="text-[11px] font-semibold tracking-widest uppercase text-black/40">{t.phoneLabel}</div>
-              <div className="text-[19px] font-semibold group-hover:underline underline-offset-4" style={{ color: "#3F5A63" }} dir="ltr">
+              <div className="text-[19px] font-semibold group-hover:underline underline-offset-4" style={{ color: "#2B3F45" }} dir="ltr">
                 {SUPPORT_PHONE}
               </div>
             </div>
@@ -120,13 +120,13 @@ const Contact = () => {
         <div className="mt-10 max-w-xl">
           <div className="text-[11px] font-semibold tracking-widest uppercase text-black/40">{t.clientsTitle}</div>
           <div className="mt-3 flex flex-wrap gap-x-8 gap-y-2">
-            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#3F5A63" }}>
+            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#2B3F45" }}>
               <School className="h-4 w-4 opacity-60" />{t.schools}
             </span>
-            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#3F5A63" }}>
+            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#2B3F45" }}>
               <GraduationCap className="h-4 w-4 opacity-60" />{t.academies}
             </span>
-            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#3F5A63" }}>
+            <span className="flex items-center gap-2 text-[15px] font-medium" style={{ color: "#2B3F45" }}>
               <UserRound className="h-4 w-4 opacity-60" />{t.teachers}
             </span>
           </div>

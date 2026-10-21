@@ -74,25 +74,25 @@ export const SiteNav = () => {
             <LangToggle variant="pill" />
             <Link
               to="/join"
-              className={`px-4 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#3F5A63] text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:bg-[#3F5A63] hover:text-white hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
+              className={`px-4 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#2B3F45] text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:bg-[#2B3F45] hover:text-white hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
             >
               {t.joinGame}
             </Link>
             {user ? (
-              <Link to="/app" className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#3F5A63] text-white text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}>
+              <Link to="/app" className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#2B3F45] text-white text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}>
                 {t.dashboard}
               </Link>
             ) : (
               <>
                 <Link
                   to="/auth"
-                  className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#3F5A63] text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:bg-[#3F5A63] hover:text-white hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
+                  className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#2B3F45] text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:bg-[#2B3F45] hover:text-white hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
                 >
                   {t.login}
                 </Link>
                 <Link
                   to="/auth?mode=signup"
-                  className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#3F5A63] text-white text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
+                  className={`px-5 py-2 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#2B3F45] text-white text-[13px] font-medium shadow-[3px_3px_0_0_hsl(var(--nb-border))] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all ${isAr ? "" : "tracking-wider"}`}
                 >
                   {t.signup}
                 </Link>
@@ -159,7 +159,7 @@ export const SiteNav = () => {
                   to={item.to}
                   onClick={() => setMenuOpen(false)}
                   aria-current={active ? "page" : undefined}
-                  className={`flex items-center gap-3 py-3.5 border-b border-black/[0.06] text-[15px] font-medium transition-colors ${active ? "text-[#3F5A63]" : "text-black/60 hover:text-[#3F5A63]"}`}
+                  className={`flex items-center gap-3 py-3.5 border-b border-black/[0.06] text-[15px] font-medium transition-colors ${active ? "text-[#2B3F45]" : "text-black/60 hover:text-[#2B3F45]"}`}
                 >
                   <span className={`h-1.5 w-1.5 rounded-full shrink-0 transition-opacity ${active ? "bg-[#8FC44A] opacity-100" : "opacity-0"}`} />
                   {item.label}
@@ -171,7 +171,7 @@ export const SiteNav = () => {
           {/* Language — small utility row, not a CTA */}
           <button
             onClick={() => { triggerLangTransition(); i18n.changeLanguage(isAr ? "en" : "ar"); }}
-            className="mx-5 mt-3 inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full text-[12px] font-medium text-black/50 hover:text-[#3F5A63] transition-colors"
+            className="mx-5 mt-3 inline-flex items-center gap-2 self-start px-3 py-1.5 rounded-full text-[12px] font-medium text-black/50 hover:text-[#2B3F45] transition-colors"
           >
             <Languages className="h-3.5 w-3.5" />
             {isAr ? "English" : "العربية"}
@@ -179,19 +179,19 @@ export const SiteNav = () => {
 
           {/* CTAs — the only pill-styled buttons */}
           <div className="mt-auto px-5 pt-4 pb-6 border-t border-black/[0.06] flex flex-col gap-2.5">
-            <Link to="/join" onClick={() => setMenuOpen(false)} className="w-full px-4 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#3F5A63] text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
+            <Link to="/join" onClick={() => setMenuOpen(false)} className="w-full px-4 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#2B3F45] text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
               {t.joinGame}
             </Link>
             {user ? (
-              <Link to="/app" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#3F5A63] text-white text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
+              <Link to="/app" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#2B3F45] text-white text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
                 {t.dashboard}
               </Link>
             ) : (
               <>
-                <Link to="/auth" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#3F5A63] text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
+                <Link to="/auth" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-white text-[#2B3F45] text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
                   {t.login}
                 </Link>
-                <Link to="/auth?mode=signup" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#3F5A63] text-white text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
+                <Link to="/auth?mode=signup" onClick={() => setMenuOpen(false)} className="w-full px-5 py-2.5 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#2B3F45] text-white text-[13px] tracking-wider font-medium text-center shadow-[3px_3px_0_0_hsl(var(--nb-border))]">
                   {t.signup}
                 </Link>
               </>
