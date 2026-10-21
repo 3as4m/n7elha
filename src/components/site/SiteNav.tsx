@@ -6,7 +6,8 @@ import { triggerLangTransition } from "@/lib/langTransitionBus";
 import { Menu, X, Languages } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import logoMark from "@/assets/logo-mark.png";
+import logoRibbon from "@/assets/logo-ribbon.webp";
+import logoDot from "@/assets/logo-dot.webp";
 
 export const SiteNav = () => {
   const { user } = useAuth();
@@ -37,9 +38,18 @@ export const SiteNav = () => {
       <nav dir="ltr" className="px-5 sm:px-8 md:px-10 pt-5 sm:pt-6">
         <div className="flex items-center justify-between gap-3 bg-white/90 rounded-2xl px-4 py-3 border-2 border-[hsl(var(--nb-border))] shadow-[4px_4px_0_0_hsl(var(--nb-border))]">
 
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src={logoMark} alt="nefelha" className="h-8 w-8 object-contain" />
-            <span className="text-[17px] font-medium tracking-tight text-black">{isAr ? "نفلها" : "nefelha"}</span>
+          {/* The logo plays a short entrance on every page (the ribbon springs
+              in, the dot drops onto it and settles, the name slides in) and the
+              dot hops on hover. Two layers cut from logo-mark.png so the dot
+              can move on its own; styles in index.css (.nav-logo-*). */}
+          <Link to="/" className="nav-logo group flex items-center gap-2 shrink-0" aria-label="nefelha">
+            <span className="relative block h-8 w-[27px]">
+              <img src={logoRibbon} alt="" className="nav-logo-ribbon absolute inset-0 h-full w-full object-contain" />
+              <span className="nav-logo-hop absolute inset-0">
+                <img src={logoDot} alt="" className="nav-logo-dot h-full w-full object-contain" />
+              </span>
+            </span>
+            <span className="nav-logo-word text-[17px] font-medium tracking-tight text-black">{isAr ? "نفلها" : "nefelha"}</span>
           </Link>
 
           <ul className={`hidden lg:flex items-center gap-7 text-[13px] font-medium text-black/80 ${isAr ? "tracking-normal" : "tracking-[0.18em]"}`}>

@@ -834,6 +834,26 @@
    drifts apart on wide monitors instead of holding together as a column. */
 .wrap { max-width: var(--content-max); margin-inline: auto; width: 100%; }
 
+/* Nav logo (SiteNav.tsx): a short entrance on every page, and the dot hops
+   on hover. Fills backwards only, like the hero. */
+.nav-logo-ribbon { transform-origin: 50% 80%; animation: nav-logo-ribbon .7s cubic-bezier(.34,1.56,.64,1) .1s backwards; }
+@keyframes nav-logo-ribbon { from { opacity: 0; transform: scale(.55) rotate(-14deg); } }
+.nav-logo-dot { display: block; transform-origin: 50% 22%; animation: nav-logo-drop .75s linear .45s backwards; }
+@keyframes nav-logo-drop {
+  0%   { opacity: 0; transform: translateY(-120%); animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  45%  { opacity: 1; transform: translateY(0) scale(1.25, .75); animation-timing-function: cubic-bezier(.2,.8,.3,1); }
+  65%  { transform: translateY(-14%) scale(.92, 1.08); animation-timing-function: cubic-bezier(.55,0,1,.45); }
+  82%  { transform: translateY(0) scale(1.06, .94); }
+  100% { transform: none; }
+}
+.nav-logo-word { display: inline-block; animation: nav-logo-word .6s cubic-bezier(.16,1,.3,1) .55s backwards; }
+@keyframes nav-logo-word { from { opacity: 0; transform: translateX(-8px); } }
+.nav-logo:hover .nav-logo-hop { animation: nav-logo-hop .55s cubic-bezier(.3,0,.3,1); }
+@keyframes nav-logo-hop { 0%, 100% { transform: none; } 40% { transform: translateY(-18%); } 70% { transform: translateY(2%); } }
+@media (prefers-reduced-motion: reduce) {
+  .nav-logo-ribbon, .nav-logo-dot, .nav-logo-word, .nav-logo:hover .nav-logo-hop { animation: none; }
+}
+
 /* Home hero entrance (Landing.tsx). No loading screen: the page is there at
    once and the first screen assembles itself. Every animation fills
    *backwards* only, so once it ends the element is back on its own styles
