@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
@@ -52,14 +52,10 @@ const NotFound    = lazy(() => import("./pages/NotFound"));
 
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { PageCurtain } from "@/components/site/PageCurtain";
-import { liftIntro } from "@/lib/intro";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-
-  // the first-load intro in index.html lifts once the app is up
-  useEffect(() => { liftIntro(); }, []);
 
   return (
     <>
