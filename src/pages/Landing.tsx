@@ -15,7 +15,9 @@ import saudiMap from "@/assets/saudi-map.svg";
 
 /* ---------- helpers ---------- */
 
+
 const INK = "#14282D";   // the Vision 2030 band: deep ink so lime and sand light up on it
+const SLATE = "#2B3F45"; // the story band, the dark slate of the footer and the nav buttons
 
 
 const Landing = () => {
@@ -150,7 +152,7 @@ const Landing = () => {
       <div className="relative w-full">
 
         {/* Positioned so it paints over the hero shapes that run up behind it. */}
-        <div data-skew className="relative z-10"><SiteNav /></div>
+        <div data-skew className="relative z-10 hero-nav"><SiteNav /></div>
 
         {/* ---------------- HERO ---------------- */}
         <div data-skew className="relative isolate">
@@ -159,46 +161,61 @@ const Landing = () => {
             for left-to-right and mirrored in Arabic, so they always sit on the
             mockup's side. The layer clips itself; nothing can scroll sideways. */}
         <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-40 bottom-0 overflow-hidden">
+          {/* entrance: each layer unfolds out of its own corner (hero-shape) */}
           <div className="absolute -top-10 -end-20 w-[300px] md:w-[600px] rtl:-scale-x-100">
-            <svg viewBox="0 0 400 400" className="w-full">
-              <path fill={SAND} d="M400 0H70C20 40 48 118 100 172C154 228 132 300 204 356C254 396 338 404 400 392Z" />
-              <path fill={LIME} d="M400 0H154C102 34 130 104 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
-            </svg>
+              <svg viewBox="0 0 400 400" className="w-full overflow-visible">
+                <path className="hero-shape" style={{ transformOrigin: "400px 0px", animationDelay: "40ms" }} fill={SAND} d="M400 0H70C20 40 48 118 100 172C154 228 132 300 204 356C254 396 338 404 400 392Z" />
+                <path className="hero-shape" style={{ transformOrigin: "400px 0px", animationDelay: "200ms" }} fill={LIME} d="M400 0H154C102 34 130 104 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
+              </svg>
           </div>
           <div className="absolute -bottom-10 -end-10 w-[240px] md:w-[440px] rtl:-scale-x-100">
-            <svg viewBox="0 0 400 300" className="w-full">
-              <path fill={TEAL} d="M400 300V120C360 104 318 124 296 166C266 226 198 226 148 258C118 278 98 292 90 300Z" />
-            </svg>
+              <svg viewBox="0 0 400 300" className="w-full overflow-visible">
+                <path className="hero-shape" style={{ transformOrigin: "400px 300px", animationDelay: "380ms" }} fill={TEAL} d="M400 300V120C360 104 318 124 296 166C266 226 198 226 148 258C118 278 98 292 90 300Z" />
+              </svg>
           </div>
-          <svg viewBox="0 0 240 140" className="absolute top-48 start-[38%] w-[200px] hidden lg:block">
-            <ellipse cx="120" cy="70" rx="112" ry="52" transform="rotate(-14 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.4" />
-          </svg>
+          <div className="absolute top-48 start-[38%] w-[200px] hidden lg:block">
+              <svg viewBox="0 0 240 140" className="w-full overflow-visible">
+                <ellipse className="hero-draw" pathLength={1} style={{ animationDelay: "650ms" }} cx="120" cy="70" rx="112" ry="52" transform="rotate(-14 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.4" />
+              </svg>
+          </div>
         </div>
         <div className="wrap relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-8 lg:gap-14 px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-28 sm:pb-32">
           <div className="relative z-10">
             <h1
               className="leading-[1.05] tracking-tight text-[38px] sm:text-[52px] md:text-[68px]"
-              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
             >
-              <span className="block">{t.line1}</span>
-              <span className="block">
-                <span className="italic" style={{ color: "#8FC44A" }}>{t.line2a}</span>
-                {" "}<span>{t.line2b}</span>
+              {/* each line slides up out of its own mask */}
+              <span className="hero-mask"><span className="hero-line" style={{ animationDelay: "120ms" }}>{t.line1}</span></span>
+              <span className="hero-mask">
+                <span className="hero-line" style={{ animationDelay: "230ms" }}>
+                  <span className="relative inline-block italic" style={{ color: "#8FC44A" }}>
+                    {t.line2a}
+                    {/* a hand-drawn lime underline sweeps in once the line has landed */}
+                    <svg aria-hidden viewBox="0 0 200 20" preserveAspectRatio="none" className="absolute inset-x-0 -bottom-[0.08em] w-full h-[0.22em] overflow-visible">
+                      <path className="hero-draw" pathLength={1} style={{ animationDelay: "900ms", animationDuration: ".8s" }} d="M3 13C48 5 104 4 150 8C170 10 186 12 197 9" fill="none" stroke="#A9CB1E" strokeWidth="5" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                  {t.line2b && <>{" "}<span>{t.line2b}</span></>}
+                </span>
               </span>
-              <span className="block">
-                {t.line3a && <span>{t.line3a} </span>}
-                <span style={{ color: "#3F5A63" }}>{t.line3b}</span>
+              <span className="hero-mask">
+                <span className="hero-line" style={{ animationDelay: "340ms" }}>
+                  {t.line3a && <span>{t.line3a} </span>}
+                  <span style={{ color: "#2B3F45" }}>{t.line3b}</span>
+                </span>
               </span>
             </h1>
 
-            <p className="mt-5 text-[15px] sm:text-[16px] leading-relaxed text-black/70 max-w-[27rem] animate-fade-up animation-delay-200">
+            <p className="mt-5 text-[15px] sm:text-[16px] leading-relaxed text-black/70 max-w-[27rem] hero-fade" style={{ animationDelay: "520ms" }}>
               {t.sub}
             </p>
 
-            <div className="mt-7 flex flex-wrap items-center gap-3 animate-fade-up animation-delay-300">
+            <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 to={user ? "/app" : "/auth?mode=signup"}
-                className="group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#3F5A63] text-white pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+                style={{ animationDelay: "680ms" }}
+                className="hero-pop group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#2B3F45] text-white pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
               >
                 {t.cta}
                 <span className="h-9 w-9 rounded-full bg-white text-black flex items-center justify-center transition group-hover:rotate-12">
@@ -208,7 +225,8 @@ const Landing = () => {
 
               <Link
                 to="/join"
-                className="group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#A9CB1E] text-[#3F5A63] pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+                style={{ animationDelay: "780ms" }}
+                className="hero-pop group inline-flex items-center gap-3 rounded-full border-2 border-[hsl(var(--nb-border))] bg-[#A9CB1E] text-[#2B3F45] pl-6 pr-2 py-2 text-[15px] font-medium shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
               >
                 {t.joinGame}
                 <span className="h-9 w-9 rounded-full bg-white text-[#A9CB1E] flex items-center justify-center">
@@ -220,7 +238,7 @@ const Landing = () => {
           </div>
 
           {/* RIGHT */}
-          <div className="relative flex items-center justify-center">
+          <div className="relative flex items-center justify-center hero-rise" style={{ animationDelay: "300ms" }}>
             <img
               src={productMockup}
               alt=""
@@ -237,9 +255,9 @@ const Landing = () => {
             waves stay inside that overlap, so no seam can show through. */}
         <section data-skew className="relative z-10 -my-[72px] text-white">
           <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[72px] -mb-px">
-            <path fill={TEAL} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
+            <path fill={SLATE} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
           </svg>
-          <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: TEAL }}>
+          <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: SLATE }}>
           <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] gap-8 lg:gap-16">
             <div>
               <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.storyKicker}</span>
@@ -259,7 +277,7 @@ const Landing = () => {
           </div>
           </div>
           <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[72px] -mt-px">
-            <path fill={TEAL} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
+            <path fill={SLATE} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
           </svg>
         </section>
 
@@ -310,7 +328,7 @@ const Landing = () => {
             </span>
             <h2
               className="mt-4 text-[32px] sm:text-[48px] md:text-[58px] tracking-tight leading-[1.12]"
-              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#3F5A63" }}
+              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
             >
               <span className="block">{t.feelLine1}</span>
               <span className="block italic" style={{ color: "#8FC44A" }}>{t.feelLine2}</span>
@@ -416,20 +434,20 @@ const Landing = () => {
           </div>
           <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
             <div>
-              <span className={`text-[12px] font-semibold text-[#3F5A63] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
+              <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
                 {t.forWhoKicker}
               </span>
-              <h2 className="mt-4 text-[26px] sm:text-[36px] tracking-tight leading-[1.15]" style={{ color: "#3F5A63", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
+              <h2 className="mt-4 text-[26px] sm:text-[36px] tracking-tight leading-[1.15]" style={{ color: "#2B3F45", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
                 {t.forWhoTitle}
               </h2>
               <img src={saudiMap} alt={isAr ? "المملكة العربية السعودية" : "Saudi Arabia"} className="mt-8 w-full max-w-[19rem]" />
-              <p className="mt-4 text-[13px] font-semibold text-[#3F5A63]">{t.mapCaption}</p>
+              <p className="mt-4 text-[13px] font-semibold text-[#2B3F45]">{t.mapCaption}</p>
             </div>
             <div className="space-y-6 text-[15px] leading-relaxed text-black/65">
               <p>{t.forWho1}</p>
               <p>{t.forWho2}</p>
               <p>{t.forWho3}</p>
-              <Link to="/about" className="inline-flex items-center gap-1.5 text-[14px] font-semibold" style={{ color: "#3F5A63" }}>
+              <Link to="/about" className="inline-flex items-center gap-1.5 text-[14px] font-semibold" style={{ color: "#2B3F45" }}>
                 {t.readMore}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>
