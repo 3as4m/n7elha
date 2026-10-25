@@ -1,81 +1,57 @@
-import { useCallback, useRef, useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
-// ── In-game feedback primitives ─────────────────────────────────────────────
-// A toast flattens every event to the same rectangle — a summit milestone and
-// a routine +30 reward read identically. These fire where the event actually
-// happened and carry weight proportional to what happened:
+// ── In-game rewards ─────────────────────────────────────────────────────────
+// Every mode shows what an answer earned the same way: the HUD stat that went
+// up takes it itself. The chip pops, grows to show "+30" next to its number,
+// then folds back. No floating text, no toasts — the number you care about is
+// the one that moves.
 //
-//   useFloatingRewards — a number rises and fades from the HUD stat it just
-//     changed (render `layer` inside a `position: relative` wrapper around
-//     that stat). For routine, frequent rewards — correct answers, currency.
-//
-//   usePowerupBurst — a colored badge slams into the center of the screen
-//     and holds before fading. For rare, discrete pickups — powerups,
-//     one-off bonuses. Only one shows at a time; a new fire replaces it
-//     rather than queuing, since these are infrequent enough that overlap
-//     would mean something is spawning powerups too fast anyway.
-//
-// Both are local to whichever component calls the hook — no global store,
-// because these belong to one game screen at a time, unlike the system
-// notification layer (components/ui/notify.tsx) which is app-wide.
+// It watches the value rather than being told about gains, so it works however
+// a mode's points arrive (a local update, a realtime row, a server RPC). Only
+// rises count: a tank draining or a balance being halved shows nothing.
 
-type RewardItem = { id: number; label: string; color: string };
-
-export const useFloatingRewards = () => {
-  const [items, setItems] = useState<RewardItem[]>([]);
-  const nextId = useRef(1);
-
-  const fire = useCallback((label: string, color: string) => {
-    const id = nextId.current++;
-    setItems((list) => [...list, { id, label, color }]);
-    setTimeout(() => setItems((list) => list.filter((i) => i.id !== id)), 900);
-  }, []);
-
-  // An element, not a component declared in here: a component made inside the
-  // hook is a new type every render, so React remounted the labels on every
-  // render and their float animation kept restarting (the flashing).
-  const layer = (
-    <div className="pointer-events-none absolute inset-0 overflow-visible">
-      {items.map((it) => (
-        <span
-          key={it.id}
-          className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap font-black text-base animate-float-reward"
-          style={{ color: it.color, textShadow: "0 1px 3px rgba(0,0,0,0.25)" }}
-        >
-          {it.label}
-        </span>
-      ))}
-    </div>
-  );
-
-  return { fire, layer };
+/** The last rise of `value`, cleared shortly after. `null` while loading. */
+export const useRise = (value: number | null | undefined) => {
+  const prev = useRef<number | null | undefined>(value);
+  const [rise, setRise] = useState<{ k: number; n: number } | null>(null);
+  useEffect(() => {
+    const before = prev.current;
+    prev.current = value;
+    if (value == null || before == null || value <= before) return;
+    const k = Date.now() + Math.random();
+    setRise({ k, n: value - before });
+    const t = setTimeout(() => setRise(r => (r?.k === k ? null : r)), 1600);
+    return () => clearTimeout(t);
+  }, [value]);
+  return rise;
 };
 
-type BurstItem = { id: number; Icon: ComponentType<{ className?: string; strokeWidth?: number }>; label: string; color: string };
-
-export const usePowerupBurst = () => {
-  const [item, setItem] = useState<BurstItem | null>(null);
-  const nextId = useRef(1);
-
-  const fire = useCallback((Icon: BurstItem["Icon"], label: string, color: string) => {
-    const id = nextId.current++;
-    setItem({ id, Icon, label, color });
-    setTimeout(() => setItem((cur) => (cur?.id === id ? null : cur)), 1150);
-  }, []);
-
-  const Layer = () =>
-    item ? (
-      <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none px-6">
-        <div
-          key={item.id}
-          className="animate-powerup-slam flex items-center gap-2.5 px-6 py-3.5 rounded-2xl border-2 border-white/25 shadow-2xl"
-          style={{ background: item.color }}
-        >
-          <item.Icon className="h-6 w-6 text-white shrink-0" strokeWidth={2.5} />
-          <span className="text-lg font-black text-white tracking-wide whitespace-nowrap">{item.label}</span>
-        </div>
-      </div>
-    ) : null;
-
-  return { fire, Layer };
+/**
+ * A HUD stat chip that shows its own gains. `children` is the chip's normal
+ * content (icon + number); `popStyle` is merged in while it's celebrating.
+ */
+export const GainChip = ({ value, className, style, popStyle, gainClassName, label, children }: {
+  value: number | null | undefined;
+  className?: string;
+  style?: CSSProperties;
+  popStyle?: CSSProperties;
+  gainClassName?: string;
+  /** How the gain reads; "+30" by default. */
+  label?: (n: number) => string;
+  children: ReactNode;
+}) => {
+  const rise = useRise(value);
+  return (
+    // Keyed by the gain so the pop plays once per gain and never on a re-render.
+    <div key={rise?.k ?? "idle"} className={cn(className, rise && "animate-chip-bump")}
+      style={rise && popStyle ? { ...style, ...popStyle, transition: "background-color .4s, color .4s" } : { ...style, transition: "background-color .4s, color .4s" }}>
+      {children}
+      {rise && (
+        <span className={cn("animate-chip-gain tabular-nums whitespace-nowrap", gainClassName)}>
+          {label ? label(rise.n) : `+${rise.n.toLocaleString()}`}
+        </span>
+      )}
+    </div>
+  );
 };

@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { playCorrect, playWrong, playBrick, playGameOver, primeAudio } from "@/lib/sound";
 import MissedReview from "@/components/game/MissedReview";
 import { LavaBackdrop, LavaQuestionView, LavaWrongScreen } from "@/components/game/LavaPhone";
-import { LF_MODES, builtHeight, towerName, type LfMode, type Tower } from "@/lib/lavaFloor";
+import { LF_MODES, builtHeight, towerName, isOut, type LfMode, type Tower } from "@/lib/lavaFloor";
 
 // ── Lava Floor — phone ───────────────────────────────────────────────────────
 // Just the questions. The game is played in the room, so the towers and the
@@ -178,7 +178,7 @@ const LavaFloorGame = ({ sessionId, studentId }: Props) => {
         <div className="max-w-md mx-auto px-5 py-10 flex flex-col items-center gap-5 text-center">
           <div className="text-sm opacity-60">{ar ? "انتهى الوقت" : "Time's up"}</div>
           <div className="text-4xl font-black" style={{ color: C.lime }}>
-            {ar ? `وضعت ${me?.crypto ?? 0} طوبة` : `You laid ${me?.crypto ?? 0} bricks`}
+            {ar ? `وضعت ${me?.crypto ?? 0} مكعب` : `You laid ${me?.crypto ?? 0} bricks`}
           </div>
           {myTower && (
             <div className="text-sm" style={{ color: C.dim }}>
@@ -199,7 +199,10 @@ const LavaFloorGame = ({ sessionId, studentId }: Props) => {
     <div className="fixed inset-0 flex flex-col" dir={ar ? "rtl" : "ltr"}>
       <LavaBackdrop />
       {q && (
-        <LavaQuestionView q={q} picked={picked} correct={phase === "correct"} onAnswer={answer} ar={ar}
+        <LavaQuestionView q={q} picked={picked} correct={phase === "correct"} onAnswer={answer} ar={ar} bricks={me ? me.crypto ?? 0 : null}
+          note={myTower && isOut(myTower)
+            ? (ar ? "خرجتم من السباق، كل إجابة صحيحة الحين ترفع الحمم على الباقين" : "You're out of the race. Every right answer now raises the lava on the others")
+            : undefined}
           timerFrac={timerOn && phase === "question" ? timeLeft / settings.timePerQ : null} />
       )}
       {phase === "wrong" && q && (

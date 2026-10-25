@@ -5,8 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { FACES } from "@/lib/avatarIdentity";
 import { isPaused } from "@/components/teacher/GameControls";
 import {
-  climbNeed, towerHeight, builtHeight, partialCourse, towerName, paceRate,
-  ERUPT_EVERY, ERUPT_RISE, ERUPT_SECS, LAVA_START, MIN_RATE, PACE_WINDOW,
+  climbNeed, towerHeight, builtHeight, partialCourse, towerName, paceRate, eruptRise, isOut, rankTowers, decidedEarly, catchUpRate, HEAT_PER_ANSWER,
+  ERUPT_EVERY, ERUPT_SECS, LAVA_START, MIN_RATE, PACE_WINDOW,
   type LfMode, type Tower,
 } from "@/lib/lavaFloor";
 import { drawBoard, fitCamera, faceImage, toBoard, type Camera, type LfStudent as Student } from "@/lib/lavaFloorRender";
@@ -36,7 +36,7 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
   const lastBricks = useRef<Map<string, number>>(new Map());
   const lavaRef = useRef(LAVA_START);
   const rateRef = useRef(MIN_RATE);
-  const eruptRef = useRef<{ at: number; from: number } | null>(null);
+  const eruptRef = useRef<{ at: number; from: number; rise: number } | null>(null);
   const nextEruptRef = useRef(Date.now() + ERUPT_EVERY * 1000);
   const historyRef = useRef<{ at: number; h: Record<string, number> }[]>([]);
   const pendingRef = useRef<Map<string, number>>(new Map());
@@ -71,6 +71,8 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
       for (const t of next) {
         const p = prev.get(t.id);
         if (!p) continue;
+        // a tower that's out keeps answering, and every right answer heats the lava
+        if (isOut(p) && isOut(t) && t.climb > p.climb) lavaRef.current += (t.climb - p.climb) * HEAT_PER_ANSWER;
         const label = towerName(mode, t, ar);
         if (!p.dunked && t.dunked) pushFeed(ar ? `${label} سقط في الحمم` : `${label} fell in`, "dunk");
         if (p.dunked && !t.dunked) {
@@ -148,17 +150,20 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
           if (e) {
             const p = (now - e.at) / 1000 / ERUPT_SECS;
             if (p >= 1) {
-              lavaRef.current = Math.max(lavaRef.current, e.from + ERUPT_RISE);
+              lavaRef.current = Math.max(lavaRef.current, e.from + e.rise);
               eruptRef.current = null;
               lastWrite = now;
               writeLava({ level: lavaRef.current, rate: rateRef.current });
             } else {
-              lavaRef.current = Math.max(lavaRef.current, e.from + ERUPT_RISE * (1 - Math.pow(1 - p, 3)));
+              lavaRef.current = Math.max(lavaRef.current, e.from + e.rise * (1 - Math.pow(1 - p, 3)));
               erupting = Math.sin(p * Math.PI);
             }
           } else {
-            lavaRef.current += rateRef.current * dt;
-            if (now - lastWrite > SNAPSHOT_MS) { lastWrite = now; writeLava({ level: lavaRef.current, rate: rateRef.current }); }
+            const standing = towers.filter(t => !t.dunked);
+            const lowest = standing.length ? Math.min(...standing.map(t => towerHeight(t))) : null;
+            const rate = catchUpRate(rateRef.current, lavaRef.current, lowest);
+            lavaRef.current += rate * dt;
+            if (now - lastWrite > SNAPSHOT_MS) { lastWrite = now; writeLava({ level: lavaRef.current, rate }); }
           }
           if (now >= nextEruptRef.current && !eruptRef.current) startEruption();
         }
@@ -171,14 +176,15 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
           const span = (now - hist[0].at) / 1000;
           if (span > 10) {
             const a = hist[0].h, b = hist[hist.length - 1].h;
-            rateRef.current = paceRate(towers.filter(t => !t.dunked && a[t.id] != null).map(t => Math.max(0, (b[t.id] - a[t.id]) / span)));
+            rateRef.current = paceRate(towers.filter(t => !t.dunked && a[t.id] != null).map(t => Math.max(0, (b[t.id] - a[t.id]) / span)), mode);
           }
         }
 
         // referee: ask the server to dunk or rescue; it re-checks on the live row
         for (const t of towers) {
           const wantDunk = !t.dunked && towerHeight(t) < lavaRef.current;
-          const wantOut = t.dunked && t.climb >= climbNeed(t.width);
+          // out of lives: stays in the lava for good
+          const wantOut = t.dunked && !isOut(t) && t.climb >= climbNeed(t.width);
           if (!wantDunk && !wantOut) continue;
           if (now - (pendingRef.current.get(t.id) ?? 0) < 1500) continue;
           pendingRef.current.set(t.id, now);
@@ -201,10 +207,11 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
   const startEruption = () => {
     if (eruptRef.current || pausedRef.current) return;
     const now = Date.now();
-    eruptRef.current = { at: now, from: lavaRef.current };
+    const rise = eruptRise(mode, towersRef.current.map(t => t.width));
+    eruptRef.current = { at: now, from: lavaRef.current, rise };
     nextEruptRef.current = now + ERUPT_EVERY * 1000;
     // phones follow the surge as a straight climb over the same few seconds
-    writeLava({ level: lavaRef.current, rate: ERUPT_RISE / ERUPT_SECS, erupt_at: new Date(now).toISOString() });
+    writeLava({ level: lavaRef.current, rate: rise / ERUPT_SECS, erupt_at: new Date(now).toISOString() });
   };
 
   // ── HUD tick + the clock ───────────────────────────────────────────────────
@@ -222,7 +229,8 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
         total: students.length,
         banner: !!e && Date.now() - e.at < 1800,
       });
-      if (left === 0 && session?.status === "running" && !endingRef.current && !pausedRef.current) finish();
+      const over = left === 0 || decidedEarly(towersRef.current);
+      if (over && session?.status === "running" && !endingRef.current && !pausedRef.current) finish();
     }, 250);
     return () => clearInterval(t);
   }, [minutes, startedAt, session?.status]);
@@ -231,14 +239,17 @@ const LavaFloorMonitor = ({ session, sessionId }: Props) => {
   const finish = () => {
     endingRef.current = true;
     const towers = towersRef.current;
-    if (mode !== "solo" && towers.length) {
-      const best = [...towers].sort((a, b) => builtHeight(b) - builtHeight(a) || a.dunks - b.dunks)[0];
-      setFinale(mode === "class"
-        ? (ar ? `بنيتم ${builtHeight(best)} متر معًا` : `You built ${builtHeight(best)} meters together`)
-        : (ar ? `فاز ${towerName(mode, best, ar)}` : `${towerName(mode, best, ar)} wins`));
+    const best = rankTowers(towers)[0];
+    if (!best) setFinale(ar ? "انتهى الوقت" : "Time's up");
+    else if (mode === "class") {
+      setFinale(isOut(best)
+        ? (ar ? "غلبتكم الحمم هذه المرة" : "The lava won this time")
+        : (ar ? `بنيتم ${builtHeight(best)} متر معًا` : `You built ${builtHeight(best)} meters together`));
     } else {
-      const top = [...studentsRef.current].sort((a, b) => (b.crypto ?? 0) - (a.crypto ?? 0))[0];
-      setFinale(top ? (ar ? `أكثر من بنى: ${top.name}` : `Top builder: ${top.name}`) : (ar ? "انتهى الوقت" : "Time's up"));
+      const name = mode === "solo"
+        ? studentsRef.current.find(st => st.lf_tower === best.id)?.name ?? towerName(mode, best, ar)
+        : towerName(mode, best, ar);
+      setFinale(ar ? `فاز ${name}` : `${name} wins`);
     }
     setTimeout(async () => {
       await supabase.from("game_sessions").update({ status: "finished", ended_at: new Date().toISOString() }).eq("id", sessionId).then(undefined, () => {});

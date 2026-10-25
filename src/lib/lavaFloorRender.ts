@@ -8,7 +8,7 @@
 // sheet over everything it has swallowed, then embers and labels.
 
 import { FACES, resolveColor, resolveFace } from "@/lib/avatarIdentity";
-import { climbNeed, towerHeight, partialCourse, towerColor, towerName, type LfMode, type Tower } from "@/lib/lavaFloor";
+import { climbNeed, towerHeight, partialCourse, towerColor, towerName, livesLeft, isOut, type LfMode, type Tower } from "@/lib/lavaFloor";
 
 export type Member = {
   id: string;
@@ -29,6 +29,10 @@ export type BoardTower = {
   dunked: boolean;
   climb: number;
   need: number;
+  /** Falls left before the tower is out. */
+  lives: number;
+  /** In the lava with no lives left: out of the game. */
+  out: boolean;
   members: Member[];
 };
 
@@ -80,10 +84,23 @@ const wave = (x: number, t: number, phase: number) =>
 
 // ── camera ────────────────────────────────────────────────────────────────────
 /** Frame the lava and every standing player; ease toward it so it never jumps. */
+/** The most meters the board ever shows at once. Past this it stops zooming
+    out, so a brick stays brick-sized (team towers climb a course per answer
+    and would otherwise shrink to stripes). What it gives up first when the
+    race is too tall to fit: the ground, then the lava, and only then the top
+    of a runaway leader, whose label stays pinned to the top edge. */
+const MAX_SPAN = 20;
+
 export const fitCamera = (prev: Camera | null, towers: BoardTower[], lava: number, h: number, padTop: number, maxPpm = 46): Camera => {
-  const tallest = towers.reduce((m, t) => Math.max(m, t.courses + (t.partial ? 1 : 0)), lava);
-  const bottom = Math.min(lava - 3.5, -1);
-  const top = Math.max(tallest + 3.2, lava + 9);
+  const racing = towers.filter(t => !t.out);
+  const topOf = (t: BoardTower) => (t.dunked ? lava : t.courses + (t.partial ? 1 : 0));
+  const tallest = racing.reduce((m, t) => Math.max(m, topOf(t)), lava);
+  const lowest = racing.reduce((m, t) => Math.min(m, topOf(t)), tallest);
+  let top = Math.max(tallest + 3.2, lava + 9);
+  let bottom = Math.min(lava - 3.5, lowest - 3, -1);
+  if (top - bottom > MAX_SPAN) bottom = Math.min(lava - 3.5, lowest - 3);      // drop the ground
+  if (top - bottom > MAX_SPAN) bottom = Math.max(bottom, Math.min(lowest - 3, top - MAX_SPAN)); // then the lava
+  if (top - bottom > MAX_SPAN) top = bottom + MAX_SPAN;                         // then the leader's top
   const ppm = Math.min(maxPpm, (h - padTop) / (top - bottom));
   const want = { bottom, top: bottom + (h - padTop) / ppm + padTop / ppm, ppm };
   if (!prev) return want;
@@ -523,30 +540,43 @@ export const drawBoard = (ctx: CanvasRenderingContext2D, w: number, h: number, f
   // dunked players float in the surface, so they go between the two sheets
   f.towers.forEach((tw, i) => {
     if (!tw.dunked) return;
+    if (tw.out) ctx.globalAlpha = 0.45;
     tw.members.forEach((m, j) => {
       const cx = memberX(tw, pos[i], j);
       floating.push({ tw, m, cx, headY: drawPlayer(ctx, m, cx, lavaY + wave(cx, t, 0) + 2, r, now, true, m.id === f.meId) });
     });
+    ctx.globalAlpha = 1;
   });
 
   drawLavaFront(ctx, w, h, lavaY, t);
   drawBubbles(ctx, w, lavaY, t);
   drawEmbers(ctx, w, lavaY, t, hot);
 
-  // labels last so the lava never covers a name
+  // labels last so the lava never covers a name; a tower that has climbed
+  // past the top of the view keeps its label pinned to the top edge
   const size = Math.max(10, Math.min(15, slotW * 0.16));
   const bigSize = Math.max(13, Math.min(20, slotW * 0.5));
+  const minY = (f.rulerTop ?? 70) + bigSize * 4.5;
+  const lives = (n: number) => f.ar ? (n === 1 ? "روح واحدة" : n === 2 ? "روحان" : `${n} أرواح`) : `${n} ${n === 1 ? "life" : "lives"}`;
+  const outText = f.ar ? "خرج" : "OUT";
   f.towers.forEach((tw, i) => {
     const heads = (tw.dunked ? floating : standing).filter(hd => hd.tw === tw);
     if (!heads.length) return;
     const p = pos[i];
+    const bg = tw.out ? "rgba(20,10,20,0.85)" : tw.dunked ? "#FF5A3C" : "rgba(20,10,20,0.85)";
+    const fg = tw.out ? "rgba(245,235,210,0.55)" : tw.dunked ? "#fff" : null;
     if (tw.label) {
-      const topY = Math.min(...heads.map(hd => hd.headY)) - r - bigSize * 1.3;
-      const text = tw.dunked ? `${tw.label}  ${tw.climb}/${tw.need}` : `${tw.label}  ${tw.courses}${f.ar ? "م" : "m"}`;
-      drawLabel(ctx, text, p.center, topY, Math.max(260, p.x1 - p.x0 + 60), tw.dunked ? "#FF5A3C" : "rgba(20,10,20,0.85)", tw.dunked ? "#fff" : tw.color, bigSize);
+      const want = Math.min(...heads.map(hd => hd.headY)) - r - bigSize * 1.3;
+      const pinned = want < minY;
+      const text = tw.out ? `${tw.label}  ${outText}`
+        : tw.dunked ? `${tw.label}  ${tw.climb}/${tw.need}  ·  ${lives(tw.lives)}`
+        : `${pinned ? "↑ " : ""}${tw.label}  ${tw.courses}${f.ar ? "م" : "m"}  ·  ${lives(tw.lives)}`;
+      drawLabel(ctx, text, p.center, Math.max(minY, want), Math.max(300, p.x1 - p.x0 + 80), bg, fg ?? tw.color, bigSize);
     } else {
-      heads.forEach(({ m, cx, headY }) => drawLabel(ctx, tw.dunked ? `${tw.climb}/${tw.need}` : m.name, cx, headY - r - size * 1.1,
-        slotW - 4, tw.dunked ? "#FF5A3C" : "rgba(20,10,20,0.78)", tw.dunked ? "#fff" : "#F5EBD2", size));
+      heads.forEach(({ m, cx, headY }) => drawLabel(ctx,
+        tw.out ? outText : tw.dunked ? `${tw.climb}/${tw.need}` : m.name,
+        cx, Math.max(minY, headY - r - size * 1.1), slotW - 4,
+        tw.out ? "rgba(20,10,20,0.78)" : tw.dunked ? "#FF5A3C" : "rgba(20,10,20,0.78)", fg ?? "#F5EBD2", size));
     }
   });
   const me = [...standing, ...floating].find(hd => hd.m.id === f.meId);
@@ -571,7 +601,7 @@ export const toBoard = (towers: Tower[], students: LfStudent[], land: Map<string
       id: t.id, width: t.width, courses: towerHeight(t), partial: partialCourse(t),
       color: towerColor(mode, t, members[0]?.color),
       label: mode === "solo" ? undefined : towerName(mode, t, ar),
-      dunked: t.dunked, climb: t.climb, need: climbNeed(t.width), members,
+      dunked: t.dunked, climb: t.climb, need: climbNeed(t.width), lives: livesLeft(t), out: isOut(t), members,
     };
   });
 

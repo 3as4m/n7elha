@@ -12,8 +12,8 @@
 import { useEffect, useRef, useState } from "react";
 import { CIRCLE_COLORS, FACES, colorIndexForName, faceIndexForName } from "@/lib/avatarIdentity";
 import {
-  climbNeed, towerHeight, partialCourse, towerColor, towerName, paceRate,
-  ERUPT_EVERY, ERUPT_RISE, ERUPT_SECS, LAVA_START, PACE_WINDOW, type LfMode, type Tower,
+  climbNeed, towerHeight, partialCourse, towerColor, towerName, paceRate, bricksPerAnswer, eruptRise, livesLeft, isOut, catchUpRate, HEAT_PER_ANSWER,
+  ERUPT_EVERY, ERUPT_SECS, LAVA_START, PACE_WINDOW, type LfMode, type Tower,
 } from "@/lib/lavaFloor";
 import { drawBoard, fitCamera, faceImage, type BoardTower, type Camera } from "@/lib/lavaFloorRender";
 import { LavaHud, type FeedItem } from "@/components/game/LavaHud";
@@ -29,16 +29,17 @@ const PhonePreview = ({ ar, holdWrong }: { ar: boolean; holdWrong: boolean }) =>
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [wrong, setWrong] = useState(holdWrong);
+  const [bricks, setBricks] = useState(4);
   const q = STAND_IN[i % STAND_IN.length];
   const next = () => { setPicked(null); setWrong(false); setI(n => n + 1); };
   const answer = (k: number) => {
     setPicked(k);
-    if (k === q.correct_index) setTimeout(next, 650); else setWrong(true);
+    if (k === q.correct_index) { setBricks(b => b + 1); setTimeout(next, 650); } else setWrong(true);
   };
   return (
     <div className="fixed inset-0 flex flex-col" dir={ar ? "rtl" : "ltr"}>
       <LavaBackdrop />
-      <LavaQuestionView q={q} picked={picked} correct={picked === q.correct_index} onAnswer={answer} ar={ar} timerFrac={0.62} />
+      <LavaQuestionView q={q} picked={picked} correct={picked === q.correct_index} onAnswer={answer} ar={ar} timerFrac={0.62} bricks={bricks} />
       {wrong && <LavaWrongScreen ar={ar} answer={q.options[q.correct_index]} onDone={next} holdMs={holdWrong ? 0 : 2200} />}
     </div>
   );
@@ -72,7 +73,7 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
   const historyRef = useRef<{ at: number; h: number[] }[]>([]);
   const lavaRef = useRef(LAVA_START);
   const rateRef = useRef(0.03);
-  const eruptRef = useRef<{ at: number; from: number } | null>(null);
+  const eruptRef = useRef<{ at: number; from: number; rise: number } | null>(null);
   const nextEruptRef = useRef(Date.now() + firstErupt * 1000);
   const camRef = useRef<Camera | null>(null);
   const startRef = useRef(Date.now());
@@ -85,7 +86,7 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
     setFeed(f => [{ id: ++feedId.current, text, kind }, ...f].slice(0, 4));
 
   const erupt = () => {
-    eruptRef.current = { at: Date.now(), from: lavaRef.current };
+    eruptRef.current = { at: Date.now(), from: lavaRef.current, rise: eruptRise(mode, towersRef.current.map(t => t.width)) };
     nextEruptRef.current = Date.now() + ERUPT_EVERY * 1000;
   };
 
@@ -134,12 +135,16 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
       const e = eruptRef.current;
       if (e) {
         const p = (now - e.at) / 1000 / ERUPT_SECS;
-        if (p >= 1) { lavaRef.current = Math.max(lavaRef.current, e.from + ERUPT_RISE); eruptRef.current = null; }
+        if (p >= 1) { lavaRef.current = Math.max(lavaRef.current, e.from + e.rise); eruptRef.current = null; }
         else {
-          lavaRef.current = Math.max(lavaRef.current, e.from + ERUPT_RISE * (1 - Math.pow(1 - p, 3)));
+          lavaRef.current = Math.max(lavaRef.current, e.from + e.rise * (1 - Math.pow(1 - p, 3)));
           erupting = Math.sin(p * Math.PI);
         }
-      } else lavaRef.current += rateRef.current * dt;
+      } else {
+        const standing = towers.filter(t => !t.dunked);
+        const lowest = standing.length ? Math.min(...standing.map(t => towerHeight(t))) : null;
+        lavaRef.current += catchUpRate(rateRef.current, lavaRef.current, lowest) * dt;
+      }
       if (now >= nextEruptRef.current && !eruptRef.current) erupt();
 
       const hist = historyRef.current;
@@ -147,7 +152,7 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
         hist.push({ at: now, h: towers.map(t => towerHeight(t) + partialCourse(t) / Math.max(1, t.width)) });
         while (hist.length > 2 && now - hist[0].at > PACE_WINDOW * 1000) hist.shift();
         const span = (now - hist[0].at) / 1000;
-        if (span > 5) rateRef.current = paceRate(towers.map((t, i) => t.dunked ? 0 : Math.max(0, (hist[hist.length - 1].h[i] - hist[0].h[i]) / span)));
+        if (span > 5) rateRef.current = paceRate(towers.map((t, i) => t.dunked ? 0 : Math.max(0, (hist[hist.length - 1].h[i] - hist[0].h[i]) / span)), mode);
       }
 
       // bots answer
@@ -156,16 +161,17 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
         b.nextAt = now + 2500 + Math.random() * 4500;
         if (Math.random() >= b.skill) continue;
         const t = towers[b.tower];
-        if (t.dunked) t.climb++;
-        else { t.bricks++; b.landAt = now; }
+        if (isOut(t)) lavaRef.current += HEAT_PER_ANSWER;   // out, but still answering: heats the lava
+        else if (t.dunked) t.climb++;
+        else { t.bricks += bricksPerAnswer(mode, t.width); b.landAt = now; }
       }
       // referee
       towers.forEach(t => {
         const label = towerName(mode, t, ar);
         if (!t.dunked && towerHeight(t) < lavaRef.current) {
           t.dunked = true; t.climb = 0; t.dunks++;
-          pushFeed(ar ? `${label} سقط في الحمم` : `${label} fell in`, "dunk");
-        } else if (t.dunked && t.climb >= climbNeed(t.width)) {
+          pushFeed(isOut(t) ? (ar ? `${label} خرج من اللعبة` : `${label} is out`) : (ar ? `${label} سقط في الحمم` : `${label} fell in`), "dunk");
+        } else if (t.dunked && !isOut(t) && t.climb >= climbNeed(t.width)) {
           t.dunked = false; t.climb = 0;
           t.base = Math.ceil(lavaRef.current) + 1 - Math.floor(t.bricks / t.width);
           botsRef.current.filter(b => b.tower === t.idx).forEach(b => { b.landAt = now; });
@@ -179,7 +185,7 @@ function BoardPreview({ params, ar }: { params: URLSearchParams; ar: boolean }) 
           id: t.id, width: t.width, courses: towerHeight(t), partial: partialCourse(t),
           color: towerColor(mode, t, members[0]?.color),
           label: mode === "solo" ? undefined : towerName(mode, t, ar),
-          dunked: t.dunked, climb: t.climb, need: climbNeed(t.width), members,
+          dunked: t.dunked, climb: t.climb, need: climbNeed(t.width), lives: livesLeft(t), out: isOut(t), members,
         };
       });
       camRef.current = fitCamera(camRef.current, board, lavaRef.current, h, 130);

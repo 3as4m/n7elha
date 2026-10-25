@@ -9,6 +9,7 @@ import { playCorrect, playWrong } from "@/lib/sound";
 import { resizeCanvas, faceImage } from "@/lib/paintFightRender";
 import { resolveColor, resolveFace, FACES, CIRCLE_COLORS } from "@/lib/avatarIdentity";
 import MissedReview from "@/components/game/MissedReview";
+import { GainChip } from "@/components/game/GameFeedback";
 import { HumanMark, ZombieMark } from "@/components/game/HvzMarks";
 import {
   TILE, PLAYER_R, HUMAN_SPEED, ZOMBIE_SPEED, SPRINT, STUN_MS, TURNING_MS, HEAD_START_MS, SHIELD_GRACE_MS,
@@ -64,20 +65,6 @@ const BOT_NAMES = ["Sara", "Omar", "Lina", "Yousef", "Maha", "Adam", "Noor", "Kh
 
 const ANSWER_COLORS = ["#E05D5D", "#3FA56B", "#7C62D6", "#E0A93A"];
 
-/** A HUD stat that takes its own reward: on a gain the chip pops and grows to
-    show "+30" next to the number, then settles back. Keyed by the gain, so it
-    plays once per answer and never again on a re-render. */
-const StatChip = ({ icon, value, gain, gainKey, bg, color, pop }: {
-  icon: React.ReactNode; value: number; gain?: number; gainKey?: number; bg: string; color: string; pop?: string;
-}) => (
-  <div key={gainKey ?? "idle"} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm overflow-hidden", gain && "animate-chip-bump")}
-    style={{ background: gain && pop ? pop : bg, color: gain && pop ? HVZ.void : color, transition: "background-color .4s, color .4s" }}>
-    {icon}
-    <span className="text-sm font-black tabular-nums">{value}</span>
-    {!!gain && <span className="animate-chip-gain text-sm font-black tabular-nums whitespace-nowrap">+{gain}</span>}
-  </div>
-);
-
 const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) => {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
@@ -98,8 +85,6 @@ const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) =
     power: null as null | "freeze" | "scream", frozen: 0, slowed: 0,
   });
 
-  // What the last right answer gave, shown inside the stat chips themselves.
-  const [gain, setGain] = useState<{ k: number; energy: number; action: number } | null>(null);
 
   const canvasRef  = useRef<HTMLCanvasElement | null>(null);
   const mapRef     = useRef<HvzMap | null>(null);
@@ -552,7 +537,7 @@ const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) =
           for (const z of zombies) { const d = Math.hypot(z.x - b.x, z.y - b.y); if (d < td) { td = d; threat = z; } }
           if (threat && td < 240 && lineOfSight(map, b.x, b.y, threat.x, threat.y)) {
             heading = Math.atan2(b.y - threat.y, b.x - threat.x) + Math.sin(now * 0.002 + b.x) * 0.6;
-            if (now - s.shotAt > 1600 && released) {
+            if (now - s.shotAt > 4500 && released) {
               const zRef = zombies.find(z => z === threat);
               if (zRef && !(zRef.ref && (now < zRef.ref.stunUntil || zRef.ref.ko))) {
                 s.shotAt = now;
@@ -958,9 +943,6 @@ const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) =
       } else {
         p.charges = Math.min(CHARGES.max, p.charges + CHARGES.perCorrect);
       }
-      const k = Date.now();
-      setGain({ k, energy: ENERGY.perCorrect, action: p.team === "human" ? AMMO.perCorrect : CHARGES.perCorrect });
-      setTimeout(() => setGain(g => (g?.k === k ? null : g)), 1600);
       if (p.streak % PERK_STREAK === 0) {
         if (p.team === "human") { p.shield = true; say(isAr ? "درع! يصدّ لمسة زومبي واحدة" : "Shield! Blocks one zombie touch", false); }
         else { p.senseUntil = Date.now() + SENSE_MS; say(isAr ? "حاسة الشم! ترى كل البشر" : "Sense! You can see every human", false); }
@@ -1218,10 +1200,16 @@ const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) =
         <div dir={ar ? "rtl" : "ltr"} className="absolute inset-0 z-40 flex flex-col backdrop-blur-sm" style={{ background: "rgba(11,15,22,0.97)" }}>
           <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-3 px-4 py-3 shrink-0" style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}>
             <div className="relative flex items-center gap-2 min-w-0">
-              <StatChip icon={<BatteryMedium className="h-3.5 w-3.5" />} value={Math.round(hud.energy)}
-                gain={gain?.energy} gainKey={gain?.k} bg={energyColor} color={HVZ.void} />
-              <StatChip icon={zombie ? <Zap className="h-3.5 w-3.5" /> : <Crosshair className="h-3.5 w-3.5" />} value={actionCount}
-                gain={gain?.action} gainKey={gain?.k} bg="rgba(255,255,255,0.1)" color="#FFFFFF" pop={teamColor} />
+              <GainChip value={Math.round(hud.energy)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm overflow-hidden"
+                style={{ background: energyColor, color: HVZ.void }} gainClassName="text-sm font-black">
+                <BatteryMedium className="h-3.5 w-3.5" />
+                <span className="text-sm font-black tabular-nums">{Math.round(hud.energy)}</span>
+              </GainChip>
+              <GainChip value={actionCount} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shadow-sm overflow-hidden"
+                style={{ background: "rgba(255,255,255,0.1)", color: "#FFFFFF" }} popStyle={{ background: teamColor, color: HVZ.void }} gainClassName="text-sm font-black">
+                {zombie ? <Zap className="h-3.5 w-3.5" /> : <Crosshair className="h-3.5 w-3.5" />}
+                <span className="text-sm font-black tabular-nums">{actionCount}</span>
+              </GainChip>
               <span className="text-xs font-bold truncate opacity-70">
                 {hud.ko > 0
                   ? (ar ? `${hud.ko} للعودة` : `${hud.ko} to get up`)

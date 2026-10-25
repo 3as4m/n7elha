@@ -1,4 +1,3 @@
-import { Flame } from "lucide-react";
 import { ERUPT_EVERY } from "@/lib/lavaFloor";
 
 export type FeedItem = { id: number; text: string; kind: "dunk" | "out" };
@@ -43,7 +42,7 @@ export const LavaHud = ({ ar, code, left, nextErupt, lava, standing, total, bann
           </div>
           <button onClick={onErupt}
             className="rounded-full bg-[#FF5A3C] hover:bg-[#ff6e52] text-white font-bold px-4 py-2.5 flex items-center gap-1.5 border-2 border-[#140A14] shadow-[3px_3px_0_0_#140A14]">
-            <Flame className="h-4 w-4" />{ar ? "ثوران الآن" : "Erupt now"}
+            {ar ? "ثوران الآن" : "Erupt now"}
           </button>
         </div>
       </div>

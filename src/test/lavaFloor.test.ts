@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
-  towerHeight, builtHeight, partialCourse, climbNeed, paceRate, lavaNow, towerName,
-  MIN_RATE, MAX_RATE, PACE,
+  towerHeight, builtHeight, partialCourse, climbNeed, paceRate, lavaNow, towerName, bricksPerAnswer, eruptRise, isOut, livesLeft, rankTowers, decidedEarly, LIVES, catchUpRate, LAG_MAX,
+  MIN_RATE, MAX_RATE, PACE, PACE_TEAMS, ERUPT_RISE,
 } from "@/lib/lavaFloor";
 import { layoutTowers, type BoardTower } from "@/lib/lavaFloorRender";
 
@@ -22,6 +22,16 @@ describe("tower height", () => {
   it("never divides by a zero width", () => {
     expect(towerHeight(tower(0, 3))).toBe(6);
   });
+
+  it("lays a whole course per answer in team mode, one brick otherwise", () => {
+    expect(bricksPerAnswer("teams", 7)).toBe(7);
+    expect(bricksPerAnswer("class", 30)).toBe(1);
+    expect(bricksPerAnswer("solo", 1)).toBe(1);
+    // three team answers: three courses up, nothing left half-built
+    const t = tower(7, 3 * bricksPerAnswer("teams", 7));
+    expect(towerHeight(t)).toBe(3 + 3);
+    expect(partialCourse(t)).toBe(0);
+  });
 });
 
 describe("winning", () => {
@@ -33,6 +43,38 @@ describe("winning", () => {
   });
 });
 
+describe("lives", () => {
+  const t = (dunks: number, dunked: boolean, bricks = 10) => ({ width: 1, bricks, base: 3, dunks, dunked });
+
+  it("costs a life per fall and puts a tower out on its last one", () => {
+    expect(livesLeft(t(0, false))).toBe(LIVES);
+    expect(livesLeft(t(1, true))).toBe(LIVES - 1);
+    expect(isOut(t(LIVES - 1, true))).toBe(false);
+    expect(isOut(t(LIVES, true))).toBe(true);
+  });
+
+  it("ranks the towers still standing above any that are out", () => {
+    const tall = { ...t(LIVES, true, 50), id: "tall" }, short = { ...t(1, false, 5), id: "short" };
+    expect(rankTowers([tall, short])[0].id).toBe("short");
+  });
+
+  it("ends early with one tower left, or when the class wall is out", () => {
+    expect(decidedEarly([t(LIVES, true), t(0, false)])).toBe(true);
+    expect(decidedEarly([t(1, true), t(0, false)])).toBe(false);
+    expect(decidedEarly([t(0, false)])).toBe(false);
+    expect(decidedEarly([t(LIVES, true)])).toBe(true);
+  });
+});
+
+describe("lava catch-up", () => {
+  it("keeps its pace while close, and is pulled up when it trails the race", () => {
+    expect(catchUpRate(0.4, 10, 10 + LAG_MAX)).toBe(0.4);
+    expect(catchUpRate(0.4, 10, null)).toBe(0.4);
+    expect(catchUpRate(0.4, 10, 30)).toBeGreaterThan(0.4);
+    expect(catchUpRate(0.4, 10, 40)).toBeGreaterThan(catchUpRate(0.4, 10, 30));
+  });
+});
+
 describe("climbing out", () => {
   it("asks two answers of one student and one of each member of a group", () => {
     expect(climbNeed(1)).toBe(2);
@@ -41,6 +83,13 @@ describe("climbing out", () => {
 });
 
 describe("lava pace", () => {
+  it("runs closer behind team towers, with bigger eruptions", () => {
+    expect(paceRate([0.6, 0.6], "teams")).toBeCloseTo(0.6 * PACE_TEAMS);
+    expect(paceRate([0.6, 0.6], "teams")).toBeGreaterThan(paceRate([0.6, 0.6]));
+    expect(eruptRise("teams", [7, 7, 7])).toBeGreaterThan(ERUPT_RISE);
+    expect(eruptRise("class", [30])).toBe(ERUPT_RISE);
+  });
+
   it("follows the typical tower, not the leader", () => {
     expect(paceRate([0.1, 0.1, 0.1, 5])).toBeCloseTo(0.1 * PACE);
   });
@@ -68,7 +117,7 @@ describe("tower names", () => {
 
 describe("board layout", () => {
   const board = (widths: number[]): BoardTower[] => widths.map((width, i) => ({
-    id: String(i), width, courses: 3, partial: 0, color: "#000", dunked: false, climb: 0, need: 2, members: [],
+    id: String(i), width, courses: 3, partial: 0, color: "#000", dunked: false, climb: 0, need: 2, lives: 3, out: false, members: [],
   }));
 
   it("keeps every tower on screen and in order", () => {

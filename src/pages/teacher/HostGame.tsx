@@ -597,7 +597,7 @@ const HostGame = () => {
                 <>
                   <p className="text-black/65 leading-relaxed">
                     {ar
-                      ? "كل إجابة صحيحة تضع طوبة في البرج، والحمم ترتفع تحتهم وتثور كل قليل. من تصل الحمم لأعلى برجه يسقط فيها، ولا يخرج إلا بالإجابات."
+                      ? "كل إجابة صحيحة تضع مكعبًا في البرج، والحمم ترتفع تحتهم وتثور كل قليل. من تصل الحمم لأعلى برجه يسقط فيها، ولا يخرج إلا بالإجابات."
                       : "Every correct answer lays a brick on the tower while the lava rises underneath and erupts every so often. When it reaches the top of a tower, everyone on it falls in, and only answers get them out."}
                   </p>
                   <div className="flex items-center gap-2 text-black/45">

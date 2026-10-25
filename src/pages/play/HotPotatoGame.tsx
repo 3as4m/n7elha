@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { GainChip } from "@/components/game/GameFeedback";
 import { cn } from "@/lib/utils";
 import { BombIcon } from "@/components/BombIcon";
 import { Trophy, Zap, Check, X as XIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -393,11 +394,11 @@ const HotPotatoGame = ({ sessionId, studentId }: Props) => {
             {me && <Avatar name={me.name} colorIndex={me.avatar_color} faceIndex={me.avatar_face} size={34} />}
             <span className="text-[15px] font-extrabold truncate">{me?.name ?? ""}</span>
           </div>
-          <div className="shrink-0 flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[15px] font-extrabold tabular-nums"
-            style={{ background: "rgba(255,255,255,0.08)" }}>
+          <GainChip value={me ? points : null} className="shrink-0 flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[15px] font-extrabold tabular-nums overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.08)" }} popStyle={{ background: PI.spark, color: "#14181F" }}>
             <Zap className="h-4 w-4" style={{ color: PI.spark }} fill={PI.spark} />
             {fmt(points)}
-          </div>
+          </GainChip>
         </header>
 
         <main className="flex-1 min-h-0 px-4 pb-4 safe-bottom flex flex-col overflow-y-auto">

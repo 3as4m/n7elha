@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { GainChip } from "@/components/game/GameFeedback";
 import { cn } from "@/lib/utils";
 import { Trophy, Check, X, Star } from "lucide-react";
 import { playSelect, playCorrect, playWrong, playGameOver, primeAudio } from "@/lib/sound";
@@ -93,7 +94,6 @@ const ClassicGame = ({ sessionId, studentId }: Props) => {
   const [me,        setMe]        = useState<any>(isPreview ? MOCK_STUDENTS[2] : null);
   const [phase, setPhase] = useState<Phase>(isPreview ? ((searchParams.get("phase") as any) ?? "waiting") : "waiting");
   const [picked,   setPicked]   = useState<number | null>(null);
-  const [lastGain, setLastGain] = useState<number | null>(null);
   const [currentQ, setCurrentQ] = useState<Q | null>(isPreview ? MOCK_Q : null);
   const [qSeed,    setQSeed]    = useState(0);
   const startedAtRef = useRef<number>(0);
@@ -170,7 +170,6 @@ const ClassicGame = ({ sessionId, studentId }: Props) => {
     const next = questions[Math.floor(Math.random() * questions.length)];
     setCurrentQ(next);
     setPicked(null);
-    setLastGain(null);
     askedCount.current += 1;
     startedAtRef.current = Date.now();
   }, [phase, qSeed, questions]);
@@ -189,7 +188,6 @@ const ClassicGame = ({ sessionId, studentId }: Props) => {
     const elapsed = (Date.now() - startedAtRef.current) / 1000;
     const timeFrac = Math.max(0, Math.min(1, 1 - elapsed / duration));
     const points = correct ? Math.round(MIN_POINTS + (MAX_POINTS - MIN_POINTS) * timeFrac) : 0;
-    setLastGain(points);
     if (correct) playCorrect(); else playWrong();
     if (!isPreview) {
       await supabase.from("question_responses").insert({
@@ -244,10 +242,12 @@ const ClassicGame = ({ sessionId, studentId }: Props) => {
           <img src={logoMark} alt="nefelha" className="h-6 w-6 object-contain shrink-0" />
           <span className="font-bold text-sm truncate" style={{ color: "#3F5A63" }}>{me?.name ?? "—"}</span>
         </div>
-        <span className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-sm tabular-nums bg-white", NB, "shadow-[3px_3px_0_0_hsl(var(--nb-border))]")} style={{ color: "#3F5A63" }}>
+        <GainChip value={me ? me.crypto ?? 0 : null}
+          className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-sm tabular-nums overflow-hidden", NB, "shadow-[3px_3px_0_0_hsl(var(--nb-border))]")}
+          style={{ background: "#FFFFFF", color: "#3F5A63" }} popStyle={{ background: "#8FC44A", color: "#14282D" }}>
           <Star className="h-3.5 w-3.5 fill-[#8FC44A] text-[#8FC44A]" />
           {fmt(me?.crypto ?? 0)}
-        </span>
+        </GainChip>
       </header>
 
       <main className="relative z-10 flex-1 flex flex-col min-h-0 overflow-hidden px-4">
@@ -332,11 +332,6 @@ const ClassicGame = ({ sessionId, studentId }: Props) => {
                     {showResult && isCorrect && <Check className="h-4 w-4 shrink-0 absolute left-2 top-2" strokeWidth={3} />}
                     {showResult && isPicked && !isCorrect && <X className="h-4 w-4 shrink-0 absolute left-2 top-2" strokeWidth={3} />}
                     <span dir="auto">{opt}</span>
-                    {showResult && isPicked && lastGain !== null && (
-                      <span className="absolute -top-2.5 -right-2 px-2 py-0.5 rounded-full text-[11px] font-black bg-white text-[#3F5A63] border-2 border-[hsl(var(--nb-border))]">
-                        +{lastGain}
-                      </span>
-                    )}
                   </button>
                 );
               })}

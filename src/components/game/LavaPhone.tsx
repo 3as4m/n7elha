@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { Layers } from "lucide-react";
+import { GainChip } from "@/components/game/GameFeedback";
 
 // ── Lava Floor — phone pieces ────────────────────────────────────────────────
 // The phone only asks questions (the towers are on the projector), but it
@@ -47,27 +49,46 @@ export const LavaBackdrop = () => (
 type Q = { text: string; options: string[]; correct_index: number; image_url?: string };
 
 /**
- * The question on an obsidian slab and the four answers as stone bricks. The
- * brick you pick for a right answer turns lime and a "+1" rises off it.
+ * The question as big plain text over the lava, and the four answers as stone
+ * bricks. The brick you pick for a right answer turns white and lifts, and the
+ * bricks-laid count at the top takes the "+1".
  */
-export const LavaQuestionView = ({ q, picked, correct, onAnswer, timerFrac, ar }: {
+export const LavaQuestionView = ({ q, picked, correct, onAnswer, timerFrac, ar, bricks, note }: {
   q: Q; picked: number | null; correct: boolean; onAnswer: (i: number) => void; timerFrac?: number | null; ar: boolean;
+  /** Bricks this player has laid; omitted, the count isn't shown. */
+  bricks?: number | null;
+  /** A line at the top, e.g. why the answers now heat the lava. */
+  note?: string;
 }) => (
   <div className="relative z-[1] flex-1 min-h-0 flex flex-col gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[calc(76px+env(safe-area-inset-bottom))] overflow-y-auto" style={font}>
-    <div className="rounded-[22px] px-4 py-5"
-      style={{ background: LAVA.slab, border: `2px solid ${LAVA.slabLine}`, boxShadow: "inset 0 2px 0 rgba(255,255,255,0.06), 0 6px 0 #0D0612" }}>
-      {q.image_url && <img src={q.image_url} alt="" className="mx-auto max-h-[24vh] w-auto object-contain mb-3 rounded-xl" />}
-      <p className="text-[19px] font-bold leading-snug text-center" style={{ color: LAVA.text }} dir="auto">{q.text}</p>
+    {note && (
+      <div className="rounded-full px-4 py-2 text-center text-sm font-bold" style={{ background: "#FF5A3C", color: "#FFFFFF" }}>{note}</div>
+    )}
+    {bricks !== undefined && !note && (
+      <div className="flex justify-end">
+        <GainChip value={bricks} className="flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[15px] font-extrabold tabular-nums overflow-hidden"
+          style={{ background: LAVA.slab, color: LAVA.text, border: `2px solid ${LAVA.slabLine}` }}
+          popStyle={{ background: "#FFFFFF", color: LAVA.ink, borderColor: "#FFFFFF" }}>
+          <Layers className="h-4 w-4" />
+          <span>{bricks ?? 0}</span>
+          <span className="text-xs font-bold opacity-70">{ar ? "مكعب" : "bricks"}</span>
+        </GainChip>
+      </div>
+    )}
+    {/* the question, plain on the dark, no box */}
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-2 py-2">
+      {q.image_url && <img src={q.image_url} alt="" className="max-h-[24vh] w-auto object-contain mb-4 rounded-xl" />}
+      <p className="max-w-md text-[25px] font-extrabold leading-[1.35]" style={{ color: LAVA.text }} dir="auto">{q.text}</p>
       {timerFrac != null && (
-        <div className="mt-4 h-2 rounded-full overflow-hidden" style={{ background: "#3A1E40" }}>
+        <div className="mt-5 h-[3px] w-40 rounded-full overflow-hidden" style={{ background: "rgba(245,235,210,0.15)" }}>
           <div className="h-full rounded-full transition-[width] duration-200"
-            style={{ width: `${Math.max(0, timerFrac) * 100}%`, background: "linear-gradient(90deg, #FFD04A, #FF6A1F)" }} />
+            style={{ width: `${Math.max(0, timerFrac) * 100}%`, background: "#FF9A3C" }} />
         </div>
       )}
     </div>
 
     {/* the answers stack up from the lava like the towers do */}
-    <div className="mt-auto grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-3">
       {q.options.map((opt, i) => {
         const won = correct && picked === i;
         const faded = picked !== null && !won;
@@ -75,19 +96,14 @@ export const LavaQuestionView = ({ q, picked, correct, onAnswer, timerFrac, ar }
           <button key={i} type="button" disabled={picked !== null} onClick={() => onAnswer(i)} dir="auto"
             className="relative min-h-[104px] rounded-[14px] px-3 pt-3 pb-4 text-[19px] font-extrabold leading-snug transition-all duration-150 active:translate-y-[3px] active:[box-shadow:0_2px_0_var(--sh)]"
             style={{
-              background: won ? LAVA.lime : LAVA.stone,
+              background: won ? "#FFFFFF" : LAVA.stone,
               color: LAVA.ink,
-              ["--sh" as string]: won ? LAVA.limeShade : LAVA.stoneShade,
-              boxShadow: `inset 0 3px 0 ${won ? "rgba(255,255,255,0.45)" : LAVA.stoneLight}, 0 5px 0 ${won ? LAVA.limeShade : LAVA.stoneShade}, 0 7px 0 #0D0612`,
+              ["--sh" as string]: won ? "#CDBF9F" : LAVA.stoneShade,
+              boxShadow: `inset 0 3px 0 ${won ? "#FFFFFF" : LAVA.stoneLight}, 0 5px 0 ${won ? "#CDBF9F" : LAVA.stoneShade}, 0 7px 0 #0D0612`,
+              transform: won ? "translateY(-4px)" : undefined,
               opacity: faded ? 0.35 : 1,
             }}>
             {opt}
-            {won && (
-              <span className="absolute left-1/2 -top-2 rounded-full px-2.5 py-0.5 text-sm font-black whitespace-nowrap"
-                style={{ background: LAVA.ink, color: LAVA.lime, animation: "lf-pop 0.65s ease-out both" }}>
-                {ar ? "+1 طوبة" : "+1 brick"}
-              </span>
-            )}
           </button>
         );
       })}
@@ -151,7 +167,7 @@ export const LavaWrongScreen = ({ ar, answer, timedOut, onDone, holdMs = 2200 }:
               {answer}
             </div>
           </div>
-          <div className="text-sm font-semibold text-white/75">{ar ? "لا طوبة هذه المرة" : "No brick this time"}</div>
+          <div className="text-sm font-semibold text-white/75">{ar ? "لا مكعب هذه المرة" : "No brick this time"}</div>
         </div>
       </div>
     </button>

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { X, Skull, Droplet, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import PaintJoystick, { type JoystickVector } from "@/components/game/PaintJoystick";
-import { useFloatingRewards } from "@/components/game/GameFeedback";
+import { X, Skull, Droplet, Zap } from "lucide-react";
+import { GainChip } from "@/components/game/GameFeedback";
 import { playCorrect, playWrong } from "@/lib/sound";
 import {
   CELL, TANK, PLAYER_SPEED, TURN_RATE, TRAIL_RADIUS, RESPAWN_MS,
@@ -87,7 +87,6 @@ const PaintFightGame = ({ sessionId, studentId }: Props) => {
   // can't steer with the question in front of you, so you shouldn't be moving.
   const showQuizRef = useRef(false);
 
-  const reward = useFloatingRewards();
 
   // ── Loop-owned state. None of this belongs in React state: it changes every
   //    frame, and re-rendering on it would both wreck the framerate and make the
@@ -621,7 +620,6 @@ const PaintFightGame = ({ sessionId, studentId }: Props) => {
       pRef.current.tank = Math.min(TANK.start, pRef.current.tank + TANK.rewardPerCorrect);
       setHud(h => ({ ...h, tank: pRef.current.tank }));
       playCorrect();
-      reward.fire(`+${TANK.rewardPerCorrect}`, myColor);
     } else {
       playWrong();  // the button turning red is feedback enough
     }
@@ -834,15 +832,14 @@ const PaintFightGame = ({ sessionId, studentId }: Props) => {
           <div className="relative flex items-center justify-between gap-3 px-4 py-3 shrink-0"
             style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))" }}>
             <div className="relative flex items-center gap-2 min-w-0">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white shadow-sm"
-                style={{ background: empty ? "#dc2626" : myColor }}>
+              <GainChip value={Math.round(hud.tank)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white shadow-sm overflow-hidden"
+                style={{ background: empty ? "#dc2626" : myColor }} gainClassName="text-sm font-black">
                 <Droplet className="h-3.5 w-3.5 shrink-0" />
                 <span className="text-sm font-black tabular-nums">{Math.round(hud.tank)}</span>
-              </div>
+              </GainChip>
               <span className="text-xs font-bold truncate" style={{ color: PF.inkSoft }}>
                 +{TANK.rewardPerCorrect} {ar ? "لكل إجابة صحيحة" : "per correct"}
               </span>
-              {reward.layer}
             </div>
             <button onClick={() => setShowQuiz(false)} disabled={empty}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black text-white shadow-sm disabled:opacity-30 active:scale-95 transition-transform"

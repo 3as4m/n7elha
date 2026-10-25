@@ -4,6 +4,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { GainChip } from "@/components/game/GameFeedback";
 import { Button } from "@/components/ui/button";
 import { Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -401,9 +402,10 @@ const Game = () => {
       {/* minimal top strip — logo left, balance right, sits directly on the CRT glass */}
       <header className="relative shrink-0 flex items-center justify-between px-4 pt-3 pb-1 z-10">
         <img src={logoLight} alt="nefelha" className="h-6 w-6 object-contain" />
-        <span className="flex items-center gap-1.5 text-sm font-bold tabular-nums" style={{ color: "hsl(120 100% 68%)" }}>
+        <GainChip value={me ? me.crypto ?? 0 : null} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-bold tabular-nums overflow-hidden"
+          style={{ color: "hsl(120 100% 68%)" }} popStyle={{ background: "hsl(120 100% 55%)", color: "#04140A" }}>
           ₿ {fmt(me?.crypto ?? 0)}
-        </span>
+        </GainChip>
       </header>
 
       <main className="relative flex-1 flex flex-col min-h-0 overflow-hidden z-10">

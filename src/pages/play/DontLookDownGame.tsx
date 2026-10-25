@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "@/components/ui/sonner";
 import { Store, X, ChevronUp, Zap, Battery, Feather, ArrowUp, ArrowLeft, ArrowRight, Trophy, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { GainChip } from "@/components/game/GameFeedback";
 import { cn } from "@/lib/utils";
 import { PixelShield } from "@/components/PixelIcons";
 import { Avatar } from "@/components/Avatar";
@@ -132,7 +133,6 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
   const hasDoubleJump = !!me?.double_jump;
   const maxEnergy    = energyTank.maxEnergy;
   const streak       = me?.streak ?? 0;
-  const mult         = streakMultiplier(streak);
 
   useEffect(() => { meRef.current = me; }, [me]);
 
@@ -512,7 +512,6 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
       const gain = ENERGY.rewardPerCorrect * m;
       const p = pRef.current;
       p.energy = Math.min(maxEnergy, p.energy + gain);
-      toast.success(`+${gain} ${ar ? "طاقة" : "energy"}  ·  +$${incomeTier.payout * m}`);
     } else {
       const cur = me.streak ?? 0;
       newStreak = streakIns.dropBy === null ? 0 : Math.max(0, cur - streakIns.dropBy);
@@ -806,13 +805,18 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
           <div className="relative flex items-center justify-between px-4 py-3 shrink-0"
             style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top))", borderBottom: "2px solid rgba(125,211,252,0.16)" }}>
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4" style={{ color: "#38bdf8" }} />
-              <span className="text-sm font-black tabular-nums" style={{ color: "#7dd3fc" }}>
-                {Math.round(hud.energy)}/{maxEnergy}
-              </span>
-              <span className="text-xs font-bold" style={{ color: "#ffd876" }}>
-                +{ENERGY.rewardPerCorrect * mult} {ar ? "لكل إجابة" : "per correct"}
-              </span>
+              <GainChip value={Math.round(hud.energy)} className="flex items-center gap-1.5 px-2.5 py-1 text-sm font-black tabular-nums overflow-hidden"
+                style={{ background: "#2f3646", color: "#7dd3fc", border: "2px solid #12151f", borderTopColor: "#98a3b5" }}
+                popStyle={{ background: "#38bdf8", color: "#0B1020" }}>
+                <Zap className="h-4 w-4" />
+                <span>{Math.round(hud.energy)}/{maxEnergy}</span>
+              </GainChip>
+              <GainChip value={me ? me.crypto ?? 0 : null} label={n => `+$${n}`}
+                className="flex items-center gap-1 px-2.5 py-1 text-sm font-black tabular-nums overflow-hidden"
+                style={{ background: "#2f3646", color: "#ffd876", border: "2px solid #12151f", borderTopColor: "#98a3b5" }}
+                popStyle={{ background: "#ffd876", color: "#0B1020" }}>
+                <span>${me?.crypto ?? 0}</span>
+              </GainChip>
             </div>
             <button onClick={() => setShowQuiz(false)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-black active:translate-y-[2px] transition-transform"
