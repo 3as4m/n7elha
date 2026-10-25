@@ -3,8 +3,9 @@
 // style. Every phone renders the map around its own player (the projector only
 // keeps score). A few players start as zombies; a zombie that touches a human
 // turns them. Humans carry a stun gun: each hit freezes a zombie and costs it a
-// life, and a zombie out of lives is knocked back to the lab until it answers
-// its way back in. Humans win if anyone is still human when the clock runs out.
+// life, and a zombie out of lives is cured, right where it fell, and plays on
+// as a human. The game ends the moment one team has everybody; if the clock
+// runs out first, humans win as long as anyone is still human.
 //
 // Questions are the only fuel. Walking drains an energy tank for both teams and
 // only a correct answer refills it, so nobody gets far without answering. A
@@ -49,6 +50,8 @@ export const ZOMBIE_LIVES = 3;
 export const KO_ANSWERS = 2;
 /** A freshly turned zombie stands still for this long before it can hunt. */
 export const TURNING_MS = 2000;
+/** A cured zombie stands dazed this long before it moves again, as a human. */
+export const CURE_MS = 2000;
 /** Zombies are held in the lab while the humans scatter. */
 export const HEAD_START_MS = 10_000;
 /** After a shield pops, a moment where the same zombie can't tag you again. */

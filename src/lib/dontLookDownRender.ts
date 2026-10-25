@@ -219,29 +219,117 @@ export const drawCloud = (ctx: CanvasRenderingContext2D, cx: number, cy: number,
 };
 
 // ── Ground ──────────────────────────────────────────────────────────────────
-export const drawGround = (ctx: CanvasRenderingContext2D, topY: number, bw: number, bh: number) => {
+// Everything here is anchored to the world, not the screen: `camBX` is the
+// camera's left edge in buffer pixels, so the grass, stones and strata scroll
+// with the run instead of sliding along under the player.
+const ghash = (n: number) => {
+  let h = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b);
+  h ^= h >>> 13;
+  h = Math.imul(h, 0xc2b2ae35);
+  h ^= h >>> 16;
+  return h >>> 0;
+};
+const G = {
+  grassLight: "#8ccf5e", grass: C.grass, grassDark: C.grassDark, grassDeep: "#2f6430",
+  soil: C.dirt, soilDark: C.dirtDark, clay: C.dirtDeep, rock: "#2a1c12", bed: "#1b120c",
+  stone: "#8a7a6a", stoneLight: "#b0a08c", stoneDark: "#55473b",
+  pebble: "#9b8569", flower: "#fff6d8", flowerMid: "#f2c94c",
+};
+
+export const drawGround = (
+  ctx: CanvasRenderingContext2D, topY: number, bw: number, bh: number, camBX = 0,
+) => {
   const y = Math.round(topY);
   if (y > bh) return;
-  ctx.fillStyle = C.dirt;
-  ctx.fillRect(0, y, bw, bh - y);
-  ctx.fillStyle = C.dirtDark;
-  ctx.fillRect(0, y + 7, bw, bh - y - 7);
-  ctx.fillStyle = C.dirtDeep;
-  ctx.fillRect(0, y + 18, bw, Math.max(0, bh - y - 18));
-  // grass cap
-  ctx.fillStyle = C.grassDark;
-  ctx.fillRect(0, y, bw, 4);
-  ctx.fillStyle = C.grass;
-  ctx.fillRect(0, y, bw, 2);
-  // a broken lower edge so the grass doesn't read as a ruler line
-  for (let x = 0; x < bw; x += 2) {
-    if (((x >> 1) * 2654435761) % 3 === 0) ctx.fillRect(x, y + 2, 2, 1);
+  const H = bh - y;
+  const cam = Math.round(camBX);
+
+  // Strata, each a little darker, with a wavy seam between them.
+  const strata: [number, string][] = [[0, G.soil], [16, G.soilDark], [40, G.clay], [78, G.rock], [130, G.bed]];
+  for (const [from, color] of strata) {
+    if (from >= H) break;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, y + from, bw, H - from);
   }
-  // scattered pebbles
-  ctx.fillStyle = C.dirtDeep;
-  for (let x = 0; x < bw; x += 7) {
-    const h = ((x * 2654435761) >>> 3) % 11;
-    ctx.fillRect(x + (h % 4), y + 8 + (h % 9), 1, 1);
+  for (let i = 1; i < strata.length; i++) {
+    const [b] = strata[i];
+    if (b >= H) break;
+    ctx.fillStyle = strata[i - 1][1];
+    for (let x = 0; x < bw; x += 2) {
+      const wx = x + cam;
+      const off = Math.round(Math.sin(wx * 0.045 + i * 2.1) * 2 + Math.sin(wx * 0.017 + i) * 2.5);
+      if (off > 0) ctx.fillRect(x, y + b, 2, off);
+    }
+  }
+
+  // Stones set into the earth: bigger and fewer the deeper they sit.
+  const CELL = 14;
+  for (let c = Math.floor(cam / CELL) - 1; c * CELL - cam < bw + CELL; c++) {
+    const h = ghash(c);
+    if (h % 5 > 1) continue;
+    const depth = 20 + ((h >>> 4) % 90);
+    if (depth > H - 4) continue;
+    const w = 3 + ((h >>> 9) % 4) + (depth > 60 ? 2 : 0);
+    const ht = 2 + ((h >>> 13) % 2) + (depth > 60 ? 1 : 0);
+    const sx = c * CELL - cam + ((h >>> 16) % 8);
+    const sy = y + depth;
+    ctx.fillStyle = G.stoneDark;
+    ctx.fillRect(sx, sy + 1, w, ht);
+    ctx.fillStyle = depth > 60 ? G.stoneDark : G.stone;
+    ctx.fillRect(sx + 1, sy, w - 2, ht);
+    ctx.fillStyle = depth > 60 ? G.stone : G.stoneLight;
+    ctx.fillRect(sx + 1, sy, Math.max(1, w - 3), 1);
+  }
+
+  // Pebbles and grit in the topsoil.
+  for (let x = 0; x < bw; x++) {
+    const h = ghash((x + cam) * 31 + 7);
+    if (h % 9 !== 0) continue;
+    ctx.fillStyle = h % 2 ? G.pebble : G.clay;
+    ctx.fillRect(x, y + 7 + ((h >>> 5) % 28), 1, 1);
+  }
+
+  // Turf: a thick grass cap with a ragged underside, blades on top and the
+  // odd flower, so the floor reads as a lawn and not a stripe.
+  ctx.fillStyle = G.grassDark;
+  ctx.fillRect(0, y, bw, 6);
+  ctx.fillStyle = G.grass;
+  ctx.fillRect(0, y, bw, 4);
+  ctx.fillStyle = G.grassLight;
+  ctx.fillRect(0, y, bw, 1);
+  for (let x = 0; x < bw; x++) {
+    const wx = x + cam;
+    const h = ghash(wx);
+    // underside roots of the turf
+    if (h % 3 === 0) { ctx.fillStyle = G.grassDark; ctx.fillRect(x, y + 6, 1, 1 + ((h >>> 3) % 2)); }
+    if (h % 11 === 0) { ctx.fillStyle = G.grassDeep; ctx.fillRect(x, y + 7, 1, 1); }
+    // blades
+    const blade = (h >>> 6) % 7;
+    if (blade < 3) {
+      ctx.fillStyle = blade === 0 ? G.grassLight : G.grass;
+      ctx.fillRect(x, y - 1 - blade, 1, 1 + blade);
+    }
+    // texture inside the turf
+    if (h % 13 === 0) { ctx.fillStyle = G.grassDark; ctx.fillRect(x, y + 2, 1, 1); }
+    // flowers, rare
+    if (h % 89 === 0) {
+      ctx.fillStyle = G.grassDark;
+      ctx.fillRect(x, y - 2, 1, 2);
+      ctx.fillStyle = (h >>> 8) % 2 ? G.flower : G.flowerMid;
+      ctx.fillRect(x - 1, y - 3, 3, 1);
+      ctx.fillRect(x, y - 4, 1, 3);
+      ctx.fillStyle = G.flowerMid;
+      ctx.fillRect(x, y - 3, 1, 1);
+    }
+  }
+
+  // Fade into the dark further down.
+  if (H > 24) {
+    const g = ctx.createLinearGradient(0, y + 24, 0, y + 170);
+    g.addColorStop(0, "rgba(10,6,4,0)");
+    g.addColorStop(1, "rgba(10,6,4,0.55)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, y + 24, bw, H - 24);
   }
 };
 

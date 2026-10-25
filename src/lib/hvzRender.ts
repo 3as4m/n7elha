@@ -352,6 +352,8 @@ export type AgentLook = {
   shield?: boolean;
   sprint?: boolean;
   turning?: boolean;
+  /** Just cured: turning back into a human. */
+  curing?: boolean;
   /** Caught in a Freeze: an ice block around the body. */
   frozen?: boolean;
   /** Caught in a Scream: green sound rings. */
@@ -359,116 +361,213 @@ export type AgentLook = {
   alpha?: number;
 };
 
-/** A player at screen (x, y); r is the body radius in screen px. */
+const OUTLINE = "rgba(11,15,22,0.9)";
+
+/** A little shield badge, drawn where a ring used to go round the whole player. */
+const shieldBadge = (ctx: CanvasRenderingContext2D, x: number, y: number, s: number) => {
+  ctx.beginPath();
+  ctx.moveTo(x, y - s);
+  ctx.quadraticCurveTo(x + s * 0.9, y - s * 0.75, x + s * 0.85, y - s * 0.55);
+  ctx.quadraticCurveTo(x + s * 0.8, y + s * 0.55, x, y + s);
+  ctx.quadraticCurveTo(x - s * 0.8, y + s * 0.55, x - s * 0.85, y - s * 0.55);
+  ctx.quadraticCurveTo(x - s * 0.9, y - s * 0.75, x, y - s);
+  ctx.closePath();
+  ctx.fillStyle = "#78DCFF";
+  ctx.fill();
+  ctx.lineWidth = Math.max(1.5, s * 0.22);
+  ctx.strokeStyle = OUTLINE;
+  ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.75)";
+  ctx.fillRect(x - s * 0.08, y - s * 0.55, s * 0.16, s * 1.05);
+};
+
+/** A player at screen (x, y), drawn standing up and facing left or right the
+    way they're heading (the map is top-down, the people aren't, as in Among
+    Us): the player's own face as the head, a body and two short legs that
+    walk. A human wears the team-blue hoodie and holds the stun gun at the
+    chest; a zombie wears torn rags with its arms out in front. (x, y) is the
+    middle of the hit circle, r its radius in screen px. */
 export const drawAgent = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number, look: AgentLook, t: number) => {
   ctx.save();
   ctx.globalAlpha = look.alpha ?? 1;
-  const bob = look.moving && !look.stunned ? Math.abs(Math.sin(t * 0.014)) * r * 0.14 : 0;
+  const walking = look.moving && !look.stunned && !look.frozen;
+  const step = walking ? Math.sin(t * 0.016) : 0;
+  const bob = walking ? Math.abs(step) * r * 0.06 : 0;
+  const dir = Math.cos(look.angle) >= 0 ? 1 : -1;
+  const line = Math.max(1.5, r * 0.09);
+  const outline = () => { ctx.lineWidth = line; ctx.strokeStyle = OUTLINE; ctx.stroke(); };
 
-  ctx.fillStyle = "rgba(0,0,0,0.30)";
-  ctx.beginPath(); ctx.ellipse(x, y + r * 0.85, r * 0.95, r * 0.36, 0, 0, Math.PI * 2); ctx.fill();
+  const feet = y + r * 0.95;
+  const hr = r * 0.78;                 // head radius
+  const hy = y - r * 0.42 - bob;       // head center
+  const tTop = hy + hr * 0.55, tBot = feet - r * 0.34, tW = r * 1.18;
+  const shirt = look.zombie ? "#7A5C44" : "#2F6FB8";
+  const skin = look.zombie ? HVZ.zombie : look.color;
 
-  const by = y - bob;
-  const ca = Math.cos(look.angle), sa = Math.sin(look.angle);
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.beginPath(); ctx.ellipse(x, feet, r * 0.85, r * 0.26, 0, 0, Math.PI * 2); ctx.fill();
 
   if (look.sprint) {
-    ctx.strokeStyle = look.zombie ? "rgba(108,192,74,0.55)" : "rgba(255,255,255,0.5)";
-    ctx.lineWidth = Math.max(1.5, r * 0.14);
+    ctx.strokeStyle = look.zombie ? "rgba(108,192,74,0.6)" : "rgba(255,255,255,0.55)";
+    ctx.lineWidth = Math.max(1.5, r * 0.12);
     ctx.lineCap = "round";
-    for (let k = -1; k <= 1; k++) {
-      const ox = -sa * k * r * 0.5, oy = ca * k * r * 0.5;
-      ctx.beginPath();
-      ctx.moveTo(x - ca * r * 1.2 + ox, by - sa * r * 1.2 + oy);
-      ctx.lineTo(x - ca * r * (1.9 + (k === 0 ? 0.4 : 0)) + ox, by - sa * r * (1.9 + (k === 0 ? 0.4 : 0)) + oy);
-      ctx.stroke();
+    for (let k = 0; k < 3; k++) {
+      const ly = hy + r * (0.2 + k * 0.45);
+      ctx.beginPath(); ctx.moveTo(x - dir * r * 1.0, ly); ctx.lineTo(x - dir * r * (1.6 + (k === 1 ? 0.3 : 0)), ly); ctx.stroke();
     }
   }
 
-  if (look.zombie) {
-    // Arms out in front, the one universal zombie silhouette.
-    ctx.strokeStyle = HVZ.zombieDeep;
-    ctx.lineCap = "round";
-    ctx.lineWidth = r * 0.42;
-    const reach = look.stunned ? 0.9 : 1.55 + Math.sin(t * 0.01) * 0.08;
-    for (const side of [-1, 1]) {
-      const bx = x + -sa * side * r * 0.62, byy = by + ca * side * r * 0.62;
-      ctx.beginPath(); ctx.moveTo(bx, byy); ctx.lineTo(bx + ca * r * reach, byy + sa * r * reach); ctx.stroke();
-    }
-    ctx.strokeStyle = HVZ.zombie;
-    ctx.lineWidth = r * 0.26;
-    for (const side of [-1, 1]) {
-      const bx = x + -sa * side * r * 0.62, byy = by + ca * side * r * 0.62;
-      ctx.beginPath(); ctx.moveTo(bx, byy); ctx.lineTo(bx + ca * r * reach, byy + sa * r * reach); ctx.stroke();
-    }
-  } else {
-    // Stun gun.
-    ctx.save();
-    ctx.translate(x, by);
-    ctx.rotate(look.angle);
-    ctx.fillStyle = "#1F2633";
-    rr(ctx, r * 0.55, -r * 0.2, r * 0.95, r * 0.4, r * 0.12); ctx.fill();
-    ctx.fillStyle = HVZ.bullet;
-    ctx.fillRect(r * 1.35, -r * 0.11, r * 0.16, r * 0.22);
-    ctx.restore();
+  // Legs.
+  for (const side of [-1, 1]) {
+    const lift = side * step * r * 0.12;
+    rr(ctx, x + side * r * 0.3 - r * 0.17, tBot - r * 0.08 - Math.max(0, lift), r * 0.34, r * 0.46, r * 0.14);
+    ctx.fillStyle = look.zombie ? "#3D4A3A" : "#28303D"; ctx.fill(); outline();
   }
 
   // Body.
-  ctx.fillStyle = look.zombie ? HVZ.zombie : look.color;
-  ctx.beginPath(); ctx.arc(x, by, r, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath();
+  if (look.zombie) {
+    // ragged hem
+    ctx.moveTo(x - tW * 0.46, tTop);
+    ctx.lineTo(x + tW * 0.46, tTop);
+    ctx.lineTo(x + tW * 0.5, tBot - r * 0.05);
+    for (let k = 1; k <= 5; k++) ctx.lineTo(x + tW * (0.5 - k * 0.2), tBot + (k % 2 ? r * 0.1 : -r * 0.04));
+    ctx.closePath();
+  } else {
+    rr(ctx, x - tW / 2, tTop, tW, tBot - tTop + r * 0.04, r * 0.3);
+  }
+  ctx.fillStyle = shirt; ctx.fill(); outline();
+  if (look.zombie) {
+    ctx.fillStyle = HVZ.zombie;
+    ctx.beginPath(); ctx.ellipse(x - dir * tW * 0.18, (tTop + tBot) / 2 + r * 0.06, r * 0.13, r * 0.09, 0.4, 0, Math.PI * 2); ctx.fill();
+  } else {
+    // hoodie zip and pocket
+    ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = Math.max(1, r * 0.06);
+    ctx.beginPath(); ctx.moveTo(x, tTop + r * 0.12); ctx.lineTo(x, tBot - r * 0.06); ctx.stroke();
+  }
 
+  const hand = (hx: number, hy2: number, hrr: number, fill: string) => {
+    ctx.beginPath(); ctx.arc(hx, hy2, hrr, 0, Math.PI * 2); ctx.fillStyle = fill; ctx.fill(); outline();
+  };
+  const chestY = tTop + (tBot - tTop) * 0.42;
+
+  if (look.zombie) {
+    // Arms out in front, one a little higher than the other, swaying.
+    const reach = look.stunned ? r * 0.55 : r * 1.05;
+    for (const [k, dy] of [[0, -r * 0.1], [1, r * 0.16]] as const) {
+      const sway = Math.sin(t * 0.008 + k * 1.7) * r * 0.05;
+      const sx = x + dir * tW * 0.3, sy = chestY + dy + sway;
+      const ex = sx + dir * reach;
+      ctx.lineCap = "round";
+      ctx.lineWidth = r * 0.3 + line * 2; ctx.strokeStyle = OUTLINE;
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, sy); ctx.stroke();
+      ctx.lineWidth = r * 0.3; ctx.strokeStyle = HVZ.zombie;
+      ctx.beginPath(); ctx.moveTo(sx + dir * reach * 0.45, sy); ctx.lineTo(ex, sy); ctx.stroke();
+      ctx.strokeStyle = shirt;
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + dir * reach * 0.45, sy); ctx.stroke();
+      hand(ex, sy, r * 0.17, HVZ.zombie);
+    }
+  } else {
+    // Stun gun at the chest, tilted toward where it's aiming.
+    const up = Math.sin(look.angle);
+    const tilt = Math.max(-0.55, Math.min(0.55, up * 0.7));
+    ctx.save();
+    ctx.translate(x + dir * tW * 0.32, chestY + r * 0.05);
+    ctx.scale(dir, 1);
+    ctx.rotate(tilt * dir);
+    const gl = r * 0.95, gh = r * 0.3;
+    // grip
+    rr(ctx, r * 0.08, gh * 0.2, r * 0.2, r * 0.32, r * 0.07);
+    ctx.fillStyle = "#2A3140"; ctx.fill(); outline();
+    // body
+    rr(ctx, -r * 0.05, -gh / 2, gl, gh, gh * 0.4);
+    ctx.fillStyle = "#3A4458"; ctx.fill(); outline();
+    ctx.fillStyle = "#64708A";
+    rr(ctx, r * 0.08, -gh / 2 + line, gl * 0.5, gh * 0.24, gh * 0.12); ctx.fill();
+    // charged tip
+    ctx.shadowColor = HVZ.bullet; ctx.shadowBlur = r * 0.6;
+    ctx.fillStyle = HVZ.bullet;
+    rr(ctx, gl - r * 0.1, -gh * 0.32, r * 0.18, gh * 0.64, r * 0.06); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+    hand(x + dir * tW * 0.32 + dir * r * 0.18, chestY + r * 0.24, r * 0.15, look.color);
+  }
+
+  // Head: the player's face.
+  ctx.fillStyle = skin;
+  ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); ctx.fill();
   if (look.face?.complete && look.face.naturalWidth) {
     ctx.save();
-    ctx.beginPath(); ctx.arc(x, by, r * 0.96, 0, Math.PI * 2); ctx.clip();
-    const s = r * 1.78;
-    ctx.drawImage(look.face, x - s / 2, by - s / 2, s, s);
-    if (look.zombie) {
+    ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); ctx.clip();
+    const s = hr * 2.3;
+    ctx.drawImage(look.face, x - s / 2, hy - s / 2, s, s);
+    const tint = look.zombie ? "rgba(120,200,90,0.65)"
+      : look.turning ? `rgba(120,200,90,${0.35 + Math.sin(t * 0.02) * 0.3})`
+      : look.curing ? `rgba(140,200,255,${0.35 + Math.sin(t * 0.02) * 0.3})` : null;
+    if (tint) {
       ctx.globalCompositeOperation = "multiply";
-      ctx.fillStyle = "rgba(120,200,90,0.65)";
-      ctx.fillRect(x - r, by - r, r * 2, r * 2);
+      ctx.fillStyle = tint;
+      ctx.fillRect(x - hr, hy - hr, hr * 2, hr * 2);
       ctx.globalCompositeOperation = "source-over";
-      // A couple of wounds so a zombie never reads as a green human.
-      ctx.fillStyle = "rgba(120,20,30,0.55)";
-      ctx.beginPath(); ctx.arc(x + r * 0.45, by - r * 0.35, r * 0.16, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(x - r * 0.5, by + r * 0.4, r * 0.11, 0, Math.PI * 2); ctx.fill();
+    }
+    if (look.zombie) {
+      // stitches and a bruise so a zombie never reads as a green human
+      ctx.strokeStyle = "rgba(40,20,20,0.75)";
+      ctx.lineWidth = Math.max(1, hr * 0.07);
+      ctx.beginPath();
+      ctx.moveTo(x - hr * 0.55, hy - hr * 0.55); ctx.lineTo(x - hr * 0.1, hy - hr * 0.8);
+      for (let k = 0; k < 3; k++) {
+        const mx = x - hr * (0.48 - k * 0.15), my = hy - hr * (0.6 + k * 0.06);
+        ctx.moveTo(mx - hr * 0.04, my - hr * 0.1); ctx.lineTo(mx + hr * 0.04, my + hr * 0.1);
+      }
+      ctx.stroke();
+      ctx.fillStyle = "rgba(110,30,60,0.45)";
+      ctx.beginPath(); ctx.arc(x + hr * 0.5, hy + hr * 0.45, hr * 0.17, 0, Math.PI * 2); ctx.fill();
     }
     if (look.stunned) {
       ctx.fillStyle = "rgba(140,200,255,0.45)";
-      ctx.fillRect(x - r, by - r, r * 2, r * 2);
+      ctx.fillRect(x - hr, hy - hr, hr * 2, hr * 2);
     }
     ctx.restore();
   }
+  ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); outline();
+  ctx.strokeStyle = "rgba(255,255,255,0.35)";
+  ctx.lineWidth = Math.max(1, hr * 0.12);
+  ctx.beginPath(); ctx.arc(x, hy, hr * 0.8, Math.PI * 1.1, Math.PI * 1.45); ctx.stroke();
 
-  ctx.lineWidth = Math.max(2, r * 0.16);
-  ctx.strokeStyle = look.zombie ? HVZ.zombieDeep : "#FFFFFF";
-  ctx.beginPath(); ctx.arc(x, by, r, 0, Math.PI * 2); ctx.stroke();
+  if (look.shield) shieldBadge(ctx, x + hr * 0.85, hy - hr * 0.7, Math.max(5, r * 0.32));
 
-  if (look.shield) {
-    const pulse = 1.32 + Math.sin(t * 0.006) * 0.05;
-    ctx.strokeStyle = "rgba(120,220,255,0.85)";
-    ctx.lineWidth = Math.max(2, r * 0.12);
-    ctx.beginPath(); ctx.arc(x, by, r * pulse, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = "rgba(120,220,255,0.12)";
-    ctx.fill();
+  if (look.curing) {
+    // little plus signs drifting up while the cure takes
+    ctx.fillStyle = "#BFE3FF";
+    for (let k = 0; k < 3; k++) {
+      const ph = (t * 0.0012 + k / 3) % 1;
+      const px = x + Math.sin(k * 2.1 + t * 0.003) * r * 0.9, py = hy - hr * (0.4 + ph * 1.6), sz = r * 0.15 * (1 - ph * 0.5);
+      ctx.globalAlpha = (look.alpha ?? 1) * (1 - ph);
+      ctx.fillRect(px - sz * 1.5, py - sz * 0.5, sz * 3, sz);
+      ctx.fillRect(px - sz * 0.5, py - sz * 1.5, sz, sz * 3);
+    }
+    ctx.globalAlpha = look.alpha ?? 1;
   }
 
   if (look.stunned) {
     ctx.fillStyle = "#FFE066";
     for (let k = 0; k < 3; k++) {
       const a = t * 0.006 + k * 2.094;
-      const sx = x + Math.cos(a) * r * 0.9, sy = by - r * 1.15 + Math.sin(a) * r * 0.3;
-      star(ctx, sx, sy, r * 0.22);
+      star(ctx, x + Math.cos(a) * r * 0.8, hy - hr * 1.15 + Math.sin(a) * r * 0.25, r * 0.2);
     }
   }
 
   if (look.frozen) {
+    const fx = x - r * 1.05, fy = hy - hr - r * 0.15, fw = r * 2.1, fh = feet - fy + r * 0.1;
     ctx.fillStyle = "rgba(190,235,255,0.55)";
-    rr(ctx, x - r * 1.25, by - r * 1.25, r * 2.5, r * 2.5, r * 0.45); ctx.fill();
+    rr(ctx, fx, fy, fw, fh, r * 0.4); ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,0.9)";
     ctx.lineWidth = Math.max(1.5, r * 0.1);
-    rr(ctx, x - r * 1.25, by - r * 1.25, r * 2.5, r * 2.5, r * 0.45); ctx.stroke();
+    rr(ctx, fx, fy, fw, fh, r * 0.4); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(x - r * 0.9, by - r * 0.6); ctx.lineTo(x - r * 0.4, by - r * 1.0);
-    ctx.moveTo(x + r * 0.5, by + r * 0.9); ctx.lineTo(x + r * 0.95, by + r * 0.4);
+    ctx.moveTo(fx + fw * 0.18, fy + fh * 0.2); ctx.lineTo(fx + fw * 0.38, fy + fh * 0.08);
+    ctx.moveTo(fx + fw * 0.7, fy + fh * 0.9); ctx.lineTo(fx + fw * 0.88, fy + fh * 0.76);
     ctx.stroke();
   }
 
@@ -478,19 +577,27 @@ export const drawAgent = (ctx: CanvasRenderingContext2D, x: number, y: number, r
     for (let k = 0; k < 2; k++) {
       const ph = ((t * 0.002 + k * 0.5) % 1);
       ctx.globalAlpha = (look.alpha ?? 1) * (1 - ph);
-      ctx.beginPath(); ctx.arc(x, by, r * (1.1 + ph * 0.9), 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(x, feet, r * (0.9 + ph * 0.9), r * (0.3 + ph * 0.3), 0, 0, Math.PI * 2); ctx.stroke();
     }
     ctx.globalAlpha = look.alpha ?? 1;
   }
+  ctx.restore();
+};
 
-  if (look.turning) {
-    ctx.strokeStyle = "rgba(108,192,74,0.9)";
-    ctx.lineWidth = Math.max(2, r * 0.14);
-    ctx.setLineDash([r * 0.4, r * 0.3]);
-    ctx.lineDashOffset = -t * 0.05;
-    ctx.beginPath(); ctx.arc(x, by, r * 1.4, 0, Math.PI * 2); ctx.stroke();
-    ctx.setLineDash([]);
+/** Lock-on brackets at the four corners of a target, instead of a ring. */
+export const drawLockOn = (ctx: CanvasRenderingContext2D, x: number, y0: number, r: number, color: string, t: number) => {
+  // centered on the whole standing figure, not just the hit circle
+  const y = y0 - r * 0.2;
+  const d = r * (1.5 + Math.sin(t * 0.012) * 0.08), L = r * 0.5;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(2, r * 0.13);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+    ctx.moveTo(x + sx * d, y + sy * (d - L)); ctx.lineTo(x + sx * d, y + sy * d); ctx.lineTo(x + sx * (d - L), y + sy * d);
   }
+  ctx.stroke();
   ctx.restore();
 };
 

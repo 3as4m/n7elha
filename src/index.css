@@ -347,6 +347,22 @@
     32%  { opacity: 1; transform: translate(-50%, -10px)  scale(1); }
     100% { opacity: 0; transform: translate(-50%, -46px)  scale(1); }
   }
+  /* a stat chip taking its reward: pop, then the "+N" opens up inside it and folds away */
+  @keyframes chip-bump {
+    0%   { transform: scale(1); }
+    25%  { transform: scale(1.14); }
+    45%  { transform: scale(0.97); }
+    60%  { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  .animate-chip-bump { animation: chip-bump .55s cubic-bezier(.3,0,.3,1); }
+  @keyframes chip-gain {
+    0%   { max-width: 0; opacity: 0; }
+    18%  { max-width: 3rem; opacity: 1; }
+    78%  { max-width: 3rem; opacity: 1; }
+    100% { max-width: 0; opacity: 0; }
+  }
+  .animate-chip-gain { display: inline-block; overflow: hidden; animation: chip-gain 1.5s cubic-bezier(.2,.8,.2,1) forwards; }
   .animate-float-reward { animation: float-reward 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
   @keyframes powerup-slam {

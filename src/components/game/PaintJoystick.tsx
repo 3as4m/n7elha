@@ -84,28 +84,27 @@ const PaintJoystick = ({ vectorRef, maxRadius = 60, deadzone = 8, className }: P
       onPointerCancel={e => { if (activeId.current === e.pointerId) release(); }}
       onLostPointerCapture={e => { if (activeId.current === e.pointerId) release(); }}
     >
-      {origin && (
-        <div
-          className="pointer-events-none absolute rounded-full"
-          style={{
-            left: origin.x - maxRadius, top: origin.y - maxRadius,
-            width: maxRadius * 2, height: maxRadius * 2,
-            background: "rgba(255,255,255,0.35)",
-            border: "2px solid hsl(var(--nb-border))",
-          }}
-        >
-          <div
-            className="absolute rounded-full"
-            style={{
-              left: maxRadius + knob.x - 22, top: maxRadius + knob.y - 22,
-              width: 44, height: 44,
-              background: "#8FC44A",
-              border: "2px solid hsl(var(--nb-border))",
-              boxShadow: "3px 3px 0 0 hsl(var(--nb-border))",
-            }}
-          />
-        </div>
-      )}
+      {origin && (() => {
+        const R = maxRadius, K = 26;
+        return (
+          <div className="pointer-events-none absolute animate-scale-in" style={{ left: origin.x - R, top: origin.y - R, width: R * 2, height: R * 2 }}>
+            {/* the pad: black, with a black rim */}
+            <div className="absolute inset-0 rounded-full" style={{
+              background: "rgba(17,17,17,0.55)",
+              border: "3px solid #111111",
+              // a faint light hairline so the black pad still shows on a dark floor
+              boxShadow: "0 0 0 1.5px rgba(255,255,255,0.35), 0 8px 22px rgba(0,0,0,0.3)",
+            }} />
+            {/* the knob: plain white */}
+            <div className="absolute rounded-full" style={{
+              left: R + knob.x - K, top: R + knob.y - K, width: K * 2, height: K * 2,
+              background: "#FFFFFF",
+              border: "3px solid #111111",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
+            }} />
+          </div>
+        );
+      })()}
     </div>
   );
 };

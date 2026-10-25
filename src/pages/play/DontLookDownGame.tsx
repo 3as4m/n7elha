@@ -336,10 +336,11 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
       const sharp = octx ?? bctx;
 
       // Camera in world units, player centred horizontally and sitting low so
-      // there is more sky than floor on screen.
+      // there is more sky than floor on screen. Near the start the ground never
+      // takes more than a fifth of the screen: below that is only dirt.
       const viewW = bw / PX, viewH = bh / PX;
       const targetCamX = p.x + WORLD.playerW / 2 - viewW / 2;
-      const targetCamY = p.y - viewH * 0.38;
+      const targetCamY = Math.max(p.y - viewH * 0.38, climbRef.current.groundY - viewH * 0.2);
       if (!p.camInit) { p.camX = targetCamX; p.camY = targetCamY; p.camInit = true; }
       p.camX += (targetCamX - p.camX) * 0.12;
       p.camY += (targetCamY - p.camY) * 0.12;
@@ -373,7 +374,7 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
       // Ground sits just under the starting block's base so the first platform
       // reads as standing on it rather than sunk into it.
       const groundTop = sy(climbRef.current.groundY);
-      if (groundTop < bh) drawGround(bctx, groundTop, bw, bh);
+      if (groundTop < bh) drawGround(bctx, groundTop, bw, bh, camBX);
 
       // Blocks
       // Scenery behind the platforms: buildings, and the black hole over the top.

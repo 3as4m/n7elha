@@ -842,7 +842,7 @@ const PaintFightGame = ({ sessionId, studentId }: Props) => {
               <span className="text-xs font-bold truncate" style={{ color: PF.inkSoft }}>
                 +{TANK.rewardPerCorrect} {ar ? "لكل إجابة صحيحة" : "per correct"}
               </span>
-              <reward.Layer />
+              {reward.layer}
             </div>
             <button onClick={() => setShowQuiz(false)} disabled={empty}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black text-white shadow-sm disabled:opacity-30 active:scale-95 transition-transform"

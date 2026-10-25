@@ -7,6 +7,7 @@
 // Route is registered only when import.meta.env.DEV, so it never ships.
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import DontLookDownMonitor from "@/pages/teacher/DontLookDownMonitor";
 import { WORLD, buildClimb } from "@/lib/dontLookDown";
 import {
   setupPixelCanvas, setupOverlayCanvas, drawSky, drawStars, drawCloud, drawPlatform, drawHint,
@@ -14,7 +15,28 @@ import {
 } from "@/lib/dontLookDownRender";
 import { PX, themeBlendAt, themeIndexAt, starAlphaAt, THEMES, STARRY_FROM } from "@/lib/dldLevel";
 
+const NAMES = ["Sara", "Omar", "Lina", "Yousef", "Maha", "Adam", "Noor", "Khalid", "Reem", "Hala", "Zaid", "Dana", "Fares", "Mona"];
+
 const DldPreview = () => {
+  // ?board=1 shows the teacher's projector over a made-up class instead.
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("board") === "1") return <BoardPreview ar={params.get("lang") === "ar"} />;
+  return <ClimbPreview />;
+};
+
+const BoardPreview = ({ ar }: { ar: boolean }) => {
+  const students = NAMES.map((name, i) => ({
+    id: `s${i}`, name, height_reached: [1730, 1420, 1380, 1100, 960, 900, 880, 640, 420, 400, 260, 120, 60, 0][i],
+    crypto: (i * 37) % 200, avatar_color: i % 7, avatar_face: (i * 5) % 20,
+  }));
+  const session = {
+    id: "demo", code: "3161", status: "running", started_at: new Date(Date.now() - 30_000).toISOString(),
+    settings: { mode: "dontlookdown", minutes: 6, lang: ar ? "ar" : "en" },
+  };
+  return <DontLookDownMonitor session={session} sessionId="demo" demo={{ students }} />;
+};
+
+const ClimbPreview = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayRef = useRef<HTMLCanvasElement | null>(null);
   const keys = useRef(new Set<string>());
@@ -91,7 +113,7 @@ const DldPreview = () => {
       // Ground sits just under the starting block's base so the first platform
       // reads as standing on it rather than sunk into it.
       const groundTop = sy(climb.groundY);
-      if (groundTop < bh) drawGround(ctx, groundTop, bw, bh);
+      if (groundTop < bh) drawGround(ctx, groundTop, bw, bh, camBX);
 
       for (const pc of climb.scenery) {
         if (!pc.back) continue;

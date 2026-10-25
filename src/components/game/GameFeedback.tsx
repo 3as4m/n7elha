@@ -6,7 +6,7 @@ import { useCallback, useRef, useState, type ComponentType } from "react";
 // happened and carry weight proportional to what happened:
 //
 //   useFloatingRewards — a number rises and fades from the HUD stat it just
-//     changed (mount <Layer/> inside a `position: relative` wrapper around
+//     changed (render `layer` inside a `position: relative` wrapper around
 //     that stat). For routine, frequent rewards — correct answers, currency.
 //
 //   usePowerupBurst — a colored badge slams into the center of the screen
@@ -31,7 +31,10 @@ export const useFloatingRewards = () => {
     setTimeout(() => setItems((list) => list.filter((i) => i.id !== id)), 900);
   }, []);
 
-  const Layer = () => (
+  // An element, not a component declared in here: a component made inside the
+  // hook is a new type every render, so React remounted the labels on every
+  // render and their float animation kept restarting (the flashing).
+  const layer = (
     <div className="pointer-events-none absolute inset-0 overflow-visible">
       {items.map((it) => (
         <span
@@ -45,7 +48,7 @@ export const useFloatingRewards = () => {
     </div>
   );
 
-  return { fire, Layer };
+  return { fire, layer };
 };
 
 type BurstItem = { id: number; Icon: ComponentType<{ className?: string; strokeWidth?: number }>; label: string; color: string };
