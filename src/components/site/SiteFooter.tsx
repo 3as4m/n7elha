@@ -131,7 +131,10 @@ export const SiteFooter = () => {
 
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[12px] text-white/35">
           <span>{t.footerRights}</span>
-          <span className="tracking-wider">Built for teachers.</span>
+          <span className="tracking-wider">
+            Built for teachers.{" "}
+            <a href="https://3asem.com" target="_blank" rel="noopener" className="text-white/25 hover:text-white/60 transition-colors">3asem.com</a>
+          </span>
         </div>
       </div>
       </div>
