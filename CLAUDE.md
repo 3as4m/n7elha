@@ -150,6 +150,8 @@ const av = (name: string) => {
 };
 ```
 
+Public site look (landing and inner pages): sections are sheets of cut paper (`components/site/PaperSheet.tsx`: uneven scissor edges, slight tilt, the buttons' hard offset shadow) instead of full-width bands or boxes, with "buddies" around them (`Buddy.tsx`: the 16 traced organic shapes in `buddyShapes.ts` with simple faces). `ShapeField` scatters the same shapes faceless down both page edges as the site pattern (`PageShapes` puts it on every inner page). The footer shows the full logo mark large and white, never mirrored, tilted or drawn on. Site media (the games explainer video) lives in the `nefelha-media` R2 bucket, uploaded with `npx wrangler r2 object put ... --remote`.
+
 `font-handwritten` uses Caveat (Latin only). `HandWrittenTitle` (`src/components/ui/hand-writing-text.tsx`) detects Arabic text via `/[؀-ۿ]/` and animates the whole word as one unit — Arabic cannot be split per-character because the shaping engine needs adjacent characters to determine letter forms.
 
 ## Environment

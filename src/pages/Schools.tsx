@@ -4,6 +4,9 @@ import { ArrowUpRight } from "lucide-react";
 import { LIME, SAND, TEAL } from "@/components/teacher/DashboardAccents";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { PaperSheet } from "@/components/site/PaperSheet";
+import { Buddy, type Mood } from "@/components/site/Buddy";
+import type { BuddyShape } from "@/components/site/buddyShapes";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 
@@ -165,8 +168,8 @@ const Schools = () => {
             <p className="mt-5 max-w-xl text-[16px] sm:text-[17px] leading-relaxed text-black/65">{t.sub}</p>
             <Link
               to="/contact"
-              className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
-              style={{ background: INK }}
+              className="mt-8 inline-flex items-center gap-2 rounded-full border-2 border-[hsl(var(--nb-border))] px-6 py-3 text-[15px] font-semibold text-white shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+              style={{ background: SLATE }}
             >
               {t.cta}
               <ArrowUpRight className="h-4 w-4" />
@@ -177,14 +180,11 @@ const Schools = () => {
       </section>
 
       {/* ---------------- WHAT THE SCHOOL GETS ---------------- */}
-      {/* One row per gain: a huge word on one side, the points on the other,
-          rows split by hairlines. */}
-      <section className="relative z-10">
-        <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mb-px">
-          <path fill={TEAL} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
-        </svg>
-        <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20 text-white" style={{ background: TEAL }}>
-          <div className="wrap">
+      {/* A teal sheet of cut paper. One row per gain: a huge word on one side,
+          the points on the other, rows split by hairlines. */}
+      <section className="relative z-10 px-4 sm:px-8 md:px-12 py-8 sm:py-12">
+        <PaperSheet color={TEAL} tilt={-0.8} className="wrap text-white">
+          <div className="px-7 sm:px-12 md:px-16 py-12 sm:py-16">
             <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.gainsKicker}</span>
             <h2 className="mt-3 text-[30px] sm:text-[44px] tracking-tight leading-[1.1]" style={{ fontFamily: DISPLAY }}>{t.gainsTitle}</h2>
 
@@ -209,10 +209,7 @@ const Schools = () => {
               ))}
             </div>
           </div>
-        </div>
-        <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mt-px">
-          <path fill={TEAL} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
-        </svg>
+        </PaperSheet>
       </section>
 
       {/* ---------------- HOW TO START ---------------- */}
@@ -237,8 +234,8 @@ const Schools = () => {
           </div>
           <Link
             to="/contact"
-            className="shrink-0 inline-flex items-center gap-2 self-start sm:self-auto rounded-full px-6 py-3 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
-            style={{ background: INK }}
+            className="shrink-0 inline-flex items-center gap-2 self-start sm:self-auto rounded-full border-2 border-[hsl(var(--nb-border))] px-6 py-3 text-[15px] font-semibold text-white shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+            style={{ background: SLATE }}
           >
             {t.cta}
             <ArrowUpRight className="h-4 w-4" />
@@ -251,12 +248,13 @@ const Schools = () => {
   );
 };
 
-/* What kids say at home: three speech bubbles, staggered, flat colors. */
+/* What kids say at home: three speech bubbles, staggered, flat colors, each
+   said by one of the home page's buddies standing at its tail. */
 const Bubbles = ({ lines }: { lines: string[] }) => {
   const styles = [
-    { bg: "#FFFFFF", fg: SLATE, cls: "self-start", tail: "start" },
-    { bg: LIME, fg: INK, cls: "self-end", tail: "end" },
-    { bg: TEAL, fg: "#FFFFFF", cls: "self-start ms-6 sm:ms-12", tail: "start" },
+    { bg: "#FFFFFF", fg: SLATE, cls: "self-start ms-12", tail: "start", who: ["pebble", TEAL, "grin"] },
+    { bg: LIME, fg: INK, cls: "self-end me-12", tail: "end", who: ["coral", "#E8794A", "happy"] },
+    { bg: TEAL, fg: "#FFFFFF", cls: "self-start ms-16 sm:ms-20", tail: "start", who: ["splash", LIME, "wink"] },
   ] as const;
   return (
     <div className="relative mx-auto w-full max-w-md flex flex-col gap-5 py-4">
@@ -266,7 +264,14 @@ const Bubbles = ({ lines }: { lines: string[] }) => {
       {lines.map((line, i) => {
         const s = styles[i % styles.length];
         return (
-          <div key={line} className={`relative max-w-[85%] ${s.cls}`}>
+          <div key={line} className={`relative max-w-[78%] ${s.cls}`}>
+            <Buddy
+              shape={s.who[0] as BuddyShape}
+              color={s.who[1]}
+              mood={s.who[2] as Mood}
+              faceColor={s.who[1] === TEAL ? "#F3E7C9" : undefined}
+              className={`absolute -bottom-3 w-11 sm:w-12 ${s.tail === "start" ? "-start-12 sm:-start-14" : "-end-12 sm:-end-14"}`}
+            />
             <p
               className={`rounded-[22px] px-5 py-3.5 text-[16px] sm:text-[17px] font-semibold leading-snug ${s.tail === "start" ? "rounded-es-md" : "rounded-ee-md"}`}
               style={{ background: s.bg, color: s.fg }}

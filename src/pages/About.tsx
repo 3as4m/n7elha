@@ -4,6 +4,8 @@ import storyBoy from "@/assets/story/boy.webp";
 import { LIME, SAND, TEAL } from "@/components/teacher/DashboardAccents";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { PaperSheet } from "@/components/site/PaperSheet";
+import { Buddy } from "@/components/site/Buddy";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 
@@ -163,9 +165,8 @@ const About = () => {
           <div className="wrap relative isolate px-5 sm:px-8 md:px-14 pb-20 sm:pb-24 pt-2">
             {/* our own shapes around the chapters, so the band is more than the photo */}
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-              <Blob color={SAND} className="w-[200px] bottom-0 -start-28 opacity-80 hidden xl:block" />
-              <Blob color={LIME} className="w-[70px] md:w-[96px] bottom-2 end-[2%]" />
-              <Blob color={LIME} className="w-[20px] bottom-8 start-[33%] hidden md:block" />
+              <Buddy shape="pebble" color={SAND} mood="smile" className="absolute w-[110px] bottom-0 -start-16 hidden xl:block" />
+              <Buddy shape="pinwheel" color={LIME} mood="wink" className="absolute w-[70px] md:w-[90px] bottom-2 end-[2%] rotate-12" />
               <svg viewBox="0 0 240 140" className="absolute w-[150px] bottom-0 end-[12%] hidden md:block">
                 <ellipse cx="120" cy="70" rx="112" ry="52" transform="rotate(-16 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.35" />
               </svg>
@@ -187,41 +188,40 @@ const About = () => {
       </section>
 
       {/* ---------------- MISSION ---------------- */}
-      {/* A dark navy band with wavy edges (not a flat box), the map, and the
-          faint wordmark behind. */}
-      <section className="relative z-10 mt-6">
-        <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mb-px">
-          <path fill={NAVY} d="M0 40C260 4 520 60 800 28C1060 0 1260 12 1440 30V72H0Z" />
-        </svg>
-        <div className="relative isolate overflow-hidden text-white px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: NAVY }}>
-          <span
-            aria-hidden
-            className="pointer-events-none select-none absolute -z-10 -top-4 end-[-2%] text-[150px] sm:text-[230px] leading-none text-white opacity-[0.07]"
-            style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
-          >
-            نفلها
-          </span>
-          <Blob color={LIME} className="-z-10 w-[60px] sm:w-[80px] bottom-8 start-[4%]" />
+      {/* A slate sheet of cut paper laid on the page (the home page's story
+          sheet), the map, and the faint wordmark behind. */}
+      <section className="relative z-10 mt-6 px-4 sm:px-8 md:px-12 py-8 sm:py-12">
+        <PaperSheet color={NAVY} tilt={-1} className="wrap text-white">
+          <div className="relative isolate overflow-hidden px-7 sm:px-12 md:px-16 py-12 sm:py-16">
+            <span
+              aria-hidden
+              className="pointer-events-none select-none absolute -z-10 -top-4 end-[-2%] text-[150px] sm:text-[230px] leading-none text-white opacity-[0.07]"
+              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
+            >
+              نفلها
+            </span>
 
-          <div className="wrap relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)] gap-12 lg:gap-16 items-center">
-            <div className="max-w-2xl">
-              <h2 className="text-[32px] sm:text-[46px] tracking-tight leading-[1.1]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
-                {t.missionTitle}
-              </h2>
-              <div className="mt-6 h-1 w-16 rounded-full" style={{ background: LIME }} />
-              <p className="mt-6 text-[17px] sm:text-[19px] leading-relaxed text-white font-medium">{t.m1}</p>
-              <p className="mt-4 text-[15px] leading-relaxed text-white/75">{t.m2}</p>
-            </div>
+            <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] gap-12 lg:gap-16 items-center">
+              <div className="max-w-2xl">
+                <h2 className="text-[32px] sm:text-[44px] tracking-tight leading-[1.1]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
+                  {t.missionTitle}
+                </h2>
+                <div className="mt-6 h-1 w-16 rounded-full" style={{ background: LIME }} />
+                <p className="mt-6 text-[17px] sm:text-[19px] leading-relaxed text-white font-medium">{t.m1}</p>
+                <p className="mt-4 text-[15px] leading-relaxed text-white/75">{t.m2}</p>
+              </div>
 
-            <div className="relative mx-auto w-full max-w-md">
-              <img src={saudiMap} alt={isAr ? "المملكة العربية السعودية" : "Saudi Arabia"} className="w-full" />
-              <p className="mt-5 text-center text-[13px] font-semibold text-white/80">{t.mapCaption}</p>
+              <div className="relative mx-auto w-full max-w-sm">
+                <img src={saudiMap} alt={isAr ? "المملكة العربية السعودية" : "Saudi Arabia"} className="w-full" />
+                <p className="mt-5 text-center text-[13px] font-semibold text-white/80">{t.mapCaption}</p>
+              </div>
             </div>
           </div>
+        </PaperSheet>
+        <div aria-hidden dir="ltr" className="absolute bottom-2 sm:bottom-4 left-8 sm:left-16 z-20 flex items-end gap-1 sm:gap-2">
+          <Buddy shape="splash" color={LIME} mood="grin" className="w-12 sm:w-16 -rotate-6" />
+          <Buddy shape="heart" color="#E8794A" mood="happy" className="w-10 sm:w-14 rotate-6" />
         </div>
-        <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mt-px">
-          <path fill={NAVY} d="M0 0H1440V30C1190 62 940 10 680 40C420 66 190 60 0 26Z" />
-        </svg>
       </section>
 
       {/* ---------------- VALUES ---------------- */}
@@ -264,16 +264,10 @@ const About = () => {
 
 /* ---------- story poster pieces ---------- */
 
-const NAVY = "#2B3F45";  // the mission band, the dark slate of the footer and the nav buttons
+const NAVY = "#2B3F45";  // the mission sheet, the dark slate of the footer and the nav buttons
 const PAPER = "#F4F2E5";     // the photo's own paper color
 const INKBROWN = "#2B211C";  // quote text, as on the poster
 
-/* The home page's soft drop shape. */
-const Blob = ({ color, className }: { color: string; className: string }) => (
-  <svg viewBox="0 0 120 120" className={`absolute ${className}`}>
-    <path fill={color} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-  </svg>
-);
 
 
 export default About;

@@ -3,6 +3,8 @@ import { Mail, Twitter, Instagram, Github, School, UserRound } from "lucide-reac
 import commas from "@/assets/doodles/comma-pair.png";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { PaperSheet } from "@/components/site/PaperSheet";
+import { Buddy } from "@/components/site/Buddy";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 
@@ -103,7 +105,11 @@ const Partners = () => {
       </section>
 
       {/* ---------------- CONTACT DETAILS ---------------- */}
-      <section className="bg-[#14212A] text-white px-5 sm:px-8 md:px-14 py-16 sm:py-20"><div className="wrap">
+      {/* a slate sheet of cut paper, a buddy waving from its corner */}
+      <section className="relative z-10 px-4 sm:px-8 md:px-12 pb-16 sm:pb-20">
+        <PaperSheet color="#2B3F45" tilt={-1} className="wrap text-white">
+        <div className="relative px-7 sm:px-12 md:px-16 py-12 sm:py-16">
+        <Buddy shape="splash" color="#A9CB1E" mood="grin" className="absolute -top-8 end-8 w-16 sm:w-20 rotate-12" />
         <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.contactKicker}</span>
         <h2 className="mt-3 text-[26px] sm:text-[36px] tracking-tight leading-[1.15] text-white" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
           {t.contactTitle}
@@ -132,6 +138,7 @@ const Partners = () => {
           </div>
         </div>
         </div>
+        </PaperSheet>
       </section>
 
       <SiteFooter />

@@ -7,6 +7,10 @@ import { useSmoothScroll } from "@/lib/smoothScroll";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
+import { Buddy, ShapeField } from "@/components/site/Buddy";
+import { BUDDY_SHAPES } from "@/components/site/buddyShapes";
+import { PaperSheet } from "@/components/site/PaperSheet";
+import { ExplainerVideo } from "@/components/site/ExplainerVideo";
 import productMockup from "@/assets/product-mockup.png";
 import phoneJoin from "@/assets/phone-join.png";
 import phoneClassic from "@/assets/phone-classic.png";
@@ -16,8 +20,9 @@ import saudiMap from "@/assets/saudi-map.svg";
 /* ---------- helpers ---------- */
 
 
-const INK = "#14282D";   // the Vision 2030 band: deep ink so lime and sand light up on it
-const SLATE = "#2B3F45"; // the story band, the dark slate of the footer and the nav buttons
+const CORAL = "#E8794A"; // the one warm accent, only ever on a buddy
+const CREAM = "#F3E7C9";
+const SLATE = "#2B3F45"; // the story sheet, the dark slate of the footer and the nav buttons
 
 
 const Landing = () => {
@@ -60,6 +65,13 @@ const Landing = () => {
         feelLine1: "التفاعل مو رقم",
         feelLine2: "في تقرير",
         feelBody: "هو إحساس نبيه لكل طالب: لحظة يدخل فيها الحصة وهو متحمّس، مو طافي. لحظة يتفاعل مع السؤال لأنه يبي، مو لأنه مجبور. هذا اللي نصمّمه، سؤال ورا سؤال.",
+
+        vidKicker: "شوف بنفسك",
+        vidTitleA: "تسع ألعاب",
+        vidTitleB: "في نص دقيقة",
+        vidSoundOn: "شغّل الصوت",
+        vidSoundOff: "اكتم الصوت",
+        vidReplay: "شوفه مرة ثانية",
 
         phonesKicker: "على جوال الطالب",
         phonesTitle: "نفس السؤال، عوالم مختلفة",
@@ -109,6 +121,13 @@ const Landing = () => {
         feelLine1: "Engagement isn't a number",
         feelLine2: "on a report",
         feelBody: "It's a feeling every student needs: the moment they walk into class excited instead of checked out. The moment they answer because they want to, not because they have to. That's what we design, one question at a time.",
+
+        vidKicker: "SEE IT",
+        vidTitleA: "Nine games",
+        vidTitleB: "in thirty seconds",
+        vidSoundOn: "Sound on",
+        vidSoundOff: "Mute",
+        vidReplay: "Watch again",
 
         phonesKicker: "ON THE STUDENT'S PHONE",
         phonesTitle: "The same question, different worlds",
@@ -160,7 +179,7 @@ const Landing = () => {
             of the page up behind the nav so the top reads as one piece. Drawn
             for left-to-right and mirrored in Arabic, so they always sit on the
             mockup's side. The layer clips itself; nothing can scroll sideways. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-40 bottom-0 overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-40 -bottom-24 overflow-hidden">
           {/* entrance: each layer unfolds out of its own corner (hero-shape) */}
           <div className="absolute -top-10 -end-20 w-[300px] md:w-[600px] rtl:-scale-x-100">
               <svg viewBox="0 0 400 400" className="w-full overflow-visible">
@@ -168,15 +187,18 @@ const Landing = () => {
                 <path className="hero-shape" style={{ transformOrigin: "400px 0px", animationDelay: "200ms" }} fill={LIME} d="M400 0H154C102 34 130 104 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
               </svg>
           </div>
-          <div className="absolute -bottom-10 -end-10 w-[240px] md:w-[440px] rtl:-scale-x-100">
+          <div className="absolute bottom-20 -end-10 w-[240px] md:w-[440px] rtl:-scale-x-100">
               <svg viewBox="0 0 400 300" className="w-full overflow-visible">
-                <path className="hero-shape" style={{ transformOrigin: "400px 300px", animationDelay: "380ms" }} fill={TEAL} d="M400 300V120C360 104 318 124 296 166C266 226 198 226 148 258C118 278 98 292 90 300Z" />
+                <path className="hero-shape" style={{ transformOrigin: "400px 300px", animationDelay: "380ms" }} fill={TEAL} d="M400 300V120C360 104 318 124 296 166C266 226 198 226 148 258C108 282 94 304 122 322C176 354 330 352 400 336Z" />
               </svg>
           </div>
+          {/* a few buddies landing on the shapes: one on the lime corner, one in the oval */}
+          <Buddy shape="splash" color={CORAL} mood="grin" className="hero-pop absolute top-[150px] md:top-[230px] end-[90px] md:end-[150px] w-14 md:w-20 -rotate-12" style={{ animationDelay: "900ms" }} />
           <div className="absolute top-48 start-[38%] w-[200px] hidden lg:block">
               <svg viewBox="0 0 240 140" className="w-full overflow-visible">
                 <ellipse className="hero-draw" pathLength={1} style={{ animationDelay: "650ms" }} cx="120" cy="70" rx="112" ry="52" transform="rotate(-14 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.4" />
               </svg>
+              <Buddy shape="pebble" color={LIME} mood="wink" className="hero-pop absolute top-[28%] left-[38%] w-14" style={{ animationDelay: "1100ms" }} />
           </div>
         </div>
         <div className="wrap relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-8 lg:gap-14 px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-28 sm:pb-32">
@@ -244,181 +266,194 @@ const Landing = () => {
               alt=""
               className="w-full max-w-[520px] h-auto select-none"
             />
+            <Buddy shape="bows" color={TEAL} mood="happy" faceColor={CREAM} className="absolute -bottom-4 start-[4%] w-16 sm:w-20 rotate-6" />
           </div>
         </div>
         </div>
 
         {/* ---------------- OUR STORY ---------------- */}
-        {/* A teal band with wavy edges instead of a flat dark block. It overlaps
-            the sections above and below by the wave's height, so their shapes
-            run under the waves instead of stopping at a straight seam. The
-            waves stay inside that overlap, so no seam can show through. */}
-        <section data-skew className="relative z-10 -my-[72px] text-white">
-          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[72px] -mb-px">
-            <path fill={SLATE} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
-          </svg>
-          <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: SLATE }}>
-          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] gap-8 lg:gap-16">
-            <div>
-              <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.storyKicker}</span>
-              <h2
-                className="mt-3 text-[26px] sm:text-[34px] tracking-tight leading-[1.15]"
-                style={{ color: "#FFFFFF", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
-              >
-                {t.storyTitle}
-              </h2>
+        {/* A slate sheet of cut paper laid on the page, and on it the class as
+            it is today: a few rows of buddies, all bored. */}
+        <section data-skew className="relative z-10 px-4 sm:px-8 md:px-12 py-8 sm:py-12">
+          <PaperSheet color={SLATE} tilt={-1.2} className="wrap text-white">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 lg:gap-14 items-center px-7 sm:px-12 md:px-16 py-12 sm:py-16">
+              <div>
+                <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: SAND }}>{t.storyKicker}</span>
+                <h2
+                  className="mt-3 text-[28px] sm:text-[36px] tracking-tight leading-[1.15]"
+                  style={{ color: "#FFFFFF", fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}
+                >
+                  {t.storyTitle}
+                </h2>
+                <div className="mt-6 h-1 w-16 rounded-full" style={{ background: LIME }} />
+                <p className="mt-6 text-[17px] sm:text-[18px] leading-relaxed text-white font-medium">{t.sp1}</p>
+                <p className="mt-5 text-[15px] leading-relaxed text-white/75">{t.sp2}</p>
+                <p className="mt-5 text-[15px] leading-relaxed text-white/75">{t.sp3}</p>
+              </div>
+              {/* the class, two rows facing us, nobody awake */}
+              <div aria-hidden className="relative mx-auto w-full max-w-[420px] aspect-[5/4]">
+                <Buddy shape="pebble" color="#5C7B82" mood="meh" className="absolute top-[4%] left-[6%] w-[26%]" />
+                <Buddy shape="blob" color={SAND} mood="oh" className="absolute top-[0%] left-[37%] w-[26%] rotate-6" />
+                <Buddy shape="heart" color="#5C7B82" mood="meh" className="absolute top-[6%] left-[68%] w-[26%] -rotate-12" />
+                <Buddy shape="stack" color={SAND} mood="meh" className="absolute top-[44%] left-[0%] w-[33%] -rotate-6" />
+                <Buddy shape="buddy" color={TEAL} mood="meh" faceColor={CREAM} className="absolute top-[40%] left-[34%] w-[33%]" />
+                <Buddy shape="spool" color={SAND} mood="oh" className="absolute top-[46%] left-[67%] w-[33%] rotate-12" />
+              </div>
             </div>
-            <div className="max-w-xl relative">
-              <div className="h-1 w-16 rounded-full" style={{ background: LIME }} />
-              <p className="mt-6 text-[17px] sm:text-[19px] leading-relaxed text-white font-medium">{t.sp1}</p>
-              <p className="mt-5 text-[15px] leading-relaxed text-white/80">{t.sp2}</p>
-              <p className="mt-5 text-[15px] leading-relaxed text-white/80">{t.sp3}</p>
-            </div>
-          </div>
-          </div>
-          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[72px] -mt-px">
-            <path fill={SLATE} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
-          </svg>
+          </PaperSheet>
         </section>
 
         {/* ---------------- WHAT WE BELIEVE ---------------- */}
-        <div data-skew className="relative">
-        {/* A teal and sand wave coming in from the page edge and crossing from
-            this section into the next, so the two read as one stretch of page
-            instead of the wave being cut where a section ends. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute bottom-20 md:bottom-28 -end-8 w-[100px] md:w-[300px] rtl:-scale-x-100">
-            <svg viewBox="0 0 300 600" className="w-full">
-              <path fill={SAND} d="M300 0C226 22 186 92 196 168C206 248 104 280 84 360C62 446 160 540 300 600Z" />
-              <path fill={TEAL} d="M300 60C252 82 232 140 240 200C248 266 168 294 154 362C140 432 210 506 300 548Z" />
-            </svg>
+        {/* The answer to the bored class in the story: the same buddies, now
+            cheering at the foot of the phones. Text and the three modes on one
+            side, the phones standing on a big sand cutout on the other. */}
+        <div data-skew className="relative isolate">
+        {/* the pattern: faceless shapes down both page edges, from here to the footer */}
+        <ShapeField />
+        <section className="relative isolate overflow-hidden px-5 sm:px-8 md:px-14 pt-16 sm:pt-24 pb-20 sm:pb-28">
+          <div className="wrap grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-12 lg:gap-16 items-center">
+            <div>
+              <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
+                {t.feelKicker}
+              </span>
+              <h2
+                className="mt-4 text-[32px] sm:text-[44px] md:text-[52px] tracking-tight leading-[1.12]"
+                style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: SLATE }}
+              >
+                <span className="block">{t.feelLine1}</span>
+                <span className="block italic" style={{ color: "#8FC44A" }}>{t.feelLine2}</span>
+              </h2>
+              <p className="mt-6 max-w-xl text-[16px] sm:text-[18px] leading-relaxed text-black/70">{t.feelBody}</p>
+              <ul className="mt-8 space-y-3">
+                {([
+                  ["pebble", TEAL, "smile", t.phoneJoinCap],
+                  ["splash", LIME, "grin", t.phoneClassicCap],
+                  ["coral", CORAL, "wink", t.phoneCryptoCap],
+                ] as const).map(([shape, color, mood, cap]) => (
+                  <li key={cap} className="flex items-center gap-3">
+                    <Buddy shape={shape} color={color} mood={mood} faceColor={color === TEAL ? CREAM : undefined} className="w-10 h-10 shrink-0" />
+                    <span className="text-[20px] sm:text-[22px]" style={{ color: SLATE, fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{cap}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Three real student screens, fanned on a sand cutout: the side
+                phones tuck behind the center one so the three read as one
+                object. Forced LTR so the fan stays symmetrical in Arabic. */}
+            <div className="relative pb-10">
+              <svg aria-hidden viewBox="-1.05 -1.05 2.1 2.1" className="absolute inset-x-[2%] top-[4%] w-[96%] -z-10 rotate-6">
+                <path d={BUDDY_SHAPES.blob.d} fill="#E3CC98" />
+              </svg>
+              <div dir="ltr" className="flex items-end justify-center pt-6">
+                <img
+                  src={phoneJoin}
+                  alt={t.phoneJoinCap}
+                  loading="lazy"
+                  className="w-[30%] max-w-[190px] h-auto select-none origin-bottom -rotate-[9deg] translate-y-3 -mr-[6%] drop-shadow-[0_18px_30px_rgba(20,33,42,0.28)]"
+                />
+                <img
+                  src={phoneClassic}
+                  alt={t.phoneClassicCap}
+                  loading="lazy"
+                  className="relative z-10 w-[34%] max-w-[220px] h-auto select-none drop-shadow-[0_22px_36px_rgba(20,33,42,0.32)]"
+                />
+                <img
+                  src={phoneCrypto}
+                  alt={t.phoneCryptoCap}
+                  loading="lazy"
+                  className="w-[30%] max-w-[190px] h-auto select-none origin-bottom rotate-[9deg] translate-y-3 -ml-[6%] drop-shadow-[0_18px_30px_rgba(20,33,42,0.28)]"
+                />
+              </div>
+              {/* the class, awake now, at the foot of the phones */}
+              <div aria-hidden dir="ltr" className="absolute bottom-0 inset-x-0 z-20 flex items-end justify-center gap-1 sm:gap-3">
+                <Buddy shape="sprout" color={TEAL} mood="grin" faceColor={CREAM} className="w-16 sm:w-24 -rotate-6" />
+                <Buddy shape="heart" color={CORAL} mood="happy" className="w-14 sm:w-20 translate-y-1" />
+                <Buddy shape="maple" color={LIME} mood="oh" className="w-16 sm:w-24 rotate-6" />
+                <Buddy shape="tulips" color={SLATE} mood="wink" faceColor={CREAM} className="w-14 sm:w-20" />
+              </div>
+            </div>
           </div>
-        </div>
-        <section className="relative isolate overflow-hidden px-5 sm:px-8 md:px-14 pt-24 sm:pt-32 pb-12 sm:pb-16">
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-            <div className="absolute -top-12 -start-16 w-[200px] md:w-[360px] ltr:-scale-x-100">
-              <svg viewBox="0 0 400 400" className="w-full">
-                <path fill={SAND} d="M400 0H70C20 40 48 118 100 172C154 228 132 300 204 356C254 396 338 404 400 392Z" />
-                <path fill={LIME} d="M400 0H154C102 34 130 104 174 150C222 200 202 262 266 310C308 342 360 340 400 330Z" />
-              </svg>
-            </div>
-            {/* the opposite upper corner: a teal wave over sand, mirroring the lime one */}
-            <div className="absolute -top-12 -end-16 w-[200px] md:w-[360px] rtl:-scale-x-100">
-              <svg viewBox="0 0 400 400" className="w-full">
-                <path fill={SAND} d="M400 0H96C52 30 66 96 112 140C164 190 150 252 214 300C262 336 344 344 400 332Z" />
-                <path fill={TEAL} d="M400 0H178C140 26 156 84 192 120C232 160 222 214 274 252C314 282 362 284 400 276Z" />
-              </svg>
-            </div>
-            {/* beside the phones, on the lime side: a thin oval with a teal and a lime drop */}
-            <div className="absolute top-[54%] start-[6%] w-[220px] h-[180px] hidden md:block">
-              <svg viewBox="0 0 240 140" className="absolute inset-x-0 top-0 w-full">
-                <ellipse cx="120" cy="70" rx="112" ry="52" transform="rotate(-20 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.4" />
-              </svg>
-              <svg viewBox="0 0 120 120" className="absolute top-[46%] start-[14%] w-[64px]">
-                <path fill={TEAL} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-              </svg>
-              <svg viewBox="0 0 120 120" className="absolute top-[6%] end-[6%] w-[34px]">
-                <path fill={LIME} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-              </svg>
-            </div>
-          </div>
-          <div className="wrap max-w-3xl mx-auto text-center">
-            <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
-              {t.feelKicker}
-            </span>
+        </section>
+
+        {/* ---------------- THE GAMES, ON VIDEO ---------------- */}
+        {/* The 30-second explainer on a slate sheet, a buddy on each corner. */}
+        <section className="relative px-4 sm:px-8 md:px-12 pt-6 sm:pt-10 pb-10 sm:pb-14">
+          <div className="wrap text-center">
+            <span className={`text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.vidKicker}</span>
             <h2
-              className="mt-4 text-[32px] sm:text-[48px] md:text-[58px] tracking-tight leading-[1.12]"
-              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: "#2B3F45" }}
+              className="mt-3 text-[30px] sm:text-[42px] md:text-[50px] tracking-tight leading-[1.12]"
+              style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif", color: SLATE }}
             >
-              <span className="block">{t.feelLine1}</span>
-              <span className="block italic" style={{ color: "#8FC44A" }}>{t.feelLine2}</span>
+              <span>{t.vidTitleA} </span>
+              <span className="italic" style={{ color: "#8FC44A" }}>{t.vidTitleB}</span>
             </h2>
           </div>
-
-          {/* Three real student screens, fanned: the side phones tuck behind
-              the center one so the three read as a single object. Forced LTR
-              so the fan stays symmetrical in Arabic. */}
-          <div dir="ltr" className="wrap mt-14 sm:mt-20 flex items-end justify-center">
-            <img
-              src={phoneJoin}
-              alt={t.phoneJoinCap}
-              loading="lazy"
-              className="w-[27%] max-w-[196px] h-auto select-none origin-bottom -rotate-[9deg] translate-y-3 -mr-[6%] drop-shadow-[0_18px_30px_rgba(20,33,42,0.28)]"
-            />
-            <img
-              src={phoneClassic}
-              alt={t.phoneClassicCap}
-              loading="lazy"
-              className="relative z-10 w-[31%] max-w-[226px] h-auto select-none drop-shadow-[0_22px_36px_rgba(20,33,42,0.32)]"
-            />
-            <img
-              src={phoneCrypto}
-              alt={t.phoneCryptoCap}
-              loading="lazy"
-              className="w-[27%] max-w-[196px] h-auto select-none origin-bottom rotate-[9deg] translate-y-3 -ml-[6%] drop-shadow-[0_18px_30px_rgba(20,33,42,0.28)]"
-            />
+          <div className="relative mx-auto mt-10 sm:mt-12 max-w-4xl">
+            <PaperSheet color={SLATE} tilt={-1} edge={1}>
+              <div className="p-3 sm:p-5 md:p-6">
+                <ExplainerVideo soundOn={t.vidSoundOn} soundOff={t.vidSoundOff} replay={t.vidReplay} />
+              </div>
+            </PaperSheet>
+            <Buddy shape="splash" color={LIME} mood="grin" className="absolute -top-8 sm:-top-10 -start-4 sm:-start-8 w-16 sm:w-24 -rotate-12" />
+            <Buddy shape="heart" color={CORAL} mood="happy" className="absolute -bottom-7 sm:-bottom-9 -end-3 sm:-end-7 w-14 sm:w-20 rotate-12" />
           </div>
-
-          <p className="mt-12 sm:mt-14 mx-auto max-w-2xl text-center text-[17px] sm:text-[20px] leading-relaxed text-black/70 font-medium">
-            {t.feelBody}
-          </p>
         </section>
 
         {/* ---------------- VISION 2030 ---------------- */}
-        {/* A deep ink band (the story keeps the teal one above, so the two
-            don't read as one). A huge outlined 2030 sits behind the text, and
-            each of the Vision's three pillars gets what nefelha does for it.
-            Columns split by thin rules, no cards. */}
-        <section className="relative z-10 -mt-6 sm:-mt-10 -mb-12 text-white">
-          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[56px] -mb-px">
-            <path fill={INK} d="M0 40C260 4 520 60 800 28C1060 0 1260 12 1440 30V72H0Z" />
-          </svg>
-          <div className="relative isolate overflow-hidden px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: INK }}>
+        {/* A sand sheet of cut paper with the class gathered at its bottom corner. A
+            huge outlined 2030 sits behind the text, and each of the Vision's
+            three pillars gets what nefelha does for it, split by thin rules. */}
+        <section className="relative z-10 px-4 sm:px-8 md:px-12 py-10 sm:py-14" style={{ color: SLATE }}>
+          <PaperSheet color={SAND} tilt={0.9} edge={1} className="wrap">
+          {/* the class this is for, gathered at the bottom corner of the sheet */}
+          <div aria-hidden className="absolute bottom-6 sm:bottom-8 end-8 sm:end-14 z-10 flex items-end gap-1 sm:gap-2">
+            <Buddy shape="splash" color={LIME} mood="grin" className="w-14 sm:w-20 -rotate-6" />
+            <Buddy shape="pinwheel" color={TEAL} mood="happy" faceColor={CREAM} className="w-12 sm:w-16" />
+            <Buddy shape="coral" color={CORAL} mood="smile" className="w-14 sm:w-[76px] rotate-6" />
+            <Buddy shape="cross" color={SLATE} mood="wink" faceColor={CREAM} className="w-12 sm:w-16 -rotate-3" />
+          </div>
+          <div className="relative isolate overflow-hidden px-7 sm:px-12 md:px-16 py-14 sm:py-20">
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
               <span
                 className="absolute top-2 -end-4 sm:end-0 select-none leading-none font-extrabold tracking-tight text-[30vw] lg:text-[19rem]"
-                style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(169,203,30,0.16)", fontFamily: "'Outfit', 'Almarai', sans-serif" }}
+                style={{ color: "transparent", WebkitTextStroke: "1.5px rgba(43,63,69,0.14)", fontFamily: "'Outfit', 'Almarai', sans-serif" }}
               >
                 2030
               </span>
-              <svg viewBox="0 0 120 120" className="absolute bottom-10 -start-6 w-[70px] md:w-[110px]">
-                <path fill={TEAL} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-              </svg>
             </div>
 
             <div className="wrap">
               <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] gap-6 lg:gap-16 items-end">
                 <div>
-                  <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: LIME }}>{t.visKicker}</span>
+                  <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`} style={{ color: TEAL }}>{t.visKicker}</span>
                   <h2 className="mt-4 text-[32px] sm:text-[46px] md:text-[54px] tracking-tight leading-[1.1]" style={{ fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>
                     <span className="block">{t.visTitleA}</span>
-                    <span className="block italic" style={{ color: LIME }}>{t.visTitleB}</span>
+                    <span className="block italic" style={{ color: TEAL }}>{t.visTitleB}</span>
                   </h2>
                 </div>
-                <p className="text-[15px] leading-relaxed text-white/70">{t.visIntro}</p>
+                <p className="text-[15px] leading-relaxed text-black/65">{t.visIntro}</p>
               </div>
 
               {/* the three pillars */}
               <ol className="mt-12 sm:mt-16 grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
                 {t.visItems.map(([pillar, head, body], i) => (
-                  <li key={pillar} className="border-t border-white/15 pt-6">
-                    <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.2em]"}`} style={{ color: SAND }}>
+                  <li key={pillar} className="border-t border-black/15 pt-6">
+                    <span className={`text-[12px] font-semibold ${isAr ? "tracking-normal" : "tracking-[0.2em]"}`} style={{ color: SLATE }}>
                       {t.visPillar} {isAr ? ["١", "٢", "٣"][i] : `0${i + 1}`}
-                      <span className="mx-2 text-white/30">/</span>
-                      <span style={{ color: LIME }}>{pillar}</span>
+                      <span className="mx-2 text-black/25">/</span>
+                      <span style={{ color: TEAL }}>{pillar}</span>
                     </span>
                     <h3 className="mt-4 text-[20px] sm:text-[22px] font-semibold leading-snug">{head}</h3>
-                    <p className="mt-2.5 text-[15px] leading-relaxed text-white/65">{body}</p>
+                    <p className="mt-2.5 text-[15px] leading-relaxed text-black/65">{body}</p>
                   </li>
                 ))}
               </ol>
 
-              <p className="mt-14 text-[12.5px] leading-relaxed text-white/40 max-w-2xl">{t.visNote}</p>
+              <p className="mt-14 text-[12.5px] leading-relaxed text-black/45 max-w-2xl">{t.visNote}</p>
             </div>
           </div>
-          <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[56px] -mt-px">
-            <path fill={INK} d="M0 0H1440V30C1190 62 940 10 680 40C420 66 190 60 0 26Z" />
-          </svg>
+          </PaperSheet>
         </section>
 
         {/* ---------------- FOR WHO ---------------- */}
@@ -428,9 +463,7 @@ const Landing = () => {
             <svg viewBox="0 0 240 140" className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[170px]">
               <ellipse cx="120" cy="70" rx="112" ry="52" transform="rotate(18 120 70)" fill="none" stroke="#12262B" strokeWidth="1.5" opacity="0.35" />
             </svg>
-            <svg viewBox="0 0 120 120" className="absolute top-[52%] left-[54%] w-[56px]">
-              <path fill={LIME} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-            </svg>
+            <Buddy shape="hill" color={LIME} mood="smile" className="absolute top-[50%] left-[53%] w-[64px]" />
           </div>
           <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
             <div>

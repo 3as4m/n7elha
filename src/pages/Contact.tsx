@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Mail, Phone, School, UserRound, GraduationCap } from "lucide-react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { Buddy } from "@/components/site/Buddy";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 import logoMark from "@/assets/logo-mark.png";
@@ -80,7 +81,11 @@ const Contact = () => {
       </div>
 
       {/* ---------------- HERO ---------------- */}
-      <section className="wrap px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14">
+      <section className="wrap relative px-5 sm:px-8 md:px-14 pt-10 sm:pt-16 pb-14">
+        <div aria-hidden className="absolute end-[10%] top-[60%] hidden md:flex items-end gap-2">
+          <Buddy shape="pebble" color="#0E7C7B" mood="grin" faceColor="#F3E7C9" className="w-16 -rotate-6" />
+          <Buddy shape="coral" color="#E8794A" mood="oh" className="w-14 rotate-12" />
+        </div>
         <span className={`text-[12px] font-semibold text-[#2B3F45] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>
           {t.kicker}
         </span>

@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { Buddy } from "@/components/site/Buddy";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 
@@ -69,6 +70,7 @@ const Blog = () => {
           <div className="text-black/50 text-sm">...</div>
         ) : posts.length === 0 ? (
           <div className="rounded-2xl border-2 border-[hsl(var(--nb-border))] bg-white p-10 text-center text-black/50 shadow-[4px_4px_0_0_hsl(var(--nb-border))]">
+            <Buddy shape="tulips" color="#A9CB1E" mood="oh" className="mx-auto mb-4 w-16" />
             {t.empty}
           </div>
         ) : (

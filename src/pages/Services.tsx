@@ -5,6 +5,9 @@ import { LIME, SAND, TEAL } from "@/components/teacher/DashboardAccents";
 import { SQUARE_TYPES } from "@/lib/physicalGames";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import { PaperSheet } from "@/components/site/PaperSheet";
+import { Buddy } from "@/components/site/Buddy";
+import type { BuddyShape } from "@/components/site/buddyShapes";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Seo } from "@/components/Seo";
 import phoneClassic from "@/assets/phone-classic.png";
@@ -180,8 +183,8 @@ const Services = () => {
         <p className="mt-3 mx-auto max-w-md text-[15px] leading-relaxed text-black/65">{t.ctaSub}</p>
         <Link
           to="/contact"
-          className="mt-7 inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold text-white transition-transform hover:-translate-y-0.5"
-          style={{ background: INK }}
+          className="mt-7 inline-flex items-center gap-2 rounded-full border-2 border-[hsl(var(--nb-border))] px-6 py-3 text-[15px] font-semibold text-white shadow-[4px_4px_0_0_hsl(var(--nb-border))] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))] transition-all"
+          style={{ background: SLATE }}
         >
           {t.ctaLink}
           <ArrowUpRight className="h-4 w-4" />
@@ -199,8 +202,8 @@ const num = (i: number, isAr: boolean) => (isAr ? ["١", "٢", "٣", "٤", "٥"]
 
 type Tone = "cream" | "teal" | "ink";
 
-/* One service. Cream bands sit straight on the page; teal and ink bands get
-   wavy top and bottom edges like the home page's story band. */
+/* One service. Cream ones sit straight on the page; teal and ink ones are
+   sheets of cut paper laid on it, like the home page's story sheet. */
 const ServiceBand = ({
   id, tone, flip, n, s, labels, isAr, visual,
 }: {
@@ -260,14 +263,10 @@ const ServiceBand = ({
     );
   }
   return (
-    <section id={id} className="scroll-mt-24 relative z-10 my-4">
-      <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mb-px">
-        <path fill={bg} d="M0 44C220 6 470 64 760 30C1010 2 1240 8 1440 26V72H0Z" />
-      </svg>
-      <div className="px-5 sm:px-8 md:px-14 py-14 sm:py-20" style={{ background: bg }}>{body}</div>
-      <svg aria-hidden viewBox="0 0 1440 72" preserveAspectRatio="none" className="relative block w-full h-[48px] sm:h-[64px] -mt-px">
-        <path fill={bg} d="M0 0H1440V36C1200 70 960 14 690 46C430 74 200 64 0 30Z" />
-      </svg>
+    <section id={id} className="scroll-mt-24 relative z-10 px-4 sm:px-8 md:px-12 py-8 sm:py-12">
+      <PaperSheet color={bg!} tilt={flip ? 1 : -1} edge={flip ? 1 : 0} className="wrap">
+        <div className="px-7 sm:px-12 md:px-16 py-12 sm:py-16">{body}</div>
+      </PaperSheet>
     </section>
   );
 };
@@ -277,10 +276,11 @@ const ServiceBand = ({
    board, a live ranking). The question cards and the ranking screen use the
    nav's hard border and offset shadow. */
 
+/* A cut-paper buddy from the home page; its shape follows its color so the
+   same color always reads as the same character. */
+const BLOB_SHAPE: Record<string, BuddyShape> = { [LIME]: "splash", [TEAL]: "bush", [SAND]: "cross" };
 const Blob = ({ color, className }: { color: string; className: string }) => (
-  <svg aria-hidden viewBox="0 0 120 120" className={`absolute ${className}`}>
-    <path fill={color} d="M64 6C94 8 116 34 112 66C108 98 82 116 52 112C22 108 4 84 8 56C12 26 34 4 64 6Z" />
-  </svg>
+  <Buddy shape={BLOB_SHAPE[color] ?? "pebble"} color={color} mood={color === TEAL ? "happy" : "smile"} faceColor={color === TEAL ? "#F3E7C9" : undefined} className={`absolute ${className}`} />
 );
 
 const PhonesVisual = () => (
