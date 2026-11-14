@@ -1,6 +1,4 @@
-import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import gsap from "gsap";
 import { useAuth } from "@/lib/auth";
 import { useTranslation } from "react-i18next";
 import { ArrowUpRight, Mail, Github, Twitter, Instagram } from "lucide-react";
@@ -8,57 +6,8 @@ import logoMark from "@/assets/logo-mark.png";
 import logoMask from "@/assets/logo-mark-mask.webp";
 import { LIME } from "@/components/teacher/DashboardAccents";
 
-/* At the very bottom of the page, scrolling on (wheel or finger) stretches
-   the footer's content up a little, and it slides straight back the moment
-   you stop, so the page doesn't just stop dead. */
-const useBottomStretch = (content: React.RefObject<HTMLElement>, logo: React.RefObject<HTMLElement>) => {
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const atBottom = () => window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
-    let pull = 0, touchY: number | null = null;
-    let release: ReturnType<typeof setTimeout>;
-    const show = () => {
-      [content.current, logo.current].forEach(el => el && gsap.to(el, { y: -pull, duration: 0.2, ease: "power2.out", overwrite: true }));
-    };
-    const back = () => {
-      pull = 0;
-      [content.current, logo.current].forEach(el => el && gsap.to(el, { y: 0, duration: 0.3, ease: "power2.out", overwrite: true }));
-    };
-    const add = (d: number) => {
-      // each extra push counts for less, so it stretches and never runs away
-      pull = Math.min(80, pull + d * (1 - pull / 90) * 0.35);
-      show();
-      clearTimeout(release);
-      release = setTimeout(back, 90);
-    };
-    const onWheel = (e: WheelEvent) => { if (e.deltaY > 0 && atBottom()) add(e.deltaY); };
-    const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
-    const onTouchMove = (e: TouchEvent) => {
-      if (touchY == null) return;
-      const y = e.touches[0].clientY, d = touchY - y;
-      touchY = y;
-      if (d > 0 && atBottom()) add(d * 1.4);
-    };
-    const onTouchEnd = () => { touchY = null; clearTimeout(release); back(); };
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd);
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      clearTimeout(release);
-    };
-  }, [content, logo]);
-};
-
 export const SiteFooter = () => {
   const { user } = useAuth();
-  const contentRef = useRef<HTMLDivElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-  useBottomStretch(contentRef, logoRef);
   const { i18n } = useTranslation();
   const isAr = i18n.language === "ar";
 
@@ -117,13 +66,12 @@ export const SiteFooter = () => {
         {/* the logo exactly as drawn, dot and all (never mirrored, tilted or
             drawn on), only larger, in flat white, cropped by the bottom corner */}
         <div
-          ref={logoRef}
           aria-hidden
           className="pointer-events-none absolute -bottom-[70px] end-5 w-[200px] sm:-bottom-[90px] sm:end-8 sm:w-[280px] lg:-bottom-[110px] lg:end-12 lg:w-[380px] aspect-[616/799]"
           style={{ background: "#FFFFFF", WebkitMaskImage: `url(${logoMask})`, maskImage: `url(${logoMask})`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat" }}
         />
 
-        <div ref={contentRef} className="wrap relative">
+        <div className="wrap relative">
           <div className="flex items-center gap-4">
             <span className="text-[13px] text-white/60 shrink-0">{t.talk}</span>
             <span className="h-px flex-1 bg-white/15" />

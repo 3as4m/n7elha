@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowUpRight, FileText, Check } from "lucide-react";
 import { LIME, SAND, TEAL } from "@/components/teacher/DashboardAccents";
-import { SQUARE_TYPES } from "@/lib/physicalGames";
 import { SiteNav } from "@/components/site/SiteNav";
 import { PageShapes } from "@/components/site/PageShapes";
+import printedBoard from "@/assets/printed-board.webp";
 import { PaperSheet } from "@/components/site/PaperSheet";
 import { Buddy } from "@/components/site/Buddy";
 import type { BuddyShape } from "@/components/site/buddyShapes";
@@ -349,22 +349,16 @@ const TeachersVisual = ({ isAr }: { isAr: boolean }) => {
   );
 };
 
-// a fixed path of squares, like a printed board laid out on the table
-const BOARD = [1, 2, 4, 3, 1, 5, 2, 6, 1, 3, 4, 2, 5, 1, 6, 3, 2, 1, 4, 5, 3, 2, 6, 1];
-
+// the printed board on the table, a team around it and the one phone scanning
+// a square, printed out and laid on the sheet with the buttons' hard shadow
 const BoardVisual = () => (
-  <div className="relative mx-auto max-w-md">
-    <div dir="ltr" className="grid grid-cols-6 gap-2 sm:gap-2.5 rotate-[-4deg]">
-      {BOARD.map((code, i) => {
-        const sq = SQUARE_TYPES[code];
-        const fill = code === 2 ? "#F4F1EA" : sq.color;
-        return (
-          <span key={i} className="aspect-square rounded-lg flex items-center justify-center text-[18px] font-extrabold" style={{ background: fill, color: code === 2 ? INK : "#FFFFFF" }}>
-            {sq.kind === "wildcard" ? "?" : sq.kind === "double" ? "x2" : ""}
-          </span>
-        );
-      })}
-    </div>
+  <div className="relative mx-auto max-w-lg">
+    <img
+      src={printedBoard}
+      alt=""
+      loading="lazy"
+      className="w-full h-auto rounded-2xl rotate-[-2deg] border-2 border-[hsl(var(--nb-border))] shadow-[6px_6px_0_0_#0E7C7B] bg-white"
+    />
   </div>
 );
 
