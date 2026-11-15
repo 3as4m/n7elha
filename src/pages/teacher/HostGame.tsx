@@ -74,7 +74,7 @@ const MODES: { id: GameMode; icon: React.ReactNode; label: string; labelAr: stri
     id: "dontlookdown",
     icon: <ChevronUp className="h-6 w-6" strokeWidth={2} />,
     label: "Don't Look Down",
-    labelAr: "لا تنظر للأسفل",
+    labelAr: "لا تشوف تحت",
     desc: "Climb a tower — answers are the fuel for every jump",
     descAr: "تسلّق البرج — الإجابات هي وقود كل قفزة",
     accent: "#2f6f8f",

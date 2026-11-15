@@ -26,6 +26,7 @@
 import { CELL, type Territory, type GoldenDrop } from "./paintFight";
 import { resolveFace } from "./avatarIdentity";
 import { drawAvatar } from "./avatarCanvas";
+import { BUDDY_SHAPES } from "@/components/site/buddyShapes";
 
 // An art-room table: a sheet of paper taped down on a wooden desk. The paper
 // is the arena; the grain and the pencil dot grid are there so movement reads
@@ -400,16 +401,12 @@ export const drawPlayer = (
 /** A speed-boosted player: a pulsing gold halo and streaks flying off behind. */
 const drawBoost = (ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, size: number) => {
   const now = performance.now();
-  const r = size * 0.75 + Math.sin(now / 90) * size * 0.05;
   ctx.save();
-  const glow = ctx.createRadialGradient(x, y, size * 0.3, x, y, r * 1.6);
-  glow.addColorStop(0, "rgba(255,210,70,0.55)");
-  glow.addColorStop(1, "rgba(255,210,70,0)");
-  ctx.fillStyle = glow;
-  ctx.beginPath(); ctx.arc(x, y, r * 1.6, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = "rgba(247,197,49,0.9)";
+  // Speed lines behind the player, drawn like the rest of the sheet: flat
+  // strokes in the dark ink, no glow.
+  ctx.strokeStyle = PF.ink;
   ctx.lineCap = "round";
-  ctx.lineWidth = Math.max(1.5, size * 0.07);
+  ctx.lineWidth = Math.max(2, size * 0.09);
   const bx = -Math.cos(angle), by = -Math.sin(angle);
   const px = -by, py = bx;
   for (let i = -1; i <= 1; i++) {
@@ -698,8 +695,14 @@ export class PaintFx {
 const GOLD = "#F7C531";
 const GOLD_DEEP = "#B7861A";
 
-/** A fat drop of golden paint standing on the sheet: pops in, bobs and glints,
- *  and blinks for its last second and a half so nobody drives to a ghost. */
+// A speed sticker: a gold cut-paper star (one of the site's buddy shapes)
+// with a dark lightning bolt, the site's dark outline and a hard offset
+// shadow, like a sticker stuck on the sheet. No glow, no gloss.
+const STAR = new Path2D(BUDDY_SHAPES.splash.d);
+const BOLT = new Path2D("M0.12 -0.62L-0.34 0.08H-0.02L-0.14 0.62L0.34 -0.1H0.02Z");
+
+/** Pops in, bobs and wobbles, and blinks for its last second and a half so
+ *  nobody drives to a ghost. */
 export const drawGoldenDrops = (
   ctx: CanvasRenderingContext2D, drops: GoldenDrop[], offX: number, offY: number, scale: number, now = Date.now(),
 ) => {
@@ -709,44 +712,25 @@ export const drawGoldenDrops = (
     const pop = Math.min(1, age / 260);
     const grow = pop < 1 ? 1 - Math.pow(1 - pop, 3) * Math.cos(pop * 7) * 0.4 : 1;
     if (left < 1500 && Math.floor(left / 150) % 2 === 0) continue;
-    const bob = Math.sin(now / 260) * 2.2;
+    const bob = Math.sin(now / 300 + d.bornAt) * 1.8;
     const x = offX + d.x * scale, y = offY + (d.y + bob) * scale;
-    const s = 11 * scale * grow;
+    const s = 13 * scale * grow;
+    const ink = PF.ink;
 
     ctx.save();
-    // Glow.
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, s * 3.2);
-    glow.addColorStop(0, "rgba(255,214,90,0.55)");
-    glow.addColorStop(1, "rgba(255,214,90,0)");
-    ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(x, y, s * 3.2, 0, Math.PI * 2); ctx.fill();
-    // Shadow.
-    ctx.fillStyle = "rgba(18,58,51,0.2)";
-    ctx.beginPath(); ctx.ellipse(x, offY + (d.y + 12) * scale, s * 0.9, s * 0.32, 0, 0, Math.PI * 2); ctx.fill();
-    // Drop, point up.
-    const tip = s * 1.8, phi = Math.acos(1 / 1.8);
-    ctx.beginPath();
-    ctx.moveTo(x, y - tip);
-    ctx.arc(x, y, s, -Math.PI / 2 + phi, -Math.PI / 2 - phi + Math.PI * 2);
-    ctx.closePath();
-    const body = ctx.createLinearGradient(x - s, y - tip, x + s, y + s);
-    body.addColorStop(0, "#FFE58A");
-    body.addColorStop(1, GOLD);
-    ctx.fillStyle = body;
-    ctx.fill();
-    ctx.lineWidth = Math.max(1.5, s * 0.16);
+    ctx.translate(x, y);
+    ctx.rotate(Math.sin(now / 420 + d.bornAt) * 0.14);
+    ctx.scale(s, s);
     ctx.lineJoin = "round";
-    ctx.strokeStyle = GOLD_DEEP;
-    ctx.stroke();
-    // Glint.
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
-    ctx.beginPath(); ctx.ellipse(x - s * 0.35, y - s * 0.2, s * 0.2, s * 0.34, -0.4, 0, Math.PI * 2); ctx.fill();
-    const tw = (Math.sin(now / 180 + d.bornAt) + 1) / 2;
-    ctx.globalAlpha = tw;
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = Math.max(1, s * 0.12);
-    const sx = x + s * 1.1, sy = y - s * 1.2, sl = s * 0.45;
-    ctx.beginPath(); ctx.moveTo(sx - sl, sy); ctx.lineTo(sx + sl, sy); ctx.moveTo(sx, sy - sl); ctx.lineTo(sx, sy + sl); ctx.stroke();
+    // hard shadow, then the star, then its outline and the bolt
+    ctx.save(); ctx.translate(0.14, 0.18); ctx.fillStyle = ink; ctx.fill(STAR); ctx.restore();
+    ctx.fillStyle = GOLD;
+    ctx.fill(STAR);
+    ctx.lineWidth = 0.12;
+    ctx.strokeStyle = ink;
+    ctx.stroke(STAR);
+    ctx.fillStyle = ink;
+    ctx.fill(BOLT);
     ctx.restore();
   }
 };

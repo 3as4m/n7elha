@@ -599,7 +599,7 @@ const DontLookDownGame = ({ sessionId, studentId }: Props) => {
         <ChevronUp className="h-14 w-14" style={{ color: "#0f172a" }} />
         <div className="px-5 py-4 rounded-2xl shadow-lg" style={{ background: "rgba(255,255,255,0.93)" }}>
           <div className="text-[10px] tracking-[0.4em] uppercase mb-2" style={{ color: "#64748b" }}>
-            {ar ? "لا تنظر للأسفل" : "DON'T LOOK DOWN"}
+            {ar ? "لا تشوف تحت" : "DON'T LOOK DOWN"}
           </div>
           <div className="text-xl font-extrabold">{me?.name ?? "—"}</div>
         </div>

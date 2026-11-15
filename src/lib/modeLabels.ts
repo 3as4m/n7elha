@@ -7,7 +7,7 @@ export const MODE_LABEL: Record<string, { ar: string; en: string }> = {
   hotpotato: { ar: "مرّرها", en: "Pass It" },
   lavafloor: { ar: "أرضية الحمم", en: "Lava Floor" },
   humansvszombies: { ar: "البشر ضد الزومبي", en: "Humans vs Zombies" },
-  dontlookdown: { ar: "لا تنظر للأسفل", en: "Don't Look Down" },
+  dontlookdown: { ar: "لا تشوف تحت", en: "Don't Look Down" },
   paintfight: { ar: "معركة الطلاء", en: "Paint Fight" },
   physical: { ar: "الألعاب الفيزيائية", en: "Physical" },
   homework: { ar: "واجب منزلي", en: "Homework" },
