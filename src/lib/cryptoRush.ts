@@ -5,16 +5,16 @@
 
 // English pool: trendy internet-slang flavored, keeps the "hacker handle" feel
 export const PASSWORD_POOL_EN = [
-  "skibidi_toilet", "sigma_grindset", "rizz_god_67", "gyatt_alert", "no_cap_frfr",
+  "skibidi_toilet", "sigma_grindset", "rizz_god_67", "aura_farming", "no_cap_frfr",
   "ohio_rizz", "goated_67", "npc_moment", "brainrot_king", "aura_100k",
   "delulu_mode", "mewing_maxx", "sigma_67", "chad_energy", "labubu_army",
   "z3r0_c00l", "matrix_42", "quantum_leap", "cyber_punk_77", "hyper_drive_8",
 ];
 // Arabic pool: ~70% Arabic slang, ~30% trendy English mixed in
 export const PASSWORD_POOL_AR = [
-  "زعيم_67", "فشخ_99", "أسطورة_42", "وحش_الشبكة", "نار_تجنن",
+  "زعيم_67", "صقر_99", "أسطورة_42", "وحش_الشبكة", "نار_تجنن",
   "جامد_قوي", "ملك_البيانات", "خطير_بزيادة", "طاقة_زعيم", "هكر_شبح",
-  "sigma_67", "gyatt_alert", "labubu_67", "goated_af",
+  "sigma_67", "aura_farming", "labubu_67", "goated_irl",
 ];
 
 export const passwordChoices = (ar: boolean, n = 5, except: string[] = []) =>
