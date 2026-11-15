@@ -774,14 +774,14 @@ const HumansVsZombiesGame = ({ sessionId, studentId, preview = false }: Props) =
         if (d.peer) {
           const q = d.peer;
           drawAgent(ctx, v.offX + q.x * scale, v.offY + q.y * scale, R, {
-            face: q.face, color: q.color, zombie: q.team === "zombie", angle: q.angle, moving: q.moving,
+            face: q.face, name: q.name, color: q.color, zombie: q.team === "zombie", angle: q.angle, moving: q.moving,
             stunned: (now < q.stunUntil && now >= q.cureUntil) || q.ko, shield: q.shield, sprint: q.sprint, turning: now < q.turningUntil, curing: now < q.cureUntil,
             frozen: now < q.frozenUntil, slowed: now < q.slowUntil,
             alpha: q.ko ? 0.45 : now < q.graceUntil && Math.floor(nowP / 120) % 2 ? 0.35 : 1,
           }, nowP);
         } else {
           drawAgent(ctx, v.offX + p.x * scale, v.offY + p.y * scale, R, {
-            face: faceRef.current ?? undefined, color: colorRef.current, zombie, angle: zombie ? p.angle : p.aim, moving: p.moving,
+            face: faceRef.current ?? undefined, name: nameRef.current, color: colorRef.current, zombie, angle: zombie ? p.angle : p.aim, moving: p.moving,
             stunned: (now < p.stunUntil && now >= p.cureUntil) || p.koLeft > 0, shield: p.shield, sprint: now < p.sprintUntil, turning: now < p.turningUntil, curing: now < p.cureUntil,
             frozen: now < p.frozenUntil, slowed: now < p.slowUntil,
             alpha: p.koLeft > 0 ? 0.55 : now < p.graceUntil && Math.floor(nowP / 120) % 2 ? 0.35 : 1,

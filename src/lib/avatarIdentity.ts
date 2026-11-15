@@ -55,3 +55,8 @@ export const resolveColor = (name: string, colorIndex?: number | null) =>
   colorIndex != null ? CIRCLE_COLORS[colorIndex] : colorForName(name);
 export const resolveFace = (name: string, faceIndex?: number | null) =>
   faceIndex != null ? FACES[faceIndex] : faceForName(name);
+
+// The avatar's outline: one of the site's cut-paper buddy shapes instead of a
+// circle. It comes from the name alone (a third seed), so it needs no column
+// and every screen agrees on it without asking the database.
+export const shapeIndexForName = (name: string, count: number) => hash(name, 0x27d4eb2f) % count;

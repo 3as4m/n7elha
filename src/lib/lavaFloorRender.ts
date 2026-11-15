@@ -8,12 +8,13 @@
 // sheet over everything it has swallowed, then embers and labels.
 
 import { FACES, resolveColor, resolveFace } from "@/lib/avatarIdentity";
+import { drawAvatar } from "@/lib/avatarCanvas";
 import { climbNeed, towerHeight, partialCourse, towerColor, towerName, livesLeft, isOut, type LfMode, type Tower } from "@/lib/lavaFloor";
 
 export type Member = {
   id: string;
   name: string;
-  color: string;        // avatar circle color
+  color: string;        // avatar fill color
   face: number;         // index into FACES
   landAt: number;       // ms of the last brick they laid, for the hop
 };
@@ -411,23 +412,9 @@ const drawPlayer = (ctx: CanvasRenderingContext2D, m: Member, cx: number, footY:
   const hop = !dunked && p >= 0 && p < 1 ? -Math.sin(p * Math.PI) * r * 0.9 : 0;
   const bob = dunked ? Math.sin(now / 260 + cx) * 3 : hop;
   const y = footY - r + bob + (dunked ? r * 0.55 : 0);
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = m.color;
-  ctx.fill();
-  ctx.clip();
-  const img = faceImage(m.face);
-  if (img.complete && img.naturalWidth) {
-    const s = r * 2 * 1.28;
-    ctx.drawImage(img, cx - s / 2, y - s / 2, s, s);
-  }
-  ctx.restore();
-  ctx.lineWidth = Math.max(2, r * 0.12);
-  ctx.strokeStyle = dunked ? "#FF5A3C" : me ? "#FFFFFF" : INK;
-  ctx.beginPath();
-  ctx.arc(cx, y, r, 0, Math.PI * 2);
-  ctx.stroke();
+  drawAvatar(ctx, cx, y, r, m.name, m.color, faceImage(m.face), {
+    stroke: dunked ? "#FF5A3C" : me ? "#FFFFFF" : INK, lineWidth: Math.max(2, r * 0.12),
+  });
   return y;
 };
 

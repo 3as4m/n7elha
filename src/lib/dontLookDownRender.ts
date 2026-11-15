@@ -19,6 +19,7 @@ import { artW, artH, type ArtId } from "./dldArt";
 import { PX, type Theme } from "./dldLevel";
 import { SCENERY, type SceneryId } from "./dldArtScenery";
 import { resolveColor, resolveFace } from "./avatarIdentity";
+import { drawAvatar, shapeForName } from "./avatarCanvas";
 
 // ── Pixel canvas ────────────────────────────────────────────────────────────
 /** Target width of the pixel buffer. Zoom is chosen to land near this. */
@@ -454,28 +455,17 @@ export const drawCharacter = (
   ctx.fillRect(Math.round(lx), Math.round(legsTopY), LEG_W, legHL);
   ctx.fillRect(Math.round(rx), Math.round(legsTopY), LEG_W, legHR);
 
-  // The circle itself — outline ring, then the fill, then the face on top.
+  // The body: their cut-paper avatar shape (as everywhere else in the app),
+  // outline, fill and face in one go; a frozen tint over it.
   const r = CIRCLE_D / 2;
-  ctx.beginPath();
-  ctx.arc(cx, cyTop + r, r + 1, 0, Math.PI * 2);
-  ctx.fillStyle = C.outline;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(cx, cyTop + r, r, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-
-  const img = getFaceImage(resolveFace(name, faceIndex));
-  if (img.complete && img.naturalWidth > 0) {
-    const fd = CIRCLE_D * 1.15;
-    ctx.drawImage(img, cx - fd / 2, cyTop + r - fd / 2, fd, fd);
-  }
-
+  drawAvatar(ctx, cx, cyTop + r, r, name, color, getFaceImage(resolveFace(name, faceIndex)), { stroke: C.outline, lineWidth: 1.5 });
   if (frozen) {
-    ctx.beginPath();
-    ctx.arc(cx, cyTop + r, r, 0, Math.PI * 2);
+    const s = shapeForName(name);
+    ctx.save();
+    ctx.translate(cx, cyTop + r); ctx.scale(r, r);
     ctx.fillStyle = "rgba(150,200,255,0.45)";
-    ctx.fill();
+    ctx.fill(s.path);
+    ctx.restore();
   }
 
   ctx.imageSmoothingEnabled = false;

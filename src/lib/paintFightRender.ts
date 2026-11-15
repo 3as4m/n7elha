@@ -25,6 +25,7 @@
 
 import { CELL, type Territory, type GoldenDrop } from "./paintFight";
 import { resolveFace } from "./avatarIdentity";
+import { drawAvatar } from "./avatarCanvas";
 
 // An art-room table: a sheet of paper taped down on a wooden desk. The paper
 // is the arena; the grain and the pencil dot grid are there so movement reads
@@ -274,7 +275,7 @@ export const drawTerritories = (
 };
 
 /**
- * The trail: a translucent ribbon of the player's color. Drawn from the
+ * The trail: a thick flat ribbon of the player's color. Drawn from the
  * polyline the player actually walked rather than from its cells, because a
  * cell staircase at trail width is exactly the pixelated look this mode is
  * getting away from. Collision is judged against the cells, never against this.
@@ -292,22 +293,18 @@ export const drawTrail = (
   for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  // Wet paint: a darker bead underneath, the stroke, and a gloss line on top.
+  // Flat paint: a thick solid stroke in their color over a darker edge
+  // underneath, no gloss.
+  const w = width * 1.7;
   ctx.save();
   ctx.translate(0, 1.6);
-  ctx.lineWidth = width;
-  ctx.strokeStyle = hueDeep(hue, 0.55);
+  ctx.lineWidth = w;
+  ctx.strokeStyle = hueDeep(hue, 0.7);
   ctx.stroke();
   ctx.restore();
-  ctx.lineWidth = width;
-  ctx.strokeStyle = hueSoft(hue, 0.95);
+  ctx.lineWidth = w;
+  ctx.strokeStyle = hueFill(hue);
   ctx.stroke();
-  ctx.save();
-  ctx.translate(-0.8, -1.1);
-  ctx.lineWidth = width * 0.26;
-  ctx.strokeStyle = "rgba(255,255,255,0.55)";
-  ctx.stroke();
-  ctx.restore();
   ctx.restore();
 };
 
@@ -325,13 +322,14 @@ export const faceImage = (src: string) => {
   return img;
 };
 
-export type PlayerAvatar = { face: HTMLImageElement };
+export type PlayerAvatar = { name: string; face: HTMLImageElement };
 /** A player's lobby avatar face — the one they picked on the join screen and
  *  see in every other mode. Falls back to the name hash when nothing was
  *  stored, exactly like the <Avatar> component. The circle behind it is their
  *  PAINT color, not their lobby circle color: the avatar has to read as the
  *  same color as the ground it owns. */
 export const avatarFor = (name: string, faceIndex?: number | null): PlayerAvatar => ({
+  name,
   face: faceImage(resolveFace(name, faceIndex)),
 });
 
@@ -428,11 +426,9 @@ const drawBoost = (ctx: CanvasRenderingContext2D, x: number, y: number, angle: n
 };
 
 /**
- * The player as their lobby avatar: the circle with their face, exactly as the
- * roster draws it, wrapped in a ring of their paint color with a drop-shaped
- * tail of paint streaming behind the heading. The avatar says WHO it is (same
- * "them" as every other mode); the ring and tail say which territory is theirs
- * and which way they are going. An empty tank greys the circle out.
+ * The player as their lobby avatar: their shape and face, exactly as the
+ * roster draws it, filled with their paint color, so it reads as the brush
+ * drawing their trail. An empty tank greys it out.
  */
 const drawAvatarPlayer = (
   ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, hue: number, size: number,
@@ -452,49 +448,12 @@ const drawAvatarPlayer = (
   ctx.save();
   ctx.globalAlpha = alpha;
 
-  // Paint tail + ring, one teardrop in the paint color.
-  const ring = r * 1.22;
-  const tip = ring * 1.75;
-  const phi = Math.acos(ring / tip);
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  ctx.moveTo(-tip, 0);
-  ctx.arc(0, 0, ring, Math.PI + phi, Math.PI - phi);
-  ctx.closePath();
-  ctx.fillStyle = opts.frozen ? "#A4ACA8" : hueFill(hue);
-  ctx.fill();
-  ctx.lineJoin = "round";
-  ctx.lineWidth = Math.max(1.5, size * 0.07);
-  ctx.strokeStyle = opts.frozen ? "#66716D" : hueDeep(hue);
-  ctx.stroke();
-  ctx.restore();
-
-  // The avatar circle: dark rim, a light tint of their paint color (light so
-  // the black face ink stays legible, like the lobby's pastel circles), their
-  // face overscanned and clipped the same way <Avatar> does it.
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = PF.ink;
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(x, y, r * 0.9, 0, Math.PI * 2);
-  ctx.fillStyle = opts.frozen ? "#D5DAD8" : hueSoft(hue);
-  ctx.fill();
-  if (avatar.face.complete && avatar.face.naturalWidth > 0) {
-    ctx.save();
-    ctx.clip();
-    const d = r * 0.9 * 2 * 1.28;
-    ctx.drawImage(avatar.face, x - d / 2, y - d / 2, d, d);
-    ctx.restore();
-  }
-  if (opts.frozen) {
-    ctx.beginPath();
-    ctx.arc(x, y, r * 0.9, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(200,205,203,0.6)";
-    ctx.fill();
-  }
+  // The avatar: their cut-paper shape (as everywhere else in the app), in
+  // their paint color, with a dark rim. It IS the brush: the trail comes
+  // straight out of it.
+  drawAvatar(ctx, x, y, r, avatar.name, opts.frozen ? "#D5DAD8" : hueFill(hue), avatar.face, {
+    stroke: PF.ink, lineWidth: Math.max(1.5, r * 0.14),
+  });
   ctx.restore();
 };
 

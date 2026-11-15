@@ -5,12 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { passwordChoices as cryptoPasswordChoices } from "@/lib/cryptoRush";
 import { toast } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
-import logoLight from "@/assets/logo-light.png";
+import logoMark from "@/assets/logo-mark.png";
 import { hueForJoinIndex } from "@/lib/paintFight";
 import { Seo } from "@/components/Seo";
 import { Avatar } from "@/components/Avatar";
 import { CIRCLE_COLORS, FACES, colorIndexForName, faceIndexForName } from "@/lib/avatarIdentity";
 import { ChevronLeft } from "lucide-react";
+import { Buddy, ShapeField } from "@/components/site/Buddy";
 
 // Small, quiet back control shared by the code and name screens — same muted
 // chevron treatment as the avatar face arrows below, never a full button.
@@ -19,11 +20,17 @@ const BackButton = ({ onClick, label }: { onClick: () => void; label: string }) 
     type="button"
     onClick={onClick}
     aria-label={label}
-    className="absolute top-6 left-6 z-20 h-9 w-9 flex items-center justify-center rounded-full text-white/25 hover:text-white/70 hover:bg-white/[0.06] transition-all duration-150 active:scale-90"
+    className="absolute top-6 left-6 z-20 h-9 w-9 flex items-center justify-center rounded-full text-[#2B3F45]/40 hover:text-[#2B3F45] hover:bg-black/[0.05] transition-all duration-150 active:scale-90"
   >
     <ChevronLeft className="h-5 w-5" />
   </button>
 );
+
+// The site's look: cream paper, slate ink, lime, the hard offset shadow.
+const CREAM = "#F3E7C9";
+const SLATE = "#2B3F45";
+const HAND = "'ArslanWessam', 'Almarai', sans-serif";
+const NB = "border-2 border-[hsl(var(--nb-border))] shadow-[4px_4px_0_0_hsl(var(--nb-border))]";
 
 // Crypto Rush terminal theme (used by boot + launch stages only) — same green
 // as the real in-session terminal (Game.tsx) and the teacher monitor, not an
@@ -109,11 +116,11 @@ const Join = () => {
     if (!faceTouched) setAvatarFaceIdx(faceIndexForName(n));
   }, [name]);
 
-  // Paint body + html dark so no cream bleeds through on iOS edges
+  // Paint body + html the page's cream so nothing else bleeds through on iOS edges
   useEffect(() => {
     const prev = document.body.style.background;
-    document.documentElement.style.background = "#080a10";
-    document.body.style.background = "#080a10";
+    document.documentElement.style.background = CREAM;
+    document.body.style.background = CREAM;
     return () => {
       document.documentElement.style.background = "";
       document.body.style.background = prev;
@@ -287,10 +294,7 @@ const Join = () => {
   // ── Code entry (mode-agnostic) ────────────────────────────────
   if (stage === "code") {
     return (
-      <div
-        className="fixed inset-0 flex flex-col items-center justify-center p-6 safe-top safe-bottom overflow-hidden"
-        style={{ background: "radial-gradient(ellipse at 50% 35%, #141928 0%, #080a10 70%)" }}
-      >
+      <div className="fixed inset-0 isolate flex flex-col items-center justify-center p-6 safe-top safe-bottom overflow-hidden" style={{ background: CREAM }}>
         {/* A bare room-code entry form has no content worth ranking for —
             noindex avoids it reading as a thin/doorway page. */}
         <Seo
@@ -301,52 +305,45 @@ const Join = () => {
           descriptionEn="Enter your room code to join a live nefelha session."
           index={false}
         />
+        <ShapeField />
         <BackButton onClick={() => nav("/")} label={ar ? "رجوع" : "Back"} />
-        <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
 
-        <div className="relative z-10 w-full max-w-xs text-center space-y-12 animate-fade-up">
-          <div className="space-y-3 flex flex-col items-center">
-            <img src={logoLight} alt="nefelha" className="h-16 w-16 object-contain" />
-            <div className="text-white/30 text-sm tracking-wide">{ar ? "أدخل رمز اللعبة" : "Enter the game code"}</div>
+        <div className="relative z-10 w-full max-w-xs text-center animate-fade-up">
+          <img src={logoMark} alt="nefelha" className="mx-auto h-14 w-14 object-contain" />
+          <h1 className="mt-6 text-[34px] leading-tight" style={{ fontFamily: HAND, color: SLATE }}>
+            {ar ? "ادخل رمز اللعبة" : "Enter the game code"}
+          </h1>
+
+          {/* the class waiting for the code */}
+          <div aria-hidden className="mt-6 flex items-end justify-center gap-1.5">
+            <Buddy shape="splash" color="#A9CB1E" mood="grin" className="w-12 -rotate-6" />
+            <Buddy shape="pebble" color="#0E7C7B" mood="happy" faceColor={CREAM} className="w-10" />
+            <Buddy shape="coral" color="#E8794A" mood="oh" className="w-11 rotate-6" />
           </div>
 
-          <div className="space-y-6">
-            <div className="flex gap-3 justify-center" onPaste={handlePaste}>
-              {cells.map((c, i) => (
-                <input
-                  key={i}
-                  ref={cellRefs[i]}
-                  value={c}
-                  onChange={e => handleCell(i, e)}
-                  onKeyDown={e => handleCellKey(i, e)}
-                  maxLength={2}
-                  autoFocus={i === 0}
-                  inputMode="numeric"
-                  className={cn(
-                    "w-[68px] h-[84px] text-center font-mono text-[32px] font-black",
-                    "bg-white/[0.06] border-2 border-white/[0.14] text-white rounded-2xl",
-                    "focus:border-white/50 focus:bg-white/[0.10] focus:outline-none",
-                    "transition-all duration-150 uppercase caret-transparent select-none",
-                    c && "border-white/30 bg-white/[0.09]"
-                  )}
-                />
-              ))}
-            </div>
-            {loading && (
-              <p className="text-white/35 text-sm font-mono animate-pulse tracking-widest">
-                {ar ? "جارٍ التحقق..." : "Verifying..."}
-              </p>
-            )}
+          <div dir="ltr" className="mt-6 flex gap-3 justify-center" onPaste={handlePaste}>
+            {cells.map((c, i) => (
+              <input
+                key={i}
+                ref={cellRefs[i]}
+                value={c}
+                onChange={e => handleCell(i, e)}
+                onKeyDown={e => handleCellKey(i, e)}
+                maxLength={2}
+                autoFocus={i === 0}
+                inputMode="numeric"
+                className={cn(
+                  "w-[64px] h-[80px] text-center text-[34px] font-black rounded-2xl bg-white caret-transparent select-none",
+                  NB, "focus:outline-none focus:-translate-y-1 focus:shadow-[4px_8px_0_0_hsl(var(--nb-border))] transition-all duration-150",
+                  c && "bg-[#A9CB1E]"
+                )}
+                style={{ color: SLATE }}
+              />
+            ))}
           </div>
-
-          <p className="text-white/15 text-xs">{ar ? "الرمز مكوّن من 4 أرقام" : "The code is 4 digits"}</p>
+          <p className="mt-6 text-[13px] font-semibold" style={{ color: `${SLATE}99` }}>
+            {loading ? (ar ? "جارٍ التحقق..." : "Checking...") : (ar ? "الرمز ٤ أرقام على شاشة المعلم" : "The 4-digit code on your teacher's screen")}
+          </p>
         </div>
       </div>
     );
@@ -355,48 +352,35 @@ const Join = () => {
   // ── Name entry (mode-agnostic — matches the code entry page) ──
   if (stage === "name") {
     return (
-      <div
-        className="fixed inset-0 flex flex-col items-center justify-center p-6 safe-top safe-bottom overflow-hidden"
-        style={{ background: "radial-gradient(ellipse at 50% 35%, #141928 0%, #080a10 70%)" }}
-      >
+      <div className="fixed inset-0 isolate flex flex-col items-center justify-center p-6 safe-top safe-bottom overflow-hidden" style={{ background: CREAM }}>
+        <ShapeField />
         <BackButton
           onClick={() => { setSession(null); setCells(["", "", "", ""]); setStage("code"); setTimeout(() => r0.current?.focus(), 50); }}
           label={ar ? "رجوع" : "Back"}
         />
-        <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
 
-        {/* Name first, then the look: a big preview of yourself, the colors,
-            and every face in a grid you can see at once and tap. The picker
-            works before a name is typed too; the name only seeds the default. */}
+        {/* Name first, then the look: a big preview of yourself (your shape
+            comes from your name), the colors, and every face in a grid you can
+            see at once and tap. */}
         <form onSubmit={submitName}
-          className="relative z-10 w-full max-w-sm h-full flex flex-col items-center pt-10 pb-2 gap-4 animate-fade-up">
+          className="relative z-10 w-full max-w-sm h-full flex flex-col items-center pt-8 pb-2 gap-4 animate-fade-up">
           <Avatar
-            key={`${avatarColorIdx}-${avatarFaceIdx}`}
+            key={`${name.trim()}-${avatarColorIdx}-${avatarFaceIdx}`}
             name={name.trim() || "?"}
             colorIndex={avatarColorIdx}
             faceIndex={avatarFaceIdx}
-            size={104}
-            className="animate-scale-in shrink-0"
+            size={112}
+            className="animate-scale-in"
           />
           <input
             autoFocus
             value={name}
             onChange={e => setName(e.target.value)}
             maxLength={24}
+            dir="auto"
             placeholder={ar ? "اسمك في اللعبة..." : "Your name..."}
-            className={cn(
-              "w-full h-14 px-4 text-center text-lg font-bold rounded-2xl text-white shrink-0",
-              "bg-white/[0.06] border-2 border-white/[0.14]",
-              "focus:border-white/50 focus:bg-white/[0.10] focus:outline-none",
-              "placeholder:text-white/25 transition-all duration-150"
-            )}
+            className={cn("w-full h-14 px-4 text-center text-lg font-bold rounded-2xl bg-white shrink-0 focus:outline-none placeholder:text-black/25", NB)}
+            style={{ color: SLATE }}
           />
 
           <div className="flex justify-center gap-2.5 shrink-0">
@@ -407,19 +391,16 @@ const Join = () => {
                 aria-label={ar ? `اللون ${i + 1}` : `Color ${i + 1}`}
                 onClick={() => { setColorTouched(true); setAvatarColorIdx(i); }}
                 className={cn(
-                  "h-8 w-8 rounded-full transition-all duration-150",
-                  avatarColorIdx === i
-                    ? "scale-110 ring-2 ring-white ring-offset-2 ring-offset-[#0d1119]"
-                    : "opacity-60 hover:opacity-100"
+                  "h-8 w-8 rounded-full border-2 border-[hsl(var(--nb-border))] transition-all duration-150",
+                  avatarColorIdx === i ? "scale-110 -translate-y-0.5 shadow-[2px_3px_0_0_hsl(var(--nb-border))]" : "opacity-70 hover:opacity-100"
                 )}
                 style={{ background: c }}
               />
             ))}
           </div>
 
-          <div className="w-full flex-1 min-h-0 overflow-y-auto rounded-2xl bg-white/[0.04] p-2.5"
-            style={{ maskImage: "linear-gradient(to bottom, black 88%, transparent)" }}>
-            <div className="grid grid-cols-6 gap-1.5 pb-4">
+          <div className={cn("w-full flex-1 min-h-0 overflow-y-auto rounded-2xl bg-white p-2.5", NB)}>
+            <div className="grid grid-cols-5 gap-1.5 pb-2">
               {FACES.map((f, i) => (
                 <button
                   key={f}
@@ -428,10 +409,10 @@ const Join = () => {
                   onClick={() => { setFaceTouched(true); setAvatarFaceIdx(i); }}
                   className={cn(
                     "aspect-square rounded-xl flex items-center justify-center transition-all duration-150 active:scale-90",
-                    avatarFaceIdx === i ? "bg-white/20 ring-2 ring-white" : "hover:bg-white/10"
+                    avatarFaceIdx === i ? "bg-[#A9CB1E]/35 ring-2 ring-[hsl(var(--nb-border))]" : "hover:bg-black/[0.04]"
                   )}
                 >
-                  <Avatar name={name.trim() || "?"} colorIndex={avatarColorIdx} faceIndex={i} size={40} />
+                  <Avatar name={name.trim() || "?"} colorIndex={avatarColorIdx} faceIndex={i} size={44} />
                 </button>
               ))}
             </div>
@@ -441,12 +422,13 @@ const Join = () => {
             type="submit"
             disabled={!name.trim()}
             className={cn(
-              "w-full h-14 rounded-2xl font-black text-lg bg-white text-[#080a10] shrink-0",
-              "transition-transform active:scale-[0.97] hover:brightness-90",
-              "disabled:opacity-30 disabled:active:scale-100"
+              "w-full h-14 rounded-full font-black text-lg bg-[#A9CB1E] shrink-0", NB,
+              "transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_hsl(var(--nb-border))]",
+              "disabled:opacity-40 disabled:hover:translate-x-0 disabled:hover:translate-y-0"
             )}
+            style={{ color: SLATE }}
           >
-            {ar ? "دخول" : "Join"}
+            {ar ? "يلا ندخل" : "Let's go"}
           </button>
         </form>
       </div>

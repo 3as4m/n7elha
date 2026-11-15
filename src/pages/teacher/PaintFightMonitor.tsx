@@ -1,3 +1,4 @@
+import { Avatar } from "@/components/Avatar";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -12,7 +13,6 @@ import {
   resizeCanvas, drawArena, drawTerritories, drawTrail, drawPlayer, drawName,
   TerritoryPaths, PaintFx, hueFill, hueDeep, hueSoft, PF, avatarFor, drawGoldenDrops, type PlayerAvatar,
 } from "@/lib/paintFightRender";
-import { resolveFace } from "@/lib/avatarIdentity";
 import PaintFightGallery from "@/components/game/PaintFightGallery";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 
@@ -276,9 +276,7 @@ const PaintFightMonitor = ({ session, sessionId }: Props) => {
                 <div key={row.studentId} className="flex items-center gap-3 px-3 py-2.5 rounded-full animate-fade-up"
                   style={{ background: hueFill(row.hue), color: "#0F2E28", animationDelay: `${200 + i * 150}ms` }}>
                   <span className="w-6 text-center text-lg font-black opacity-70">{i + 1}</span>
-                  <span className="relative h-10 w-10 rounded-full overflow-hidden shrink-0 border-2" style={{ background: hueSoft(row.hue), borderColor: "#0F2E28" }}>
-                    <img src={resolveFace(s?.name ?? "", s?.avatar_face)} alt="" className="absolute left-1/2 top-1/2 w-[128%] max-w-none -translate-x-1/2 -translate-y-1/2" />
-                  </span>
+                  <Avatar name={s?.name ?? ""} faceIndex={s?.avatar_face} fill={hueSoft(row.hue)} size={40} />
                   <span className="flex-1 min-w-0 truncate text-base font-extrabold">{s?.name ?? "—"}</span>
                   <span className="text-base font-black tabular-nums">{row.pct.toFixed(1)}%</span>
                 </div>

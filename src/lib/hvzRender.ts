@@ -9,6 +9,7 @@
 // Everything is drawn in CSS px through a world → screen transform:
 // screen = off + world * scale.
 
+import { shapeForName } from "./avatarCanvas";
 import { TILE, PLAYER_R, FLOOR, WALL, SECRET, tileAt, type HvzMap, type Prop } from "@/lib/humansVsZombies";
 
 export const HVZ = {
@@ -343,6 +344,8 @@ export const drawDarkness = (
 
 export type AgentLook = {
   face?: HTMLImageElement;
+  /** Gives the head its cut-paper avatar shape (as everywhere else in the app); a circle without it. */
+  name?: string;
   color: string;
   zombie: boolean;
   /** Where the arms (zombie) or the gun (human) point. */
@@ -493,14 +496,19 @@ export const drawAgent = (ctx: CanvasRenderingContext2D, x: number, y: number, r
     hand(x + dir * tW * 0.32 + dir * r * 0.18, chestY + r * 0.24, r * 0.15, look.color);
   }
 
-  // Head: the player's face.
+  // Head: the player's avatar, their shape with their face on it.
+  const shape = look.name ? shapeForName(look.name) : null;
+  const head = new Path2D();
+  if (shape) head.addPath(shape.path, new DOMMatrix([hr, 0, 0, hr, x, hy]));
+  else head.arc(x, hy, hr, 0, Math.PI * 2);
   ctx.fillStyle = skin;
-  ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); ctx.fill();
+  ctx.fill(head);
   if (look.face?.complete && look.face.naturalWidth) {
     ctx.save();
-    ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); ctx.clip();
-    const s = hr * 2.3;
-    ctx.drawImage(look.face, x - s / 2, hy - s / 2, s, s);
+    ctx.clip(head);
+    const s = shape ? hr * Math.min(shape.fr * 2.7, 1.6) : hr * 2.3;
+    const fx = shape ? x + shape.fx * hr : x, fy = shape ? hy + shape.fy * hr : hy;
+    ctx.drawImage(look.face, fx - s / 2, fy - s / 2, s, s);
     const tint = look.zombie ? "rgba(120,200,90,0.65)"
       : look.turning ? `rgba(120,200,90,${0.35 + Math.sin(t * 0.02) * 0.3})`
       : look.curing ? `rgba(140,200,255,${0.35 + Math.sin(t * 0.02) * 0.3})` : null;
@@ -530,10 +538,12 @@ export const drawAgent = (ctx: CanvasRenderingContext2D, x: number, y: number, r
     }
     ctx.restore();
   }
-  ctx.beginPath(); ctx.arc(x, hy, hr, 0, Math.PI * 2); outline();
-  ctx.strokeStyle = "rgba(255,255,255,0.35)";
-  ctx.lineWidth = Math.max(1, hr * 0.12);
-  ctx.beginPath(); ctx.arc(x, hy, hr * 0.8, Math.PI * 1.1, Math.PI * 1.45); ctx.stroke();
+  ctx.lineWidth = line; ctx.strokeStyle = OUTLINE; ctx.lineJoin = "round"; ctx.stroke(head);
+  if (!shape) {
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.lineWidth = Math.max(1, hr * 0.12);
+    ctx.beginPath(); ctx.arc(x, hy, hr * 0.8, Math.PI * 1.1, Math.PI * 1.45); ctx.stroke();
+  }
 
   if (look.shield) shieldBadge(ctx, x + hr * 0.85, hy - hr * 0.7, Math.max(5, r * 0.32));
 
