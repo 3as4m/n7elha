@@ -66,6 +66,13 @@ const Landing = () => {
         feelLine2: "في تقرير",
         feelBody: "هو إحساس نبيه لكل طالب: لحظة يدخل فيها الحصة وهو متحمّس، مو طافي. لحظة يتفاعل مع السؤال لأنه يبي، مو لأنه مجبور. هذا اللي نصمّمه، سؤال ورا سؤال.",
 
+        statsKicker: "بالأرقام",
+        stats: [
+          ["3X", "انتباه أكثر من الحصة العادية"],
+          ["16+", "نمط لعب تفاعلي"],
+          ["2X", "تحصيل علمي، بمتعة"],
+        ],
+
         vidKicker: "شوف بنفسك",
         vidTitleA: "تسع ألعاب",
         vidTitleB: "في نص دقيقة",
@@ -121,6 +128,13 @@ const Landing = () => {
         feelLine1: "Engagement isn't a number",
         feelLine2: "on a report",
         feelBody: "It's a feeling every student needs: the moment they walk into class excited instead of checked out. The moment they answer because they want to, not because they have to. That's what we design, one question at a time.",
+
+        statsKicker: "BY THE NUMBERS",
+        stats: [
+          ["3X", "more engaged than a regular class"],
+          ["16+", "interactive game modes"],
+          ["2X", "the learning, all fun"],
+        ],
 
         vidKicker: "SEE IT",
         vidTitleA: "Nine games",
@@ -372,6 +386,42 @@ const Landing = () => {
                 <Buddy shape="maple" color={LIME} mood="oh" className="w-16 sm:w-24 rotate-6" />
                 <Buddy shape="tulips" color={SLATE} mood="wink" faceColor={CREAM} className="w-14 sm:w-20" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------------- BY THE NUMBERS ---------------- */}
+        {/* Three big numbers, each standing on a cut-paper shape with a buddy
+            peeking from its corner. No boxes: the shapes are the frame. */}
+        <section className="relative px-5 sm:px-8 md:px-14 pt-4 sm:pt-8 pb-16 sm:pb-24">
+          <div className="wrap">
+            <span className={`block text-center text-[12px] font-semibold text-[#8FC44A] ${isAr ? "tracking-normal" : "tracking-[0.25em]"}`}>{t.statsKicker}</span>
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-14 sm:gap-6 md:gap-10">
+              {([
+                ["blob", TEAL, "pebble", LIME, "grin", -6],
+                ["bush", "#E3CC98", "splash", CORAL, "happy", 4],
+                ["cross", LIME, "sprout", TEAL, "wink", -3],
+              ] as const).map(([bg, bgColor, buddy, buddyColor, mood, rot], i) => {
+                const [num, label] = t.stats[i];
+                return (
+                  <div key={num} className="flex flex-col items-center text-center">
+                    <div className="relative w-[200px] sm:w-full max-w-[240px] aspect-square flex items-center justify-center">
+                      <svg aria-hidden viewBox="-1.05 -1.05 2.1 2.1" className="absolute inset-0 w-full h-full" style={{ transform: `rotate(${rot}deg)`, filter: "drop-shadow(6px 7px 0 hsl(var(--nb-border)))" }}>
+                        <path d={BUDDY_SHAPES[bg].d} fill={bgColor} />
+                      </svg>
+                      <span
+                        dir="ltr"
+                        className="relative text-[72px] sm:text-[64px] md:text-[84px] font-extrabold leading-none tracking-tight"
+                        style={{ fontFamily: "'Outfit', system-ui, sans-serif", color: bgColor === TEAL ? CREAM : SLATE }}
+                      >
+                        {num}
+                      </span>
+                      <Buddy shape={buddy} color={buddyColor} mood={mood} faceColor={buddyColor === TEAL ? CREAM : undefined} className="absolute -bottom-2 -end-2 w-14 sm:w-16 rotate-12" />
+                    </div>
+                    <p className="mt-6 max-w-[16rem] text-[20px] sm:text-[22px] leading-snug" style={{ color: SLATE, fontFamily: "'ArslanWessam', 'Almarai', sans-serif" }}>{label}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

@@ -54,7 +54,7 @@ export function useSmoothScroll(enabled = true) {
       const y = window.scrollY, t = performance.now();
       const perFrame = ((y - lastY) / Math.max(1, t - lastT)) * 16.7;   // px per 60fps frame
       lastY = y; lastT = t;
-      skewTo(gsap.utils.clamp(-2.8, 2.8, perFrame * 0.48));
+      skewTo(gsap.utils.clamp(-1.8, 1.8, perFrame * 0.31));
       clearTimeout(resetTimeout);
       resetTimeout = setTimeout(() => skewTo(0), 120);
     };
